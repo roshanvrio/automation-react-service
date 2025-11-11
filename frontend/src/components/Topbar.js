@@ -14,3 +14,5 @@ export default function Topbar() {
     </header>
   );
 }
+
+// Topbar component represents the top navigation bar of the dashboard.
