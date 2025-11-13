@@ -5,9 +5,28 @@ import robotLoading from "../images/robot-loading.png";
 
 export default function OverviewTiles(){
   const [data, setData] = useState(null);
-  useEffect(()=>{ fetchOverview().then(setData).catch(()=>{}); }, []);
+  const [loading, setLoading] = useState(true);
   
-  // fallback display values
+  useEffect(() => { 
+    const loadData = async () => {
+      try {
+        const overview = await fetchOverview();
+        setData(overview);
+      } catch (error) {
+        console.error("Failed to load overview:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+    
+    // Refresh every 30 seconds
+    const interval = setInterval(loadData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Fallback display values
   const d = data || { 
     total_bots: 25, 
     in_queue: 9, 
@@ -25,8 +44,8 @@ export default function OverviewTiles(){
           <div className="error-box">
             <img src={robotError} alt="Error Bot" style={{width: '80px', height: '80px', objectFit: 'contain'}} />
             <div>
-            <div style={{fontSize: '0.9rem', color: '#D7E4E3', marginBottom: '0.5rem'}}>Error</div>
-              <div className="err-count">{String(d.errors || 5).padStart(2, '0')}</div>
+              <div style={{fontSize: '0.9rem', color: '#D7E4E3', marginBottom: '0.5rem'}}>Error</div>
+              <div className="err-count">{String(d.errors).padStart(2, '0')}</div>
             </div>
           </div>
           <div className="total-bots-box">
@@ -49,13 +68,15 @@ export default function OverviewTiles(){
         </div>
         <div className="date-card" style={{gridRow: '1 / 3', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-end'}}>
           <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between'}}>
-          <span style={{fontSize: '0.85rem', color: '#FFFFFF', fontWeight: '500'}}>Completed</span>
-          <span style={{fontSize: '0.85rem', color: '#FFFFFF'}}>•••</span>
+            <span style={{fontSize: '0.85rem', color: '#FFFFFF', fontWeight: '500'}}>Completed</span>
+            <span style={{fontSize: '0.85rem', color: '#FFFFFF'}}>•••</span>
           </div>
           <div style={{fontSize: '2.5rem', fontWeight: '700', color: '#ffffff', textShadow: '0 0 10px rgba(255, 255, 255, 0.3)', alignSelf: 'flex-start'}}>{d.completed}</div>
-          <div style={{fontSize: '0.75rem', color: '#00FFDD', textShadow: '0 0 8px rgba(0, 255, 221, 0.5)', alignSelf: 'flex-start'}}>+5%</div>
+          <div style={{fontSize: '0.75rem', color: '#00FFDD', textShadow: '0 0 8px rgba(0, 255, 221, 0.5)', alignSelf: 'flex-start'}}>
+            {d.success_rate}%
+          </div>
           <div style={{fontSize: '0.9rem', fontWeight: '600', color: '#ffffff', lineHeight: '1.6', textAlign: 'right', alignSelf: 'flex-end'}}>
-            4th September<br/>2025
+            {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/ /g, ' ')}
           </div>
         </div>
 

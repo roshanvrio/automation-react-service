@@ -4,7 +4,6 @@ import botIcon from "../images/robot-happy.png";
 
 export default function Sidebar() {
   const [bots, setBots] = useState([]);
-  const [hoveredBot, setHoveredBot] = useState(null);
   const scrollContainerRef = useRef(null);
   const animationFrameRef = useRef(null);
   const lastMouseYRef = useRef(null);
@@ -245,22 +244,13 @@ export default function Sidebar() {
               className="bot-stack-item"
               key={bot.id}
               style={{ "--item-index": index }}
-              onMouseEnter={() => setHoveredBot(bot.id)}
-              onMouseLeave={() => setHoveredBot(null)}
             >
               <img src={botIcon} alt="Bot" className="bot-stack-img" />
               
-              {/* Show bot name on hover */}
-              {hoveredBot === bot.id && (
-                <div className="bot-hover-name">{bot.name}</div>
-              )}
+              {/* Show bot name by default on the right */}
+              <div className="bot-name-label">{bot.name}</div>
             </div>
           ))}
-
-          {/* Name label for bottom-most bot (always visible) */}
-          <div className="bot-stack-name-label">
-            {baseBots[baseBots.length - 1]?.name}
-          </div>
         </div>
       </div>
 
