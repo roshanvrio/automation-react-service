@@ -20,6 +20,11 @@ const MetricsBar = ({ metrics }) => {
         label="IN PROGRESS"
       />
       <MetricCard
+        type="queue"
+        count={String(metrics.totalInQueue || 0).padStart(2, '0')}
+        label="Total in Queue"
+      />
+      <MetricCard
         type="error"
         count={String(metrics.errors || 0).padStart(2, '0')}
         label="Error"

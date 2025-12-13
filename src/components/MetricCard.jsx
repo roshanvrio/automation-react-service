@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, Zap, Settings, AlertTriangle, Clock } from 'lucide-react';
+import { Activity, Zap, Settings, AlertTriangle, Clock, List } from 'lucide-react';
 
 const MetricCard = ({ type, count, label }) => {
   const getIcon = () => {
@@ -10,6 +10,8 @@ const MetricCard = ({ type, count, label }) => {
         return <Zap size={26} strokeWidth={2.5} />;
       case 'progress':
         return <Settings size={26} strokeWidth={2.5} />;
+      case 'queue':
+        return <List size={26} strokeWidth={2.5} />;
       case 'error':
         return <AlertTriangle size={26} strokeWidth={2.5} />;
       case 'time':
@@ -45,6 +47,14 @@ const MetricCard = ({ type, count, label }) => {
           iconColor: '#38bdf8',
           countColor: '#38bdf8'
         };
+      case 'queue':
+        return {
+          bgColor: 'rgba(245, 158, 11, 0.12)',
+          borderColor: 'rgba(245, 158, 11, 0.35)',
+          iconBg: 'rgba(245, 158, 11, 0.22)',
+          iconColor: '#fbbf24',
+          countColor: '#fbbf24'
+        };
       case 'error':
         return {
           bgColor: 'rgba(239, 68, 68, 0.12)',
@@ -75,14 +85,14 @@ const MetricCard = ({ type, count, label }) => {
   const styles = getStyles();
 
   return (
-    <div 
+    <div
       className="metric-card"
       style={{
         backgroundColor: styles.bgColor,
         borderColor: styles.borderColor
       }}
     >
-      <div 
+      <div
         className="metric-icon"
         style={{
           backgroundColor: styles.iconBg,

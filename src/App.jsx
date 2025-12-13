@@ -1,64 +1,118 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import HoneycombGrid from './components/HoneycombGrid';
 import MetricsBar from './components/MetricsBar';
 import LeftSidebar from './components/LeftSidebar';
 
+// WebSocket Configuration
+const WS_DASHBOARD_URL = 'ws://127.0.0.1:8000/ws/dashboard';
+const RECONNECT_INTERVAL = 3000; // 3 seconds
+
 function App() {
-  const [scale, setScale] = useState(1);
   const [metrics, setMetrics] = useState({
-    exceptions: 9,
-    successful: 25,
-    inProgress: 7,
-    errors: 25,
-    avgTime: 25
+    exceptions: 0,
+    successful: 0,
+    inProgress: 0,
+    totalInQueue: 0,
+    errors: 0,
+    avgTime: 0
   });
 
-  // Auto-scale based on screen size
-  useEffect(() => {
-    const calculateScale = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const baseWidth = 1920;
-      const baseHeight = 1080;
-      const scaleX = width / baseWidth;
-      const scaleY = height / baseHeight;
-      const newScale = Math.min(scaleX, scaleY);
-      setScale(newScale);
-    };
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(null);
+  const [error, setError] = useState(null);
+  const [queuePriorityData, setQueuePriorityData] = useState([]);
 
-    calculateScale();
-    window.addEventListener('resize', calculateScale);
-    return () => window.removeEventListener('resize', calculateScale);
-  }, []);
+  const wsRef = useRef(null);
+  const reconnectTimeoutRef = useRef(null);
 
-  // Fetch metrics from API
+  // Unified WebSocket connection for dashboard
+  const connectWebSocket = () => {
+    try {
+      console.log('Connecting to Dashboard WebSocket...');
+      const ws = new WebSocket(WS_DASHBOARD_URL);
+
+      ws.onopen = () => {
+        console.log('✅ Dashboard WebSocket Connected');
+        setIsConnected(true);
+        setError(null);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+
+          switch (message.type) {
+            case 'metrics_update':
+              console.log('📊 Metrics received:', message.data);
+              setMetrics({
+                exceptions: message.data.exceptions || 0,
+                successful: message.data.successful || 0,
+                inProgress: message.data.inProgress || 0,
+                totalInQueue: message.data.totalInQueue || 0,
+                errors: message.data.errors || 0,
+                avgTime: message.data.avgTime || 0
+              });
+              setLastUpdate(new Date());
+              break;
+
+            case 'queue_priority_update':
+              console.log('📋 Queue Priority received:', message.data);
+              setQueuePriorityData(message.data);
+              setLastUpdate(new Date());
+              break;
+
+            case 'error':
+              console.error(`Error in ${message.source}: ${message.message}`);
+              setError(message.message);
+              break;
+
+            default:
+              console.log('Unknown message type:', message.type);
+          }
+        } catch (err) {
+          console.error('Error parsing WebSocket message:', err);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('❌ WebSocket Error:', error);
+        setError('WebSocket connection error');
+        setIsConnected(false);
+      };
+
+      ws.onclose = () => {
+        console.log('🔌 WebSocket Disconnected');
+        setIsConnected(false);
+
+        // Attempt to reconnect after delay
+        reconnectTimeoutRef.current = setTimeout(() => {
+          console.log('🔄 Attempting to reconnect...');
+          connectWebSocket();
+        }, RECONNECT_INTERVAL);
+      };
+
+      wsRef.current = ws;
+    } catch (err) {
+      console.error('Failed to create WebSocket:', err);
+      setError('Failed to establish WebSocket connection');
+      setIsConnected(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        // Replace with your actual API endpoint
-        const response = await fetch('/api/metrics');
-        const data = await response.json();
-        setMetrics({
-          exceptions: data.exceptions || 0,
-          successful: data.successful || 0,
-          inProgress: data.inProgress || 0,
-          errors: data.errors || 0,
-          avgTime: data.avgTime || 0
-        });
-      } catch (error) {
-        console.error('Error fetching metrics:', error);
-        // Keep default values on error
+    // Connect to WebSocket on mount
+    connectWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      if (wsRef.current) {
+        wsRef.current.close();
       }
     };
-
-    // Fetch initially
-    fetchMetrics();
-
-    // Fetch every 30 seconds
-    const metricsInterval = setInterval(fetchMetrics, 30000);
-    
-    return () => clearInterval(metricsInterval);
   }, []);
 
   const vmData = [
@@ -134,20 +188,20 @@ function App() {
     }
   ];
 
-  const botsInQueue = [
-    { name: 'Nigeria Reports - NG31', type: 'mail', status: 'In Queue', count: '312' },
-    { name: 'Nigeria Reports - NG36', type: 'mail', status: 'In Queue', count: '300' },
-    { name: 'InvoiceVetting', type: 'clock', status: 'In Queue', count: '289' },
-    { name: 'PO Creation_Posting GR_Remittance Advice', type: 'clock', status: 'In Queue', count: '245' },
-    { name: 'Shipment Instruction & Booking Advise Creatio', type: 'clock', status: 'In Queue', count: '234' },
-    { name: 'Invoice Indexing & Posting in OTM Automation', type: 'clock', status: 'In Queue', count: '198' },
-    { name: 'QualitricsAutomation', type: 'mail', status: 'In Queue', count: '176' },
-    { name: 'TSF - MECR', type: 'clock', status: 'In Queue', count: '156' },
-    { name: 'PixelPilot88.bot', type: 'clock', status: 'In Queue', count: '143' }
-  ];
+  // Transform queue priority data from WebSocket to the format expected by LeftSidebar
+  const botsInQueue = queuePriorityData.length > 0
+    ? queuePriorityData.map(item => ({
+        name: item.processName,
+        type: item.triggerIndication === 'Email' ? 'mail' : 'clock',
+        status: 'In Queue',
+        count: item.transactionCount.toString()
+      }))
+    : [
+        // Fallback data when WebSocket is not connected
+        { name: 'Waiting for data...', type: 'clock', status: 'Loading', count: '-' }
+      ];
 
   const vmUtilization = [
-    { id: 'VM-01', time: '245 mins', color: '#2dd4bf' },
     { id: 'VM-01', time: '245 mins', color: '#2dd4bf' },
     { id: 'VM-31', time: '245 mins', color: '#26c9b5' },
     { id: 'VM-29', time: '835 mins', color: '#1fb8a6' },
@@ -185,12 +239,52 @@ function App() {
   };
 
   return (
-    <div className="App" style={{
-      transform: `scale(${scale})`,
-      transformOrigin: 'center center',
-      width: '100vw',
-      height: '100vh'
-    }}>
+    <div className="App">
+      {/* Connection Status Indicator */}
+      <div style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        background: isConnected ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+        border: `1px solid ${isConnected ? 'rgba(16, 185, 129, 0.5)' : 'rgba(239, 68, 68, 0.5)'}`,
+        padding: '4px 8px',
+        borderRadius: '4px',
+        color: isConnected ? '#34d399' : '#f87171',
+        fontSize: '9px',
+        zIndex: 1000
+      }}>
+        <div style={{
+          width: '5px',
+          height: '5px',
+          borderRadius: '50%',
+          background: isConnected ? '#34d399' : '#f87171',
+          animation: isConnected ? 'pulse 2s infinite' : 'none'
+        }}></div>
+        {isConnected ? 'Live' : 'Disconnected'}
+      </div>
+
+      {/* Error Display */}
+      {error && (
+        <div style={{
+          position: 'absolute',
+          top: '50px',
+          right: '10px',
+          background: 'rgba(239, 68, 68, 0.2)',
+          border: '1px solid rgba(239, 68, 68, 0.5)',
+          padding: '8px 16px',
+          borderRadius: '6px',
+          color: '#f87171',
+          fontSize: '12px',
+          zIndex: 1000,
+          maxWidth: '300px'
+        }}>
+          ⚠ {error}
+        </div>
+      )}
+
       {/* Metrics Bar */}
       <MetricsBar metrics={metrics} />
 
@@ -203,6 +297,20 @@ function App() {
         />
         <HoneycombGrid vmData={vmData} />
       </div>
+
+      {/* Last update indicator */}
+      {lastUpdate && (
+        <div style={{
+          position: 'absolute',
+          bottom: '10px',
+          left: '10px',
+          fontSize: '10px',
+          color: '#8b92b2',
+          zIndex: 1000
+        }}>
+          📡 Real-time • Last update: {lastUpdate.toLocaleTimeString()}
+        </div>
+      )}
     </div>
   );
 }
