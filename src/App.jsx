@@ -191,6 +191,7 @@ function App() {
   // Transform queue priority data from WebSocket to the format expected by LeftSidebar
   const botsInQueue = queuePriorityData.length > 0
     ? queuePriorityData.map(item => ({
+        id: item.processName,
         name: item.processName,
         type: item.triggerIndication === 'Email' ? 'mail' : 'clock',
         status: 'In Queue',
@@ -198,7 +199,7 @@ function App() {
       }))
     : [
         // Fallback data when WebSocket is not connected
-        { name: 'Waiting for data...', type: 'clock', status: 'Loading', count: '-' }
+        { id: 'loading', name: 'Waiting for data...', type: 'clock', status: 'Loading', count: '-' }
       ];
 
   const vmUtilization = [
