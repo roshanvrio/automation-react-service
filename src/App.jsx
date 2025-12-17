@@ -22,9 +22,19 @@ function App() {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [error, setError] = useState(null);
   const [queuePriorityData, setQueuePriorityData] = useState([]);
+  const [activeVMs, setActiveVMs] = useState([]);
+  const [idleVMs, setIdleVMs] = useState([]);
+  const [poppingVM, setPoppingVM] = useState(null); // VM name that's being assigned
+  const [originalCounts, setOriginalCounts] = useState({}); // Track original counts for each process
 
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const activeVMsRef = useRef([]); // Ref to track current activeVMs for closure
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    activeVMsRef.current = activeVMs;
+  }, [activeVMs]);
 
   // Unified WebSocket connection for dashboard
   const connectWebSocket = () => {
@@ -57,8 +67,56 @@ function App() {
               break;
 
             case 'queue_priority_update':
-              console.log('📋 Queue Priority received:', message.data);
+  console.log('📋 Queue Priority received:', message.data);
+  // Track original counts for new processes
+  setOriginalCounts(prev => {
+    const updated = { ...prev };
+    message.data.forEach(item => {
+      if (!(item.processName in updated)) {
+        updated[item.processName] = item.totalCount;  // NEW field
+      }
+    });
+    return updated;
+  });
               setQueuePriorityData(message.data);
+              setLastUpdate(new Date());
+              break;
+
+            case 'active_vms_update':
+              console.log('🖥️ Active VMs received:', message.data);
+              // Find the new VM being assigned (compare with current activeVMs using ref)
+              const currentActiveVMs = activeVMsRef.current;
+              const newVMs = message.data.filter(
+                newVM => !currentActiveVMs.some(existing => existing.machineName === newVM.machineName)
+              );
+
+              console.log('📊 Current Active VMs:', currentActiveVMs.map(v => v.machineName));
+              console.log('📊 New VMs detected:', newVMs.map(v => v.machineName));
+
+              if (newVMs.length > 0) {
+                // Step 1: After 1 second (after -1 animation), highlight the VM in Entry pool
+                setTimeout(() => {
+                  setPoppingVM(newVMs[0].machineName);
+                  console.log('🎯 Highlighting VM:', newVMs[0].machineName);
+                }, 1000);
+
+                // Step 2: After 2 more seconds, create the hexagon and clear the highlight
+                setTimeout(() => {
+                  setActiveVMs(message.data);
+                  setLastUpdate(new Date());
+                  // Clear the popping state after animation
+                  setTimeout(() => setPoppingVM(null), 500);
+                }, 3000);
+              } else {
+                // No new VMs, just update immediately
+                setActiveVMs(message.data);
+                setLastUpdate(new Date());
+              }
+              break;
+
+            case 'idle_vms_update':
+              console.log('💤 Idle VMs received:', message.data);
+              setIdleVMs(message.data);
               setLastUpdate(new Date());
               break;
 
@@ -115,91 +173,23 @@ function App() {
     };
   }, []);
 
-  const vmData = [
-    {
-      id: 'VM-34',
-      task: 'Account Creation',
-      utilization: '800 mins',
-      status: 'schedule',
-      isTopPerforming: true,
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-03',
-      task: 'Access Control',
-      utilization: '150 mins',
-      status: 'email',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-14',
-      task: 'System Backup',
-      utilization: '512 mins',
-      status: 'schedule',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-22',
-      task: 'Data Sync',
-      utilization: '345 mins',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-05',
-      task: 'Log Monitoring',
-      utilization: '430 mins',
-      status: 'clock',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-32',
-      task: 'Process 2234',
-      utilization: '200 mins',
-      status: 'clock',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-18',
-      task: 'Network Configuration',
-      utilization: '215 mins',
-      status: 'clock',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-27',
-      task: 'Incident Response',
-      utilization: '360 mins',
-      status: 'clock',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-11',
-      task: 'Resource Allocation',
-      utilization: '487 mins',
-      status: 'clock',
-      automation: 'uipath'
-    },
-    {
-      id: 'VM-31',
-      task: 'Patch Management',
-      utilization: '590 mins',
-      status: 'clock',
-      automation: 'uipath'
-    }
-  ];
 
   // Transform queue priority data from WebSocket to the format expected by LeftSidebar
+  // Calculate total as: current queue count + number of active VMs running that process
   const botsInQueue = queuePriorityData.length > 0
-    ? queuePriorityData.map(item => ({
+  ? queuePriorityData.map(item => {
+      return {
         id: item.processName,
         name: item.processName,
         type: item.triggerIndication === 'Email' ? 'mail' : 'clock',
         status: 'In Queue',
-        count: item.transactionCount.toString()
-      }))
+        count: item.inQueueCount.toString(),    // NEW: Numerator (NEW status)
+        totalCount: item.totalCount.toString()  // NEW: Denominator (all statuses)
+      };
+    })
     : [
         // Fallback data when WebSocket is not connected
-        { id: 'loading', name: 'Waiting for data...', type: 'clock', status: 'Loading', count: '-' }
+        { id: 'loading', name: 'Waiting for data...', type: 'clock', status: 'Loading', count: '-', totalCount: '-' }
       ];
 
   const vmUtilization = [
@@ -296,7 +286,7 @@ function App() {
           vmUtilization={vmUtilization}
           topPerformer={topPerformer}
         />
-        <HoneycombGrid vmData={vmData} />
+        <HoneycombGrid activeVMs={activeVMs} idleVMs={idleVMs} poppingVM={poppingVM} />
       </div>
 
       {/* Last update indicator */}

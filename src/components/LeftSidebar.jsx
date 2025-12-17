@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Mail, Clock } from 'lucide-react';
 import QueueCountDisplay from './QueueCountDisplay';
 
 const LeftSidebar = ({ botsInQueue, vmUtilization, topPerformer }) => {
   const [animatingBots, setAnimatingBots] = useState({});
 
-  const handleAnimationChange = (botId, isAnimating) => {
+  const handleAnimationChange = useCallback((botId, isAnimating) => {
     setAnimatingBots(prev => ({ ...prev, [botId]: isAnimating }));
-  };
+  }, []);
 
   return (
     <div className="left-sidebar">
@@ -30,6 +30,7 @@ const LeftSidebar = ({ botsInQueue, vmUtilization, topPerformer }) => {
                 <span className="status-badge-small">{bot.status}</span>
                 <QueueCountDisplay
                   count={bot.count}
+                  totalCount={bot.totalCount}
                   processName={bot.name}
                   onAnimationChange={(isAnimating) => handleAnimationChange(bot.id || bot.name, isAnimating)}
                 />

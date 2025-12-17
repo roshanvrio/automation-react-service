@@ -1,66 +1,72 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const QueueCountDisplay = ({ count, processName, onAnimationChange }) => {
+const QueueCountDisplay = ({ count, totalCount, onAnimationChange }) => {
   const [displayValue, setDisplayValue] = useState(count);
   const [isAnimating, setIsAnimating] = useState(false);
-  const previousCountRef = useRef(count);
+  const previousCountRef = useRef(null);
   const isInitialMount = useRef(true);
+  const animationInProgressRef = useRef(false);
+
+  // Store callback in ref to avoid dependency issues
+  const onAnimationChangeRef = useRef(onAnimationChange);
+  onAnimationChangeRef.current = onAnimationChange;
+
+  // Convert count to number for comparison
+  const currentCountNum = parseInt(count, 10);
 
   useEffect(() => {
+    // Skip if animation is already in progress
+    if (animationInProgressRef.current) {
+      return;
+    }
+
     // Skip animation on initial mount
     if (isInitialMount.current) {
       isInitialMount.current = false;
-      previousCountRef.current = count;
+      previousCountRef.current = currentCountNum;
       setDisplayValue(count);
       return;
     }
 
-    const prevCount = previousCountRef.current;
-    const currentCount = parseInt(count, 10);
-    const prevCountNum = parseInt(prevCount, 10);
+    const prevCountNum = previousCountRef.current;
 
     // Detect if count decreased (process assigned to VM)
-    if (!isNaN(currentCount) && !isNaN(prevCountNum) && currentCount < prevCountNum) {
-      const decrementAmount = prevCountNum - currentCount;
-      let currentStep = 0;
+    if (!isNaN(currentCountNum) && !isNaN(prevCountNum) && currentCountNum < prevCountNum) {
+      animationInProgressRef.current = true;
 
-      const runAnimation = () => {
-        if (currentStep < decrementAmount) {
-          // Show -1 animation
-          setIsAnimating(true);
-          onAnimationChange?.(true);
-          setDisplayValue('-1');
+      // Show -1 animation
+      setIsAnimating(true);
+      onAnimationChangeRef.current?.(true);
+      setDisplayValue('-1');
 
-          setTimeout(() => {
-            // Show intermediate count
-            const intermediateValue = prevCountNum - currentStep - 1;
-            setDisplayValue(intermediateValue.toString());
-            setIsAnimating(false);
-            onAnimationChange?.(false);
+      // After 1 second, show the new count
+      const timeout = setTimeout(() => {
+        setDisplayValue(currentCountNum.toString());
+        setIsAnimating(false);
+        onAnimationChangeRef.current?.(false);
+        animationInProgressRef.current = false;
+        previousCountRef.current = currentCountNum;
+      }, 1000);
 
-            currentStep++;
-
-            // Pause before next animation cycle
-            if (currentStep < decrementAmount) {
-              setTimeout(runAnimation, 200);
-            }
-          }, 1000); // Duration of -1 flash (1 second for visibility)
-        }
+      return () => {
+        clearTimeout(timeout);
+        animationInProgressRef.current = false;
       };
-
-      runAnimation();
-      previousCountRef.current = count;
-      return;
     } else {
       // No animation needed, just update
       setDisplayValue(count);
-      previousCountRef.current = count;
+      previousCountRef.current = currentCountNum;
     }
-  }, [count]);
+  }, [count, currentCountNum]);
+
+  // Format as "current/total" or just show -1 during animation
+  const formattedDisplay = isAnimating
+    ? displayValue
+    : (totalCount && totalCount !== '-' ? `${displayValue}/${totalCount}` : displayValue);
 
   return (
     <span className={`bot-count ${isAnimating ? 'count-decreasing' : ''}`}>
-      {displayValue}
+      {formattedDisplay}
     </span>
   );
 };

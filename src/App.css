@@ -272,7 +272,7 @@ html {
   background: #1B1F24;
   border: 1px solid rgba(100, 120, 200, 0.3);
   border-radius: 12px;
-  padding: clamp(8px, 1vh, 15px) clamp(10px, 1vw, 15px);
+  padding: clamp(15px, 2vh, 30px) clamp(10px, 1vw, 15px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -300,8 +300,17 @@ html {
   /* Grid columns and rows are set dynamically via inline styles */
   gap: var(--hex-gap-row) var(--hex-gap-col);
   position: relative;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
   place-items: center;
+  place-content: center;
+}
+
+/* Auto-layout honeycomb grid - uses absolute positioning */
+.honeycomb-grid.honeycomb-auto-layout {
+  display: block;
+  position: relative;
+  margin: auto;
 }
 
 .hex-wrapper {
@@ -309,6 +318,19 @@ html {
   align-items: center;
   justify-content: center;
   width: 100%;
+}
+
+/* Hex wrapper for auto-layout */
+.honeycomb-auto-layout .hex-wrapper {
+  width: auto;
+  position: absolute;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s ease;
+}
+
+.honeycomb-auto-layout .hex-wrapper:hover {
+  z-index: 10;
 }
 
 /* ===================================
@@ -389,15 +411,16 @@ html {
 
 .hexagon-content {
   position: relative;
-  padding: clamp(10px, 1.2vw, 14px) clamp(8px, 0.8vw, 10px);
+  padding: clamp(4px, 0.5vw, 8px) clamp(4px, 0.4vw, 6px);
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(3px, 0.4vw, 5px);
+  gap: clamp(1px, 0.2vw, 3px);
   z-index: 1;
   transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .hexagon:hover .hexagon-content {
@@ -420,11 +443,11 @@ html {
 
 .dot {
   position: absolute;
-  width: 3px;
-  height: 3px;
+  width: clamp(2px, 0.2vw, 3px);
+  height: clamp(2px, 0.2vw, 3px);
   background: rgba(255, 255, 255, 0.7);
   border-radius: 50%;
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
   animation: dotPulse 2s ease-in-out infinite;
   animation-delay: calc(var(--dot-index) * 0.05s);
 }
@@ -481,15 +504,16 @@ html {
    HEXAGON CONTENT ELEMENTS
    =================================== */
 .top-label {
-  font-size: var(--font-xs);
+  font-size: clamp(5px, 0.55vw, 8px);
   font-weight: 700;
   color: #ff4444;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.3px;
   text-align: center;
-  margin-bottom: 2px;
-  text-shadow: 0 0 12px rgba(255, 68, 68, 0.6), 0 0 24px rgba(255, 68, 68, 0.3);
+  margin-bottom: 1px;
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.6), 0 0 16px rgba(255, 68, 68, 0.3);
   line-height: 1;
   animation: labelPulse 2s ease-in-out infinite;
+  white-space: nowrap;
 }
 
 @keyframes labelPulse {
@@ -507,69 +531,71 @@ html {
 .vm-header {
   display: flex;
   align-items: center;
-  gap: clamp(3px, 0.3vw, 4px);
+  gap: clamp(2px, 0.2vw, 3px);
   color: white;
-  font-size: var(--font-md);
+  font-size: clamp(6px, 0.65vw, 10px);
   font-weight: 700;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   line-height: 1;
 }
 
 .vm-header svg {
-  width: clamp(10px, 1vw, 12px);
-  height: clamp(10px, 1vw, 12px);
+  width: clamp(8px, 0.8vw, 12px);
+  height: clamp(8px, 0.8vw, 12px);
   flex-shrink: 0;
 }
 
-.vm-id {
+.hexagon .vm-id {
   font-family: 'Courier New', monospace;
-  letter-spacing: 0.5px;
-  font-size: var(--font-lg);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.3px;
+  font-size: clamp(7px, 0.7vw, 11px);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  color: #ffffff !important;
 }
 
 .status-badge {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   background: rgba(74, 158, 255, 0.2);
-  padding: clamp(2px, 0.3vw, 3px) clamp(5px, 0.5vw, 7px);
-  border-radius: 5px;
-  font-size: var(--font-xs);
+  padding: clamp(1px, 0.15vw, 2px) clamp(3px, 0.3vw, 5px);
+  border-radius: 3px;
+  font-size: clamp(5px, 0.5vw, 8px);
   color: #6db3ff;
   border: 1px solid rgba(74, 158, 255, 0.4);
   font-weight: 500;
   line-height: 1;
-  box-shadow: 0 2px 8px rgba(74, 158, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 4px rgba(74, 158, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .hexagon:hover .status-badge {
   background: rgba(74, 158, 255, 0.25);
-  box-shadow: 0 2px 12px rgba(74, 158, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .status-badge svg {
-  width: clamp(8px, 0.7vw, 9px);
-  height: clamp(8px, 0.7vw, 9px);
+  width: clamp(6px, 0.55vw, 8px);
+  height: clamp(6px, 0.55vw, 8px);
   flex-shrink: 0;
 }
 
 .task-name {
-  font-size: var(--font-md);
+  font-size: clamp(5px, 0.55vw, 9px);
   font-weight: 600;
   color: white;
   text-align: center;
   background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  padding: clamp(4px, 0.4vw, 6px) clamp(6px, 0.6vw, 8px);
-  border-radius: 5px;
-  width: 90%;
-  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  padding: clamp(2px, 0.2vw, 4px) clamp(3px, 0.3vw, 6px);
+  border-radius: 3px;
+  width: 85%;
+  max-width: 90%;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.15);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2;
+  line-height: 1.1;
   transition: all 0.3s ease;
 }
 
@@ -582,73 +608,73 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  margin-top: 3px;
+  gap: 1px;
+  margin-top: 1px;
 }
 
 .util-label {
-  font-size: var(--font-xs);
+  font-size: clamp(4px, 0.45vw, 7px);
   color: #a0aec0;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   line-height: 1;
 }
 
 .util-value {
-  font-size: var(--font-sm);
+  font-size: clamp(5px, 0.55vw, 9px);
   font-weight: 700;
   color: white;
   font-family: 'Courier New', monospace;
   line-height: 1;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .automation-badge {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   background: rgba(255, 68, 68, 0.2);
-  padding: clamp(2px, 0.3vw, 3px) clamp(4px, 0.5vw, 6px);
-  border-radius: 5px;
-  font-size: var(--font-xs);
+  padding: clamp(1px, 0.15vw, 2px) clamp(2px, 0.25vw, 4px);
+  border-radius: 3px;
+  font-size: clamp(5px, 0.5vw, 8px);
   color: #ff6b6b;
   font-weight: 600;
   border: 1px solid rgba(255, 68, 68, 0.4);
-  margin-top: 2px;
+  margin-top: 1px;
   line-height: 1;
-  box-shadow: 0 2px 8px rgba(255, 68, 68, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 4px rgba(255, 68, 68, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
 .hexagon:hover .automation-badge {
   background: rgba(255, 68, 68, 0.25);
-  box-shadow: 0 2px 12px rgba(255, 68, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(255, 68, 68, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .uipath-logo {
   background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
   color: white;
-  padding: 2px 4px;
-  border-radius: 3px;
+  padding: 1px 3px;
+  border-radius: 2px;
   font-weight: 700;
-  font-size: var(--font-xs);
-  letter-spacing: 0.5px;
+  font-size: clamp(5px, 0.5vw, 8px);
+  letter-spacing: 0.3px;
   line-height: 1;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .hex-connector {
   position: absolute;
-  right: -6px;
+  right: -4px;
   top: 50%;
   transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
+  width: clamp(6px, 0.6vw, 10px);
+  height: clamp(6px, 0.6vw, 10px);
   background: radial-gradient(circle, #00ff88 0%, #00cc6a 100%);
   border-radius: 50%;
   z-index: 2;
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.9), 0 0 40px rgba(0, 255, 136, 0.5);
-  border: 2px solid rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.9), 0 0 24px rgba(0, 255, 136, 0.5);
+  border: 1px solid rgba(0, 255, 136, 0.4);
   animation: connectorPulse 2s ease-in-out infinite;
 }
 
@@ -664,6 +690,94 @@ html {
     box-shadow: 0 0 25px rgba(0, 255, 136, 1), 0 0 50px rgba(0, 255, 136, 0.6);
     transform: translateY(-50%) scale(1.1);
   }
+}
+
+/* ===================================
+   ACTIVE VM HEXAGON (In Progress)
+   =================================== */
+.hexagon.active-vm-hexagon::before {
+  border-color: #ffffff;
+  border-width: 2px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: activeVMGlow 2s ease-in-out infinite;
+}
+
+@keyframes activeVMGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.7), 0 0 60px rgba(255, 255, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+.active-vm-hexagon .hexagon-dots .dot {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+}
+
+.active-vm-status {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: clamp(1px, 0.15vw, 2px) clamp(4px, 0.35vw, 6px);
+  border-radius: 3px;
+  font-size: clamp(5px, 0.5vw, 7px);
+  color: #ffffff;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+  line-height: 1;
+  text-transform: uppercase;
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.3);
+  margin-bottom: 2px;
+}
+
+.active-vm-status .status-icon {
+  width: clamp(6px, 0.5vw, 8px);
+  height: clamp(6px, 0.5vw, 8px);
+  fill: #ffffff;
+}
+
+.active-process-name {
+  background: linear-gradient(135deg, #00cc6a 0%, #00994d 100%);
+}
+
+.running-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.pulse-dot {
+  width: clamp(4px, 0.4vw, 6px);
+  height: clamp(4px, 0.4vw, 6px);
+  background: #ffffff;
+  border-radius: 50%;
+  animation: pulseDot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.8);
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.4);
+  }
+}
+
+.running-text {
+  font-size: clamp(5px, 0.45vw, 7px);
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* ===================================
@@ -696,6 +810,7 @@ html {
   border-radius: 8px;
   padding: var(--spacing-sm);
   backdrop-filter: blur(10px);
+  overflow: visible;
 }
 
 /* ===================================
@@ -768,6 +883,7 @@ html {
   display: flex;
   gap: var(--spacing-md);
   margin-top: clamp(12px, 2vh, 30px);
+  overflow: hidden;
 }
 
 .vm-utilization-content {
@@ -781,11 +897,11 @@ html {
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  padding-left: var(--spacing-md);
+  align-items: center;
+  padding-left: var(--spacing-sm);
   padding-right: var(--spacing-sm);
-  min-width: 0;
-  overflow: visible;
-  max-width: clamp(110px, 12vw, 150px);
+  width: clamp(160px, 16vw, 200px);
+  overflow: hidden;
 }
 
 .top-performer-content .section-title {
@@ -830,10 +946,9 @@ html {
   transition: all 0.3s ease;
 }
 
+/* Only highlight the green "In Queue" card section, not the entire row */
 .bot-item.bot-item-animating {
-  background: rgba(255, 107, 107, 0.15);
-  border-color: rgba(255, 107, 107, 0.5);
-  box-shadow: 0 0 15px rgba(255, 107, 107, 0.3), inset 0 0 10px rgba(255, 107, 107, 0.1);
+  /* No changes to the main row - only the .bot-status child gets highlighted */
 }
 
 .bot-item .bot-status {
@@ -846,6 +961,33 @@ html {
   gap: 8px;
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 18px 50%);
   border-radius: 0 6px 6px 0;
+  transition: all 0.3s ease;
+}
+
+/* Green card highlight when animating */
+.bot-item.bot-item-animating .bot-status {
+  background: #00a5a8;
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  animation: greenCardPulse 1000ms ease-out;
+}
+
+@keyframes greenCardPulse {
+  0% {
+    background: #007173;
+    box-shadow: none;
+  }
+  20% {
+    background: #00c5c8;
+    box-shadow: 0 0 25px rgba(0, 255, 200, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.3);
+  }
+  80% {
+    background: #00c5c8;
+    box-shadow: 0 0 25px rgba(0, 255, 200, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    background: #00a5a8;
+    box-shadow: 0 0 20px rgba(0, 255, 200, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  }
 }
 
 .bot-icon {
@@ -1006,13 +1148,14 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px 0;
+  padding: 5px 0;
+  width: 100%;
 }
 
 .performer-badge {
   position: relative;
-  width: clamp(160px, 16vw, 200px);
-  height: clamp(160px, 16vw, 200px);
+  width: clamp(100px, 10vw, 140px);
+  height: clamp(100px, 10vw, 140px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1021,8 +1164,8 @@ html {
 /* Outer star burst with dashed lines */
 .star-burst-outer {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   animation: rotateSlowGlow 20s linear infinite;
 }
 
@@ -1037,12 +1180,12 @@ html {
 .star-ray-outer::before {
   content: '';
   position: absolute;
-  top: 8%;
+  top: 10%;
   left: 50%;
   width: 2px;
-  height: 35%;
+  height: 30%;
   background: transparent;
-  border-left: 2px dashed #00ff88;
+  border-left: 1px dashed #00ff88;
   transform: translateX(-50%);
   opacity: 0.7;
   animation: dashGlow 2s ease-in-out infinite;
@@ -1050,20 +1193,20 @@ html {
 
 .star-icon {
   position: absolute;
-  top: 0;
+  top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 16px;
+  font-size: clamp(8px, 0.8vw, 12px);
   color: #00ff88;
-  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8), 0 0 20px rgba(0, 255, 136, 0.5);
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 16px rgba(0, 255, 136, 0.5);
   animation: starGlow 1.5s ease-in-out infinite;
 }
 
 /* Inner star burst */
 .star-burst-inner {
   position: absolute;
-  width: 70%;
-  height: 70%;
+  width: 60%;
+  height: 60%;
   animation: rotateSlowGlowReverse 15s linear infinite;
 }
 
@@ -1078,12 +1221,12 @@ html {
 .star-ray-inner::before {
   content: '';
   position: absolute;
-  top: 5%;
+  top: 8%;
   left: 50%;
   width: 2px;
-  height: 30%;
+  height: 25%;
   background: transparent;
-  border-left: 2px dashed #00ff88;
+  border-left: 1px dashed #00ff88;
   transform: translateX(-50%);
   opacity: 0.5;
   animation: dashGlow 2.5s ease-in-out infinite;
@@ -1091,12 +1234,12 @@ html {
 
 .star-icon-inner {
   position: absolute;
-  top: 0;
+  top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 12px;
+  font-size: clamp(6px, 0.6vw, 8px);
   color: #00ff88;
-  text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 15px rgba(0, 255, 136, 0.5);
+  text-shadow: 0 0 6px rgba(0, 255, 136, 0.8), 0 0 12px rgba(0, 255, 136, 0.5);
   animation: starGlow 2s ease-in-out infinite;
 }
 
@@ -1108,20 +1251,20 @@ html {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: clamp(70px, 7vw, 85px);
-  height: clamp(70px, 7vw, 85px);
+  width: clamp(45px, 4.5vw, 55px);
+  height: clamp(45px, 4.5vw, 55px);
   background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, rgba(10, 14, 39, 0.9) 100%);
   border: 2px dashed #00ff88;
   border-radius: 50%;
   box-shadow:
-    0 0 20px rgba(0, 255, 136, 0.4),
-    0 0 40px rgba(0, 255, 136, 0.2),
-    inset 0 0 20px rgba(0, 255, 136, 0.1);
+    0 0 15px rgba(0, 255, 136, 0.4),
+    0 0 30px rgba(0, 255, 136, 0.2),
+    inset 0 0 15px rgba(0, 255, 136, 0.1);
   animation: centerGlow 3s ease-in-out infinite;
 }
 
 .performer-vm-id {
-  font-size: clamp(14px, 1.4vw, 18px);
+  font-size: clamp(11px, 1.1vw, 14px);
   font-weight: 700;
   color: #00ff88;
   font-family: 'Courier New', monospace;
@@ -1130,9 +1273,9 @@ html {
 }
 
 .performer-time {
-  font-size: var(--font-xs);
+  font-size: clamp(6px, 0.6vw, 8px);
   color: #34d399;
-  margin-top: 4px;
+  margin-top: 2px;
   line-height: 1;
   text-shadow: 0 0 5px rgba(52, 211, 153, 0.5);
 }
@@ -1158,14 +1301,14 @@ html {
 
 @keyframes starGlow {
   0%, 100% {
-    opacity: 0.6;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.8), 0 0 20px rgba(0, 255, 136, 0.5);
+    opacity: 0.7;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 16px rgba(0, 255, 136, 0.5);
     transform: translateX(-50%) scale(1);
   }
   50% {
     opacity: 1;
-    text-shadow: 0 0 15px rgba(0, 255, 136, 1), 0 0 30px rgba(0, 255, 136, 0.8), 0 0 45px rgba(0, 255, 136, 0.4);
-    transform: translateX(-50%) scale(1.2);
+    text-shadow: 0 0 12px rgba(0, 255, 136, 1), 0 0 24px rgba(0, 255, 136, 0.8), 0 0 36px rgba(0, 255, 136, 0.4);
+    transform: translateX(-50%) scale(1.15);
   }
 }
 
@@ -1199,15 +1342,15 @@ html {
    ANALYTICS SIDEBAR (Inside Honeycomb)
    =================================== */
 .analytics-sidebar {
-  width: clamp(180px, 15vw, 280px);
-  height: 103%;
+  width: clamp(110px, 10vw, 160px);
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
+  gap: clamp(1px, 0.15vw, 2px);
+  padding: clamp(4px, 0.4vw, 6px);
   background: linear-gradient(157deg, rgba(31, 34, 36, 1) 0%, rgba(35, 62, 82, 1) 38%, rgba(28, 16, 16, 1) 100%, rgba(6, 43, 34, 1) 95%);
   border: 1px solid rgba(100, 120, 200, 0.3);
-  border-radius: 12px;
+  border-radius: 6px;
   overflow: hidden;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -1217,27 +1360,25 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-sm) 0;
+  padding: clamp(2px, 0.2vw, 4px) 0;
   border-bottom: 1px solid rgba(100, 120, 200, 0.3);
-  margin-bottom: var(--spacing-sm);
   flex-shrink: 0;
 }
 
 .analytics-title {
-  font-size: var(--font-md);
+  font-size: clamp(7px, 0.6vw, 9px);
   font-weight: 600;
   color: #a0aec0;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .vm-list-container {
   display: flex;
   flex-direction: column;
-  gap: clamp(4px, 0.4vw, 6px);
+  gap: clamp(1px, 0.1vw, 2px);
   flex: 1;
   overflow-y: auto;
-  padding-right: 4px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -1249,14 +1390,15 @@ html {
 .vm-list-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: clamp(6px, 0.6vw, 8px) var(--spacing-sm);
+  gap: clamp(2px, 0.15vw, 3px);
+  padding: clamp(1px, 0.1vw, 2px) clamp(3px, 0.3vw, 5px);
   background: rgba(15, 21, 51, 0.4);
   border: 1px solid rgba(100, 120, 200, 0.2);
-  border-radius: 6px;
+  border-radius: 3px;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  min-height: clamp(14px, 1.4vh, 18px);
 }
 
 .vm-list-item:hover {
@@ -1265,35 +1407,86 @@ html {
 }
 
 .vm-list-icon {
-  font-size: var(--font-lg);
+  font-size: clamp(6px, 0.5vw, 8px);
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .vm-list-name {
-  font-size: var(--font-sm);
+  font-size: clamp(6px, 0.5vw, 8px);
   font-weight: 500;
   color: #52d4c1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1;
 }
 
 .analytics-footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-sm) 0;
+  padding: clamp(2px, 0.2vw, 4px) 0;
   border-top: 1px solid rgba(100, 120, 200, 0.3);
-  margin-top: var(--spacing-sm);
   flex-shrink: 0;
 }
 
 .analytics-exit {
-  font-size: var(--font-md);
+  font-size: clamp(7px, 0.6vw, 9px);
   font-weight: 600;
   color: #a0aec0;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+}
+
+/* ===================================
+   VM POPPING ANIMATION (Entry Pool)
+   =================================== */
+.vm-list-item.vm-popping {
+  animation: vmPopUp 2s ease-in-out;
+  background: rgba(0, 255, 136, 0.4) !important;
+  border-color: #00ff88 !important;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.7), 0 0 24px rgba(0, 255, 136, 0.4);
+  transform: scale(1.08);
+  z-index: 10;
+}
+
+.vm-list-item.vm-popping .vm-list-name {
+  color: #00ff88 !important;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
+}
+
+.vm-list-item.vm-popping .vm-list-icon {
+  filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.8));
+}
+
+@keyframes vmPopUp {
+  0% {
+    transform: scale(1);
+    background: rgba(15, 21, 51, 0.4);
+    box-shadow: none;
+  }
+  15% {
+    transform: scale(1.15);
+    background: rgba(0, 255, 136, 0.5);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.9), 0 0 40px rgba(0, 255, 136, 0.5);
+  }
+  40% {
+    transform: scale(1.08);
+    background: rgba(0, 255, 136, 0.4);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 255, 136, 0.4);
+  }
+  70% {
+    transform: scale(1.12);
+    background: rgba(0, 255, 136, 0.45);
+    box-shadow: 0 0 18px rgba(0, 255, 136, 0.85), 0 0 35px rgba(0, 255, 136, 0.45);
+  }
+  100% {
+    transform: scale(1.08);
+    background: rgba(0, 255, 136, 0.4);
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.7), 0 0 24px rgba(0, 255, 136, 0.4);
+  }
 }
 
 /* ===================================
