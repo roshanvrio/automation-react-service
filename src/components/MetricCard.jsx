@@ -39,14 +39,16 @@ const MetricCard = ({ type, count, label }) => {
           iconColor: '#05DF72',
           countColor: '#05DF72'
         };
-     // case 'progress':
+        
+     {/* case 'progress':
         return {
           bgColor: '#0A0E1A',
           borderColor: 'rgba(0, 217, 255, 0.20)',
           iconBg: 'rgba(14, 165, 233, 0.22)',
           iconColor: '#38bdf8',
           countColor: '#38bdf8'
-        }; //
+        }; */}
+        
       case 'queue':
         return {
           bgColor: '#0A0E1A',
