@@ -23,17 +23,43 @@ function App() {
   const [error, setError] = useState(null);
   const [queuePriorityData, setQueuePriorityData] = useState([]);
   const [activeVMs, setActiveVMs] = useState([]);
-  const [idleVMs, setIdleVMs] = useState([]);
+  const [newlyAddedVMs, setNewlyAddedVMs] = useState(new Set()); // Track VMs that just appeared for animation
+  // Generate 31 distinct VMs (0-30) with naming convention VM00.BOT, VM01.BOT, etc.
+  const generateIdleVMs = () => {
+    return Array.from({ length: 31 }, (_, i) => `VM${String(i).padStart(2, '0')}.BOT`);
+  };
+  const [idleVMs, setIdleVMs] = useState(generateIdleVMs());
   const [poppingVM, setPoppingVM] = useState(null); // VM name that's being assigned
   const [originalCounts, setOriginalCounts] = useState({}); // Track original counts for each process
 
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const activeVMsRef = useRef([]); // Ref to track current activeVMs for closure
+  const isInitialLoadRef = useRef(true); // Skip animation on initial page load
+  const animatedVMsRef = useRef(new Set()); // Track VMs that have already been animated
 
   // Keep ref in sync with state
   useEffect(() => {
     activeVMsRef.current = activeVMs;
+  }, [activeVMs]);
+
+  // DEBUG: Function to test animation manually
+  const testAnimation = () => {
+    if (activeVMs.length > 0) {
+      const testVM = activeVMs[0].machineName;
+      console.log('🧪 TEST: Triggering animation for:', testVM);
+      setNewlyAddedVMs(new Set([testVM]));
+      setTimeout(() => {
+        setNewlyAddedVMs(new Set());
+        console.log('🧪 TEST: Animation cleared');
+      }, 3000);
+    }
+  };
+
+  // Expose test function to window for debugging
+  useEffect(() => {
+    window.testHexAnimation = testAnimation;
+    console.log('🧪 DEBUG: Run window.testHexAnimation() in console to test animation');
   }, [activeVMs]);
 
   // Unified WebSocket connection for dashboard
@@ -68,6 +94,11 @@ function App() {
 
             case 'queue_priority_update':
   console.log('📋 Queue Priority received:', message.data);
+  // Debug: Log the first item's structure to see available fields
+  if (message.data && message.data.length > 0) {
+    console.log('📋 Queue item fields:', Object.keys(message.data[0]));
+    console.log('📋 First queue item:', message.data[0]);
+  }
   // Track original counts for new processes
   setOriginalCounts(prev => {
     const updated = { ...prev };
@@ -84,29 +115,59 @@ function App() {
 
             case 'active_vms_update':
               console.log('🖥️ Active VMs received:', message.data);
-              // Find the new VM being assigned (compare with current activeVMs using ref)
-              const currentActiveVMs = activeVMsRef.current;
+
+              // Find NEW VMs that we haven't animated yet
+              // Compare against animatedVMsRef which tracks all VMs we've ever shown
               const newVMs = message.data.filter(
-                newVM => !currentActiveVMs.some(existing => existing.machineName === newVM.machineName)
+                newVM => !animatedVMsRef.current.has(newVM.machineName)
               );
 
-              console.log('📊 Current Active VMs:', currentActiveVMs.map(v => v.machineName));
-              console.log('📊 New VMs detected:', newVMs.map(v => v.machineName));
+              console.log('📊 Already animated VMs:', Array.from(animatedVMsRef.current));
+              console.log('📊 New VMs to animate:', newVMs.map(v => v.machineName));
+              console.log('📊 isInitialLoadRef.current:', isInitialLoadRef.current);
 
-              if (newVMs.length > 0) {
-                // Step 1: After 1 second (after -1 animation), highlight the VM in Entry pool
+              // Check if this is initial load (skip animation on page refresh)
+              if (isInitialLoadRef.current) {
+                console.log('📦 Initial load - updating VMs without animation');
+                // Mark all current VMs as "already animated" so they don't animate later
+                message.data.forEach(vm => animatedVMsRef.current.add(vm.machineName));
+                setActiveVMs(message.data);
+                setLastUpdate(new Date());
+                isInitialLoadRef.current = false; // Mark initial load complete
+              } else if (newVMs.length > 0) {
+                const newVMNames = newVMs.map(vm => vm.machineName);
+                console.log('🆕 NEW VMs DETECTED for animation:', newVMNames);
+
+                // Mark these VMs as animated so we don't animate them again
+                newVMNames.forEach(name => animatedVMsRef.current.add(name));
+
+                // Step 1: After 1 second, highlight the VM in Entry pool
                 setTimeout(() => {
                   setPoppingVM(newVMs[0].machineName);
-                  console.log('🎯 Highlighting VM:', newVMs[0].machineName);
+                  console.log('🎯 Highlighting VM in entry pool:', newVMs[0].machineName);
                 }, 1000);
 
-                // Step 2: After 2 more seconds, create the hexagon and clear the highlight
+                // Step 2: After 3 seconds, add hexagon with pop animation
+                // Set BOTH states together so animation class is applied immediately
                 setTimeout(() => {
+                  console.log('🎬 Setting animation state AND activeVMs together for:', newVMNames);
+                  setNewlyAddedVMs(new Set(newVMNames));
                   setActiveVMs(message.data);
                   setLastUpdate(new Date());
-                  // Clear the popping state after animation
-                  setTimeout(() => setPoppingVM(null), 500);
+                  console.log('🎬 State should now have newlyAddedVMs:', newVMNames);
                 }, 3000);
+
+                // Step 3: Clear animation state after animation completes (2s after hexagon appears)
+                setTimeout(() => {
+                  setNewlyAddedVMs(new Set());
+                  console.log('✅ Pop animation complete, clearing animation state');
+                }, 5000);
+
+                // Step 4: Clear the entry pool highlight
+                setTimeout(() => {
+                  setPoppingVM(null);
+                  console.log('✅ Entry pool highlight cleared');
+                }, 5500);
               } else {
                 // No new VMs, just update immediately
                 setActiveVMs(message.data);
@@ -286,7 +347,20 @@ function App() {
           vmUtilization={vmUtilization}
           topPerformer={topPerformer}
         />
-        <HoneycombGrid activeVMs={activeVMs} idleVMs={idleVMs} poppingVM={poppingVM} />
+        <HoneycombGrid
+          activeVMs={activeVMs.map(vm => {
+            // Find trigger info from queue priority data
+            const queueInfo = queuePriorityData.find(q => q.processName === vm.processName);
+            return {
+              ...vm,
+              triggerIndication: queueInfo?.triggerIndication || vm.triggerIndication || 'Schedule',
+              rpaTool: queueInfo?.rpaTool || vm.rpaTool || 'UiPath'
+            };
+          })}
+          idleVMs={idleVMs}
+          poppingVM={poppingVM}
+          newlyAddedVMs={Array.from(newlyAddedVMs)}
+        />
       </div>
 
       {/* Last update indicator */}
@@ -302,6 +376,7 @@ function App() {
           📡 Real-time • Last update: {lastUpdate.toLocaleTimeString()}
         </div>
       )}
+
     </div>
   );
 }

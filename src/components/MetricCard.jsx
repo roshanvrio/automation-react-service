@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, Zap, Settings, AlertTriangle, Clock, List } from 'lucide-react';
+import { Activity, Zap, Settings, AlertTriangle, Clock, Cpu } from 'lucide-react';
 
 const MetricCard = ({ type, count, label }) => {
   const getIcon = () => {
@@ -11,7 +11,7 @@ const MetricCard = ({ type, count, label }) => {
       case 'progress':
         return <Settings size={26} strokeWidth={2.5} />;
       case 'queue':
-        return <List size={26} strokeWidth={2.5} />;
+        return <Cpu size={26} strokeWidth={2.5} />;
       case 'error':
         return <AlertTriangle size={26} strokeWidth={2.5} />;
       case 'time':
@@ -25,56 +25,56 @@ const MetricCard = ({ type, count, label }) => {
     switch (type) {
       case 'exception':
         return {
-          bgColor: '#171a1aff',
-          borderColor: 'rgba(31, 91, 109, 0.35)',
-          iconBg: 'rgba(99, 102, 241, 0.22)',
-          iconColor: '#818cf8',
-          countColor: '#818cf8'
+          bgColor: '#0A0E1A',
+          borderColor: 'rgba(0, 217, 255, 0.20)',
+          iconBg: '#8B5CF633',
+          iconColor: '#BF00FF',
+          countColor: '#BF00FF'
         };
       case 'successful':
         return {
-          bgColor: '#171a1aff',
-          borderColor: 'rgba(31, 91, 109, 0.35)',
-          iconBg: 'rgba(16, 185, 129, 0.22)',
-          iconColor: '#34d399',
-          countColor: '#34d399'
+          bgColor: '#0A0E1A',
+          borderColor: 'rgba(0, 217, 255, 0.20)',
+          iconBg: '#00C95033',
+          iconColor: '#05DF72',
+          countColor: '#05DF72'
         };
       case 'progress':
         return {
-          bgColor: '#171a1aff',
-          borderColor: 'rgba(31, 91, 109, 0.35)',
+          bgColor: '#0A0E1A',
+          borderColor: 'rgba(0, 217, 255, 0.20)',
           iconBg: 'rgba(14, 165, 233, 0.22)',
           iconColor: '#38bdf8',
           countColor: '#38bdf8'
         };
       case 'queue':
         return {
-          bgColor: '#171a1aff',
-          borderColor: 'rgba(31, 91, 109, 0.35)',
-          iconBg: 'rgba(245, 158, 11, 0.22)',
-          iconColor: '#fbbf24',
-          countColor: '#fbbf24'
+          bgColor: '#0A0E1A',
+          borderColor: 'rgba(0, 217, 255, 0.20)',
+          iconBg: '#00D9FF33',
+          iconColor: '#00D9FF',
+          countColor: '#00D9FF'
         };
       case 'error':
         return {
-          bgColor: '#171a1aff',
-          borderColor: 'rgba(31, 91, 109, 0.35)',
-          iconBg: 'rgba(239, 68, 68, 0.22)',
-          iconColor: '#f87171',
-          countColor: '#f87171'
+          bgColor: '#0A0E1A',
+          borderColor: 'rgba(0, 217, 255, 0.20)',
+          iconBg: '#DF050582',
+          iconColor: '#FF0004',
+          countColor: '#DF0505'
         };
       case 'time':
         return {
-          bgColor: '#171a1aff',
-          borderColor: 'rgba(31, 91, 109, 0.35)',
-          iconBg: 'rgba(139, 92, 246, 0.22)',
-          iconColor: '#a78bfa',
-          countColor: '#a78bfa'
+          bgColor: '#0A0E1A',
+          borderColor: 'rgba(0, 217, 255, 0.20)',
+          iconBg: '#04E1CD75',
+          iconColor: '#00FFDD',
+          countColor: '#04E1CD'
         };
       default:
         return {
-          bgColor: '#171a1aff',
-          borderColor: 'rgba(31, 91, 109, 0.35)',
+          bgColor: '#0A0E1A',
+          borderColor: 'rgba(0, 217, 255, 0.20)',
           iconBg: 'rgba(100, 120, 200, 0.22)',
           iconColor: '#6478c8',
           countColor: '#6478c8'
