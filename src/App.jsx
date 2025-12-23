@@ -12,7 +12,7 @@ function App() {
   const [metrics, setMetrics] = useState({
     exceptions: 0,
     successful: 0,
-    inProgress: 0,
+//    inProgress: 0,
     totalInQueue: 0,
     errors: 0,
     avgTime: 0
@@ -84,7 +84,7 @@ function App() {
               setMetrics({
                 exceptions: message.data.exceptions || 0,
                 successful: message.data.successful || 0,
-                inProgress: message.data.inProgress || 0,
+                //inProgress: message.data.inProgress || 0,
                 totalInQueue: message.data.totalInQueue || 0,
                 errors: message.data.errors || 0,
                 avgTime: message.data.avgTime || 0
