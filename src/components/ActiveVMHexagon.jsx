@@ -1,6 +1,6 @@
 import { Monitor, Mail, Clock } from 'lucide-react';
 
-// SVG Hexagon outline with dashed stroke
+// SVG Hexagon outline with dashed strokes
 const HexagonOutline = ({ className = '' }) => (
   <svg
     className={`hexagon-outline ${className}`}
