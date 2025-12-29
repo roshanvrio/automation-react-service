@@ -53,7 +53,7 @@ const QueueCountDisplay = ({ count, totalCount, onAnimationChange }) => {
         animationInProgressRef.current = false;
       };
     } else {
-      // No animation needed, just update
+      // No animation needed, just updates
       setDisplayValue(count);
       previousCountRef.current = currentCountNum;
     }
