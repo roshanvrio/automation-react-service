@@ -71,7 +71,7 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
                   </span>
                 </span>
 
-                <span className="queue-count"> /</span>
+                <span className="queue-count"> / </span>
 
                 <span className="count-container">
                   {change?.totalDiff && (
