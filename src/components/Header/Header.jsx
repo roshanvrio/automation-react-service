@@ -1,6 +1,6 @@
 import "./Header.css";
 
-const Header = () => {
+const Header = ({ metrics }) => {
   return (
     <div className="mt-3">
       <div className="row g-3 align-items-center">
@@ -16,7 +16,7 @@ const Header = () => {
                   <i className="bi bi-inbox-fill"></i>
                 </div>
                 <div className="metric-text">
-                  <div className="metric-value">1200</div>
+                  <div className="metric-value">{metrics?.totalInQueue || 0}</div>
                   <div className="metric-label">Total in Queue</div>
                 </div>
               </div>
@@ -28,7 +28,7 @@ const Header = () => {
                   <i className="bi bi-lightning-fill"></i>
                 </div>
                 <div className="metric-text">
-                  <div className="metric-value">25</div>
+                  <div className="metric-value">{metrics?.successful || 0}</div>
                   <div className="metric-label">Successful</div>
                 </div>
               </div>
@@ -40,7 +40,7 @@ const Header = () => {
                   <i className="bi bi-activity"></i>
                 </div>
                 <div className="metric-text">
-                  <div className="metric-value">09</div>
+                  <div className="metric-value">{metrics?.exceptions || 0}</div>
                   <div className="metric-label">Exception</div>
                 </div>
               </div>
@@ -52,7 +52,7 @@ const Header = () => {
                   <i className="bi bi-exclamation-triangle-fill"></i>
                 </div>
                 <div className="metric-text">
-                  <div className="metric-value">25</div>
+                  <div className="metric-value">{metrics?.errors || 0}</div>
                   <div className="metric-label">Error</div>
                 </div>
               </div>
@@ -64,7 +64,7 @@ const Header = () => {
                   <i className="bi bi-clock-fill"></i>
                 </div>
                 <div className="metric-text">
-                  <div className="metric-value">25 mins</div>
+                  <div className="metric-value">{metrics?.avgTime || 0} mins</div>
                   <div className="metric-label">Avg. Utilisation time</div>
                 </div>
               </div>
