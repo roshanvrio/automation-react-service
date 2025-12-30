@@ -1,0 +1,9 @@
+.entry-row {
+  background: #0b2230;
+  border: 1px solid rgba(0, 255, 200, 0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text-primary);
+}
