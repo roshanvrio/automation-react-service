@@ -6,31 +6,45 @@ const vmData = [
   { id: "VM-18", name: "User Gatekeeper", time: "150 mins" },
   { id: "VM-11", name: "Process 3254", time: "335 mins" },
   { id: "VM-33", name: "Permission Sentinel", time: "200 mins" },
-  { id: "VM-29", name: "Entry Shield", time: "110 mins" },
-  { id: "VM-29", name: "Entry Shield", time: "110 mins" },
-  { id: "VM-29", name: "Entry Shield", time: "110 mins" },
   { id: "VM-29", name: "Entry Shield", time: "110 mins" }
+
 ];
 
 const ActiveVMs = () => {
   return (
     <div className="dashboard-card center-height activevms-card">
       <div className="activevms-header">
-        🖥 Active VMs <strong>{vmData.length}</strong>
+        <span>🖥 Active VMs <strong>7</strong></span>
+
+        <div className="legend">
+          <span className="busy">Busy</span>
+          <span className="success">Success</span>
+          <span className="error">Error</span>
+        </div>
       </div>
 
       <div className="activevms-scroll card-scroll">
         <div className="hex-grid">
           {vmData.map((vm, i) => (
-            <div className="hex-card" key={i}>
-              <div className="hex-content">
-                <div className="hex-small">✉ Email</div>
-                <div className="hex-vm">🖥 {vm.id}</div>
-                <div className="hex-name">{vm.name}</div>
-                <div className="hex-time">
-                  Last Run Time <strong>{vm.time}</strong>
+            <div className="hex-wrapper" key={i}>
+              {/* DASHED OUTLINE */}
+              <svg className="hex-outline-svg" viewBox="0 0 200 220">
+                <polygon
+                  points="50,2 150,2 198,110 150,218 50,218 2,110"
+                />
+              </svg>
+
+              {/* HEX CARD */}
+              <div className="hex-card">
+                <div className="hex-content">
+                  <div className="hex-small">✉ Email</div>
+                  <div className="hex-vm">🖥 {vm.id}</div>
+                  <div className="hex-name">{vm.name}</div>
+                  <div className="hex-time">
+                    Last Run Time <strong>{vm.time}</strong>
+                  </div>
+                  <span className="uipath">UiPath</span>
                 </div>
-                <span className="uipath">UiPath</span>
               </div>
             </div>
           ))}
