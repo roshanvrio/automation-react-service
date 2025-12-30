@@ -23,7 +23,7 @@ const App = () => {
         {/*Main content */}
         <div className="row mt-3">
 
-          <div className="col-lg-3">
+          <div className="col-4">
             <div className="row gy-3">
               <div className="col-12">
                 <BotsInQueue />
@@ -31,10 +31,10 @@ const App = () => {
 
               <div className="col-12">
                 <div className="row gx-2">
-                  <div className="col-6">
+                  <div className="col-8">
                     <VMUtilization />
                   </div>
-                  <div className="col-6">
+                  <div className="col-4">
                     <TopPerformingVM />
                   </div>
                 </div>
@@ -45,12 +45,12 @@ const App = () => {
           </div>
 
           {/* CENTER COLUMN */}
-          <div className="col-lg-6">
+          <div className="col-6">
             <ActiveVMs />
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="col-lg-3">
+          <div className="col-2">
             <Entry />
           </div>
         </div>

@@ -9,15 +9,16 @@ const bots = [
   { name: "Invoice Indexing & Posting in OTM Automation", count: 198, icon: "bi-clock" },
   { name: "QualtricsAutomation", count: 176, icon: "bi-envelope" },
   { name: "TSF - MECR", count: 157, icon: "bi-clock" },
-  { name: "PixelPilot88.bot", count: 143, icon: "bi-clock" }
+  { name: "PixelPilot88.bot", count: 143, icon: "bi-clock" },
+
 ];
 
 const BotsInQueue = () => {
   return (
-    <div className="dashboard-card">
+    <div className="dashboard-card card-scroll">
       <div className="card-title text-center">Bots in Queue</div>
 
-      <div className="bots-list card-scroll">
+      <div className="bots-list">
         {bots.map((bot, i) => (
           <div className="bot-row" key={i}>
 
