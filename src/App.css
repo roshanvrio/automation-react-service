@@ -1,7 +1,7 @@
 :root {
   --bg-main: #0a0f14;
   --bg-card: #0f1724;
-  --bg-card-dark: #0c1320;
+  /* --bg-card-dark: #0c1320; */
   --border-glow: rgba(0, 255, 200, 0.25);
   --text-primary: #e5f0ff;
   --text-muted: #8fa3bf;
