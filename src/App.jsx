@@ -68,7 +68,7 @@ const App = () => {
   return (
     <div className="app-root">
 
-      <div className="container-fluid mt-3">
+      <div className="container-fluid">
 
         {/*Header */}
         <div className="row gx-3">
