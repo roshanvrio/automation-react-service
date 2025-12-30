@@ -1,12 +1,69 @@
-.top-vm {
-  background: radial-gradient(circle, #0c2430, #08141d);
-  border: 1px solid rgba(0, 255, 200, 0.3);
-  border-radius: 8px;
-  padding: 12px 0;
-  margin-bottom: 10px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 700;
+.top-vm-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Radial container */
+.radial {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-top: 8px;
+}
+
+/* Rotating layer */
+.rays {
+  position: absolute;
+  inset: 0;
+  animation: spin 22s linear infinite;
+}
+
+/* Rays */
+.ray {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 85px;
+  height: 1px;
+  background: linear-gradient(to right,
+      rgba(0, 255, 200, 0.9),
+      rgba(0, 255, 200, 0.1));
+  transform-origin: left center;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+/* Center content (STATIC) */
+.center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   color: var(--accent-cyan);
-  box-shadow: 0 0 14px rgba(0, 255, 200, 0.25);
+  z-index: 2;
+}
+
+.vm-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.vm-time {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 1;
+  }
 }

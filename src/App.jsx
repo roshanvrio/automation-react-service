@@ -88,10 +88,10 @@ const App = () => {
 
               <div className="col-12">
                 <div className="row gx-2">
-                  <div className="col-8">
+                  <div className="col-7">
                     <VMUtilization />
                   </div>
-                  <div className="col-4">
+                  <div className="col-5">
                     <TopPerformingVM />
                   </div>
                 </div>
