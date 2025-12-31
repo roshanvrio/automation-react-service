@@ -1,69 +1,205 @@
-.top-vm-card {
+.performer-display {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Radial container */
-.radial {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  margin-top: 8px;
-}
-
-/* Rotating layer */
-.rays {
-  position: absolute;
-  inset: 0;
-  animation: spin 22s linear infinite;
-}
-
-/* Rays */
-.ray {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 85px;
-  height: 1px;
-  background: linear-gradient(to right,
-      rgba(0, 255, 200, 0.9),
-      rgba(0, 255, 200, 0.1));
-  transform-origin: left center;
-  animation: pulse 2.2s ease-in-out infinite;
-}
-
-/* Center content (STATIC) */
-.center {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: var(--accent-cyan);
-  z-index: 2;
+  padding: 5px 0;
+  width: 100%;
 }
 
-.vm-name {
-  font-size: 18px;
+.performer-badge {
+  position: relative;
+  width: clamp(100px, 10vw, 140px);
+  height: clamp(100px, 10vw, 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Outer star burst with dashed lines */
+.star-burst-outer {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  animation: rotateSlowGlow 20s linear infinite;
+}
+
+.star-ray-outer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.star-ray-outer::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  width: 2px;
+  height: 30%;
+  background: transparent;
+  border-left: 1px dashed #00ff88;
+  transform: translateX(-50%);
+  opacity: 0.7;
+  animation: dashGlow 2s ease-in-out infinite;
+}
+
+.star-icon {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(8px, 0.8vw, 12px);
+  color: #00ff88;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 16px rgba(0, 255, 136, 0.5);
+  animation: starGlow 1.5s ease-in-out infinite;
+}
+
+/* Inner star burst */
+.star-burst-inner {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  animation: rotateSlowGlowReverse 15s linear infinite;
+}
+
+.star-ray-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.star-ray-inner::before {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 2px;
+  height: 25%;
+  background: transparent;
+  border-left: 1px dashed #00ff88;
+  transform: translateX(-50%);
+  opacity: 0.5;
+  animation: dashGlow 2.5s ease-in-out infinite;
+}
+
+.star-icon-inner {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(6px, 0.6vw, 8px);
+  color: #00ff88;
+  text-shadow: 0 0 6px rgba(0, 255, 136, 0.8), 0 0 12px rgba(0, 255, 136, 0.5);
+  animation: starGlow 2s ease-in-out infinite;
+}
+
+
+/* Center content circle */
+.performer-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: clamp(45px, 4.5vw, 55px);
+  height: clamp(45px, 4.5vw, 55px);
+  background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, rgba(10, 14, 39, 0.9) 100%);
+  border: 2px dashed #00ff88;
+  border-radius: 50%;
+  box-shadow:
+    0 0 15px rgba(0, 255, 136, 0.4),
+    0 0 30px rgba(0, 255, 136, 0.2),
+    inset 0 0 15px rgba(0, 255, 136, 0.1);
+  animation: centerGlow 3s ease-in-out infinite;
+}
+
+.performer-vm-id {
+  font-size: clamp(11px, 1.1vw, 14px);
   font-weight: 700;
+  color: #00ff88;
+  font-family: 'Courier New', monospace;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
 }
 
-.vm-time {
-  font-size: 12px;
-  opacity: 0.8;
+.performer-time {
+  font-size: clamp(6px, 0.6vw, 8px);
+  color: #34d399;
+  margin-top: 2px;
+  line-height: 1;
+  text-shadow: 0 0 5px rgba(52, 211, 153, 0.5);
 }
 
-/* Animations */
-@keyframes spin {
-  to {
+/* Glowing animations */
+@keyframes rotateSlowGlow {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
     transform: rotate(360deg);
   }
 }
 
-@keyframes pulse {
+@keyframes rotateSlowGlowReverse {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes starGlow {
+
+  0%,
+  100% {
+    opacity: 0.7;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 16px rgba(0, 255, 136, 0.5);
+    transform: translateX(-50%) scale(1);
+  }
+
   50% {
     opacity: 1;
+    text-shadow: 0 0 12px rgba(0, 255, 136, 1), 0 0 24px rgba(0, 255, 136, 0.8), 0 0 36px rgba(0, 255, 136, 0.4);
+    transform: translateX(-50%) scale(1.15);
+  }
+}
+
+@keyframes dashGlow {
+
+  0%,
+  100% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 2px rgba(0, 255, 136, 0.5));
+  }
+
+  50% {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 6px rgba(0, 255, 136, 1));
+  }
+}
+
+@keyframes centerGlow {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(0, 255, 136, 0.4),
+      0 0 40px rgba(0, 255, 136, 0.2),
+      inset 0 0 20px rgba(0, 255, 136, 0.1);
+  }
+
+  50% {
+    box-shadow:
+      0 0 30px rgba(0, 255, 136, 0.6),
+      0 0 60px rgba(0, 255, 136, 0.3),
+      inset 0 0 30px rgba(0, 255, 136, 0.2);
   }
 }

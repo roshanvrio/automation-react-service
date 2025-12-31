@@ -4,25 +4,46 @@ const TopPerformingVM = () => {
   return (
     <div className="dashboard-card small-card-height top-vm-card">
       <div className="card-title">Top Performing VM</div>
-
-      <div className="radial">
-        {/* Rotating rays */}
-        <div className="rays">
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="ray"
-              style={{ transform: `rotate(${i * 30}deg)` }}
-            />
-          ))}
-        </div>
-
-        {/* Static center */}
-        <div className="center">
-          <div className="vm-name">VM 32</div>
-          <div className="vm-time">1000 mins</div>
+      <div className="performer-display">
+        <div className="performer-badge">
+          {/* Outer stars with dashed lines */}
+          <div className="star-burst-outer">
+            {[...Array(16)].map((_, i) => (
+              <div
+                key={`outer-${i}`}
+                className="star-ray-outer"
+                style={{
+                  transform: `rotate(${i * 22.5}deg)`,
+                  animationDelay: `${i * 0.1}s`
+                }}
+              >
+                <span className="star-icon">★</span>
+              </div>
+            ))}
+          </div>
+          {/* Inner stars */}
+          <div className="star-burst-inner">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={`inner-${i}`}
+                className="star-ray-inner"
+                style={{
+                  transform: `rotate(${i * 45 + 22.5}deg)`,
+                  animationDelay: `${i * 0.15}s`
+                }}
+              >
+                <span className="star-icon-inner">★</span>
+              </div>
+            ))}
+          </div>
+          {/* Center circle with VM info */}
+          <div className="performer-content">
+            <span className="performer-vm-id">abc</span>
+            <span className="performer-time">abx</span>
+          </div>
         </div>
       </div>
+
     </div>
   );
 };
