@@ -38,8 +38,8 @@ const TopPerformingVM = () => {
           </div>
           {/* Center circle with VM info */}
           <div className="performer-content">
-            <span className="performer-vm-id">abc</span>
-            <span className="performer-time">abx</span>
+            <span className="performer-vm-id">VM 32</span>
+            <span className="performer-time">1000 mins</span>
           </div>
         </div>
       </div>
