@@ -2,7 +2,7 @@ import "./TopPerformingVM.css";
 
 const TopPerformingVM = () => {
   return (
-    <div className="dashboard-card small-card-height top-vm-card">
+    <div className="dashboard-card small-card-height">
       <div className="card-title">Top Performing VM</div>
       <div className="performer-display">
         <div className="performer-badge">
