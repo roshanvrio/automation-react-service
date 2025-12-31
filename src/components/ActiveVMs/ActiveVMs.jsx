@@ -7,6 +7,7 @@ const vmData = [
   { id: "VM-22", name: "User Gatekeeper", time: "150 mins" },
 
 
+
 ];
 
 const ActiveVMs = () => {
