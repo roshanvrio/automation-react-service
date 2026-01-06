@@ -17,7 +17,7 @@ const ActiveVMs = ({ activeVmUpdate }) => {
         <div className="hex-grid">
           {Array.isArray(activeVmUpdate) && activeVmUpdate.map((vm, i) => (
             <div
-              className={`hex-wrapper ${i === activeVmUpdate.length - 1 ? "hex-animate" : ""}`}
+              className="hex-wrapper"
               key={vm.machineName || i}
             >
               <div className="hex-border"></div>
