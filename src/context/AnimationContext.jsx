@@ -24,6 +24,8 @@ export const AnimationProvider = ({ children }) => {
   const [highlightedVm, setHighlightedVm] = useState(null);
   // Ghost VM to show in Entry during animation (since it's removed from idle list)
   const [ghostVm, setGhostVm] = useState(null);
+  // Ghost Bot to show in BotsInQueue during animation (in case it's removed from queue)
+  const [ghostBot, setGhostBot] = useState(null);
 
   // Refs for element positions
   const botRefs = useRef({});
@@ -123,6 +125,12 @@ export const AnimationProvider = ({ children }) => {
         position: vmPos
       });
 
+      // Set ghost Bot to show in BotsInQueue during animation
+      setGhostBot({
+        processName: nextAnimation.processName,
+        triggerIndication: nextAnimation.triggerIndication
+      });
+
       // PHASE 1: Highlight first (no flying yet)
       setAnimationPhase("highlight");
       setHighlightedBot(nextAnimation.processName);
@@ -152,6 +160,7 @@ export const AnimationProvider = ({ children }) => {
         setHighlightedBot(null);
         setHighlightedVm(null);
         setGhostVm(null);
+        setGhostBot(null);
         isAnimating.current = false;
 
         // Process next in queue after a short delay
@@ -266,6 +275,7 @@ export const AnimationProvider = ({ children }) => {
     highlightedBot,
     highlightedVm,
     ghostVm,
+    ghostBot,
     registerBotRef,
     registerVmRef,
     registerActiveCenter,

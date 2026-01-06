@@ -5,7 +5,30 @@ import "./BotsInQueue.css";
 const BotsInQueue = ({ queuePriorityUpdate }) => {
   const [changes, setChanges] = useState({});
   const prevCounts = useRef({});
-  const { registerBotRef, highlightedBot } = useAnimation();
+  const { registerBotRef, highlightedBot, ghostBot } = useAnimation();
+
+  // Build list of bots including ghost bot if needed
+  const buildBotList = () => {
+    const botList = Array.isArray(queuePriorityUpdate) ? [...queuePriorityUpdate] : [];
+
+    // Add ghost bot if it's not already in the list (ensures row stays visible during animation)
+    if (ghostBot && ghostBot.processName) {
+      const ghostExists = botList.some(bot => bot.processName === ghostBot.processName);
+      if (!ghostExists) {
+        botList.push({
+          processName: ghostBot.processName,
+          triggerIndication: ghostBot.triggerIndication,
+          inQueueCount: 0,
+          totalCount: 0,
+          isGhost: true
+        });
+      }
+    }
+
+    return botList;
+  };
+
+  const botList = buildBotList();
 
   // Ref callback to register bot row elements
   const setRowRef = (processName) => (element) => {
@@ -49,17 +72,18 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
       <div className="card-title text-center">Bots in Queue</div>
 
       <div className="bots-list">
-        {queuePriorityUpdate && queuePriorityUpdate.map((bot, i) => {
+        {botList.map((bot, i) => {
           const icon = bot.triggerIndication === "Email" ? "bi-envelope" : "bi-clock";
           const key = `${bot.processName}-${i}`;
           const change = changes[key];
 
           const isHighlighted = highlightedBot === bot.processName;
+          const isGhost = bot.isGhost === true;
 
           return (
             <div
-              className={`bot-row ${isHighlighted ? 'bot-highlighted' : ''}`}
-              key={i}
+              className={`bot-row ${isHighlighted ? 'bot-highlighted' : ''} ${isGhost ? 'bot-ghost' : ''}`}
+              key={bot.processName || i}
               ref={setRowRef(bot.processName)}
             >
 

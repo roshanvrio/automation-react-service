@@ -284,3 +284,8 @@
     background-position: 200% 50%;
   }
 }
+
+/* Ghost bot - stays visible during animation even if removed from data */
+.bot-row.bot-ghost {
+  opacity: 0.7;
+}
