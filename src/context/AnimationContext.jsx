@@ -104,20 +104,9 @@ export const AnimationProvider = ({ children }) => {
       const botPos = getElementPosition(botElement);
       const centerPos = getElementPosition(centerElement);
 
-      // Use cached position for VM (should always exist now since we pre-cache in queueAnimations)
-      let vmPos = vmPositionsCache.current[nextAnimation.machineName];
-      let vmPosSource = "cached";
-      if (!vmPos) {
-        // Fallback: try to find element or use default right-side position
-        const vmElement = vmRefs.current[nextAnimation.machineName];
-        if (vmElement) {
-          vmPos = getElementPosition(vmElement);
-          vmPosSource = "element";
-        } else {
-          vmPos = getFallbackVmPosition();
-          vmPosSource = "fallback-right";
-        }
-      }
+      // Always use right side position for VM animation
+      const vmPos = getFallbackVmPosition();
+      const vmPosSource = "right-side";
 
       console.log("Animation positions:", {
         bot: botPos,
