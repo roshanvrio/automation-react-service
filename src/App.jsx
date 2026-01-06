@@ -20,6 +20,7 @@ const App = () => {
   const [activeVmUpdate, setActiveVmUpdate] = useState([]);
   const [idleVmUpdate, setIdleVmUpdate] = useState([]);
   const [vmUtilizationUpdate, setVmUtilizationUpdate] = useState([]);
+  const [topPerformer, setTopPerformer] = useState(null);
   const wsRef = useRef(null);
 
   useEffect(() => {
@@ -53,6 +54,7 @@ const App = () => {
           if (message.type === "vm_utilization_update" && message.data) {
             console.log("VM Utilization Update:", message.data);
             setVmUtilizationUpdate(message.data.vmUtilization || []);
+            setTopPerformer(message.data.topPerformer || null);
           }
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
@@ -107,7 +109,7 @@ const App = () => {
                     <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
                   </div>
                   <div className="col-5">
-                    <TopPerformingVM />
+                    <TopPerformingVM topPerformer={topPerformer} />
                   </div>
                 </div>
               </div>

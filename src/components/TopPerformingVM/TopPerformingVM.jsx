@@ -1,6 +1,6 @@
 import "./TopPerformingVM.css";
 
-const TopPerformingVM = () => {
+const TopPerformingVM = ({ topPerformer }) => {
   return (
     <div className="dashboard-card small-card-height">
       <div className="card-title">Top Performing VM</div>
@@ -38,8 +38,8 @@ const TopPerformingVM = () => {
           </div>
           {/* Center circle with VM info */}
           <div className="performer-content">
-            <span className="performer-vm-id">VM 32</span>
-            <span className="performer-time">1000 mins</span>
+            <span className="performer-vm-id">{topPerformer?.vmName || "N/A"}</span>
+            <span className="performer-time">{topPerformer?.utilizationHours || 0} hrs</span>
           </div>
         </div>
       </div>
