@@ -52,7 +52,7 @@ const Entry = ({ idleVmUpdate }) => {
   const vmList = buildVmList();
 
   return (
-    <div className="dashboard-card right-height entry-card card-scroll">
+    <div className="dashboard-card entry-card">
 
       <div className="entry-title">ENTRY</div>
 

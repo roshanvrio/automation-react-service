@@ -1,5 +1,16 @@
+/* Card container - increase height and enable content wrapping */
+.dashboard-card.card-scroll {
+  min-height: 350px;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
 .bots-list {
   margin-top: 8px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ROW */

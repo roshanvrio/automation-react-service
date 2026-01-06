@@ -51,7 +51,8 @@
 }
 
 .small-card-height {
-  height: calc(100vh - 470px);
+  height: calc(100vh - 600px);
+
 }
 
 .center-height {
