@@ -213,3 +213,63 @@
   background: #0b1f25;
   border-radius: 50%;
 }
+
+/* HIGHLIGHT ANIMATION for cross-component animation */
+.bot-row.bot-highlighted {
+  animation: botHighlight 0.6s ease-out forwards;
+  position: relative;
+  z-index: 100;
+}
+
+.bot-row.bot-highlighted::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #00e6ff, #00ff88, #00e6ff);
+  background-size: 200% 100%;
+  animation: borderGlow 0.5s linear infinite, borderAppear 0.6s ease-out forwards;
+  z-index: -1;
+}
+
+@keyframes botHighlight {
+  0% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+  30% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 30px rgba(0, 230, 255, 0.9),
+      0 0 60px rgba(0, 230, 255, 0.6),
+      inset 0 0 20px rgba(0, 230, 255, 0.3);
+  }
+  100% {
+    transform: scale(1.03);
+    box-shadow:
+      0 0 25px rgba(0, 230, 255, 0.8),
+      0 0 50px rgba(0, 230, 255, 0.5),
+      inset 0 0 15px rgba(0, 230, 255, 0.25);
+  }
+}
+
+@keyframes borderAppear {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes borderGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}

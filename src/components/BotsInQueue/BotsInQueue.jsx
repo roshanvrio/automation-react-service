@@ -1,9 +1,18 @@
 import { useState, useRef, useEffect } from "react";
+import { useAnimation } from "../../context/AnimationContext";
 import "./BotsInQueue.css";
 
 const BotsInQueue = ({ queuePriorityUpdate }) => {
   const [changes, setChanges] = useState({});
   const prevCounts = useRef({});
+  const { registerBotRef, highlightedBot } = useAnimation();
+
+  // Ref callback to register bot row elements
+  const setRowRef = (processName) => (element) => {
+    if (element) {
+      registerBotRef(processName, element);
+    }
+  };
 
   useEffect(() => {
     if (!queuePriorityUpdate) return;
@@ -45,8 +54,14 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
           const key = `${bot.processName}-${i}`;
           const change = changes[key];
 
+          const isHighlighted = highlightedBot === bot.processName;
+
           return (
-            <div className="bot-row" key={i}>
+            <div
+              className={`bot-row ${isHighlighted ? 'bot-highlighted' : ''}`}
+              key={i}
+              ref={setRowRef(bot.processName)}
+            >
 
               {/* LEFT ICON + NAME */}
               <div className="bot-left">
