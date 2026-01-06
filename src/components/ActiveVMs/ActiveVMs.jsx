@@ -1,14 +1,26 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useAnimation } from "../../context/AnimationContext";
 import "./ActiveVMs.css";
 
-const ActiveVMs = ({ activeVmUpdate, initialVms = [] }) => {
+const ActiveVMs = ({ activeVmUpdate }) => {
   const centerRef = useRef(null);
-  const { registerActiveCenter, getAnimatingVms, completedAnimations, pendingAnimations, currentAnimation } = useAnimation();
+  const { registerActiveCenter, queueAnimations } = useAnimation();
 
-  // Track VMs we've seen on first data load (local fallback for initialVms timing)
-  const firstLoadVmsRef = useRef(null);
-  const hasReceivedData = useRef(false);
+  // Displayed VMs - what's actually rendered on screen
+  const [displayedVMs, setDisplayedVMs] = useState([]);
+  // Track the latest added VM for popup animation
+  const [latestAddedVm, setLatestAddedVm] = useState(null);
+
+  // Pending queue - new VMs waiting to be added
+  const pendingQueue = useRef([]);
+  // Flag to track if we're processing the queue
+  const isProcessingQueue = useRef(false);
+  // Track if this is first data load
+  const isFirstLoad = useRef(true);
+  // Track all VMs we've seen (to prevent duplicates)
+  const seenVmsRef = useRef(new Set());
+  // Animation delay between items (ms)
+  const ANIMATION_DELAY = 800;
 
   // Register the center area for animation target
   useEffect(() => {
@@ -17,56 +29,85 @@ const ActiveVMs = ({ activeVmUpdate, initialVms = [] }) => {
     }
   }, [registerActiveCenter]);
 
-  // Capture first load VMs locally to avoid timing issues
-  if (Array.isArray(activeVmUpdate) && activeVmUpdate.length > 0 && !hasReceivedData.current) {
-    hasReceivedData.current = true;
-    firstLoadVmsRef.current = activeVmUpdate.map(vm => vm.machineName);
-    console.log("ActiveVMs: First data received, storing:", firstLoadVmsRef.current);
-  }
+  // Process the pending queue one by one
+  const processQueue = useCallback(() => {
+    if (isProcessingQueue.current || pendingQueue.current.length === 0) {
+      return;
+    }
 
-  // Filter VMs to only show those that should be visible
-  const getVisibleVms = () => {
-    if (!Array.isArray(activeVmUpdate)) return [];
+    isProcessingQueue.current = true;
 
-    const animatingVms = getAnimatingVms();
-    // Use both initialVms prop and local firstLoadVms for robustness
-    const firstLoadVms = firstLoadVmsRef.current || [];
+    // Get the next VM from queue
+    const nextVm = pendingQueue.current.shift();
 
-    console.log("getVisibleVms:", {
-      activeVmUpdate: activeVmUpdate.map(v => v.machineName),
-      initialVms,
-      firstLoadVms,
-      animatingVms,
-      completedAnimations,
-      pendingCount: pendingAnimations?.length || 0,
-      hasCurrentAnimation: !!currentAnimation
-    });
+    console.log("Processing queue - adding VM:", nextVm.machineName, "Remaining in queue:", pendingQueue.current.length);
 
-    return activeVmUpdate.filter(vm => {
-      // VM is visible if:
-      // 1. It was in the initial load (from prop OR local ref)
-      // 2. OR it has completed its animation
-      // 3. OR it's not currently animating
-      const isInitial = initialVms.includes(vm.machineName) || firstLoadVms.includes(vm.machineName);
-      const hasCompleted = completedAnimations.includes(vm.machineName);
-      const isAnimating = animatingVms.includes(vm.machineName);
+    // Trigger the fly animation for this VM
+    queueAnimations([nextVm]);
 
-      const isVisible = isInitial || hasCompleted || !isAnimating;
+    // Add to displayed VMs after a small delay (let animation start)
+    setTimeout(() => {
+      setDisplayedVMs(prev => [...prev, nextVm]);
+      setLatestAddedVm(nextVm.machineName);
 
-      if (!isVisible) {
-        console.log(`VM ${vm.machineName} hidden: isInitial=${isInitial}, hasCompleted=${hasCompleted}, isAnimating=${isAnimating}`);
+      // Clear the latest added flag after animation completes
+      setTimeout(() => {
+        setLatestAddedVm(null);
+      }, 500);
+
+      isProcessingQueue.current = false;
+
+      // Process next item in queue after delay
+      if (pendingQueue.current.length > 0) {
+        setTimeout(() => {
+          processQueue();
+        }, ANIMATION_DELAY);
       }
+    }, 2800); // Wait for fly animation to complete (matching AnimationContext timing)
+  }, [queueAnimations]);
 
-      return isVisible;
-    });
-  };
+  // Detect new VMs and queue them
+  useEffect(() => {
+    if (!Array.isArray(activeVmUpdate) || activeVmUpdate.length === 0) {
+      return;
+    }
 
-  const visibleVms = getVisibleVms();
+    // First load - display all immediately without animation
+    if (isFirstLoad.current) {
+      console.log("First load - displaying all VMs immediately:", activeVmUpdate.map(vm => vm.machineName));
+      isFirstLoad.current = false;
+      // Mark all initial VMs as seen
+      activeVmUpdate.forEach(vm => seenVmsRef.current.add(vm.machineName));
+      setDisplayedVMs(activeVmUpdate);
+      return;
+    }
 
-  // Get the latest completed VM for popup animation
-  const latestCompletedVm = completedAnimations.length > 0
-    ? completedAnimations[completedAnimations.length - 1]
-    : null;
+    // Find new VMs that we haven't seen before
+    const newVMs = activeVmUpdate.filter(vm => !seenVmsRef.current.has(vm.machineName));
+
+    if (newVMs.length > 0) {
+      console.log("New VMs detected - adding to queue:", newVMs.map(vm => vm.machineName));
+      // Mark as seen immediately to prevent duplicates
+      newVMs.forEach(vm => seenVmsRef.current.add(vm.machineName));
+      pendingQueue.current.push(...newVMs);
+
+      // Start processing if not already
+      if (!isProcessingQueue.current) {
+        processQueue();
+      }
+    }
+
+    // Handle removed VMs - remove from displayed if no longer in activeVmUpdate
+    const activeNames = activeVmUpdate.map(vm => vm.machineName);
+    const removedVMs = displayedVMs.filter(vm => !activeNames.includes(vm.machineName));
+
+    if (removedVMs.length > 0) {
+      console.log("VMs removed:", removedVMs.map(vm => vm.machineName));
+      // Remove from seen set as well
+      removedVMs.forEach(vm => seenVmsRef.current.delete(vm.machineName));
+      setDisplayedVMs(prev => prev.filter(vm => activeNames.includes(vm.machineName)));
+    }
+  }, [activeVmUpdate, displayedVMs, processQueue]);
 
   return (
     <div className="dashboard-card center-height activevms-card">
@@ -82,8 +123,8 @@ const ActiveVMs = ({ activeVmUpdate, initialVms = [] }) => {
 
       <div className="activevms-scroll card-scroll" ref={centerRef}>
         <div className="hex-grid">
-          {visibleVms.map((vm, i) => {
-            const isNewlyAdded = vm.machineName === latestCompletedVm;
+          {displayedVMs.map((vm, i) => {
+            const isNewlyAdded = vm.machineName === latestAddedVm;
 
             return (
               <div

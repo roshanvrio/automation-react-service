@@ -6,7 +6,7 @@ import TopPerformingVM from "./components/TopPerformingVM/TopPerformingVM";
 import ActiveVMs from "./components/ActiveVMs/ActiveVMs";
 import Entry from "./components/Entry/Entry";
 import AnimationOverlay from "./components/AnimationOverlay/AnimationOverlay";
-import { AnimationProvider, useAnimation } from "./context/AnimationContext";
+import { AnimationProvider } from "./context/AnimationContext";
 
 import "./App.css";
 
@@ -24,75 +24,7 @@ const AppContent = () => {
   const [idleVmUpdate, setIdleVmUpdate] = useState([]);
   const [vmUtilizationUpdate, setVmUtilizationUpdate] = useState([]);
   const [topPerformer, setTopPerformer] = useState(null);
-  // Track initial VMs that were present on first load (no animation needed)
-  const [initialVms, setInitialVms] = useState([]);
   const wsRef = useRef(null);
-  const prevActiveVmsRef = useRef([]);
-  const isFirstLoad = useRef(true);
-  // Pending messages for batched processing
-  const pendingUpdates = useRef({ active: null, idle: null });
-  // Timer for batched processing to prevent duplicate calls
-  const batchTimer = useRef(null);
-
-  const { queueAnimations } = useAnimation();
-
-  // Process batched updates - detect new VMs BEFORE state updates
-  const processBatchedUpdates = () => {
-    // Clear the timer
-    batchTimer.current = null;
-
-    const { active, idle } = pendingUpdates.current;
-
-    // Only process if we have data
-    if (!active && !idle) return;
-
-    if (active) {
-      // First load - just store initial VMs (NO animations)
-      if (isFirstLoad.current) {
-        console.log("FIRST LOAD - storing initial VMs, NO animations:", active.map(vm => vm.machineName));
-        isFirstLoad.current = false;
-        const initialMachineNames = active.map(vm => vm.machineName);
-        setInitialVms(initialMachineNames);
-        prevActiveVmsRef.current = initialMachineNames;
-        // IMPORTANT: Do NOT call queueAnimations here
-      } else {
-        // Subsequent updates - detect new active VMs
-        const prevMachineNames = prevActiveVmsRef.current;
-        const newActiveVms = active.filter(
-          vm => !prevMachineNames.includes(vm.machineName)
-        );
-
-        console.log("Subsequent update - prev:", prevMachineNames, "current:", active.map(vm => vm.machineName), "new:", newActiveVms.map(v => v.machineName));
-
-        if (newActiveVms.length > 0) {
-          console.log("Queueing animations for new VMs:", newActiveVms.length, newActiveVms.map(v => v.machineName));
-          // Queue animations NOW while Entry still has the VMs
-          queueAnimations(newActiveVms);
-        }
-
-        prevActiveVmsRef.current = active.map(vm => vm.machineName);
-      }
-
-      setActiveVmUpdate(active);
-    }
-
-    if (idle) {
-      setIdleVmUpdate(idle);
-    }
-
-    // Clear pending
-    pendingUpdates.current = { active: null, idle: null };
-  };
-
-  // Schedule batched processing (debounced)
-  const scheduleBatchProcessing = () => {
-    // Clear existing timer to prevent duplicate calls
-    if (batchTimer.current) {
-      clearTimeout(batchTimer.current);
-    }
-    // Schedule new processing
-    batchTimer.current = setTimeout(processBatchedUpdates, 50);
-  };
 
   useEffect(() => {
     const connectWebSocket = () => {
@@ -116,15 +48,11 @@ const AppContent = () => {
           }
           if (message.type === "active_vms_update" && message.data) {
             console.log("Active VM Update:", message.data);
-            // Store for batched processing
-            pendingUpdates.current.active = message.data;
-            scheduleBatchProcessing();
+            setActiveVmUpdate(message.data);
           }
           if (message.type === "idle_vms_update" && message.data) {
             console.log("Idle VM Update:", message.data);
-            // Store for batched processing
-            pendingUpdates.current.idle = message.data;
-            scheduleBatchProcessing();
+            setIdleVmUpdate(message.data);
           }
           if (message.type === "vm_utilization_update" && message.data) {
             console.log("VM Utilization Update:", message.data);
@@ -197,7 +125,7 @@ const AppContent = () => {
 
           {/* CENTER COLUMN */}
           <div className="col-6">
-            <ActiveVMs activeVmUpdate={activeVmUpdate} initialVms={initialVms} />
+            <ActiveVMs activeVmUpdate={activeVmUpdate} />
           </div>
 
           {/* RIGHT COLUMN */}
