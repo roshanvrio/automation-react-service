@@ -89,10 +89,10 @@ const App = () => {
               <div className="col-12">
                 <div className="row gx-2">
                   <div className="col-7">
-                    {/* <VMUtilization /> */}
+                    <VMUtilization />
                   </div>
                   <div className="col-5">
-                    {/* <TopPerformingVM /> */}
+                    <TopPerformingVM />
                   </div>
                 </div>
               </div>
@@ -103,12 +103,12 @@ const App = () => {
 
           {/* CENTER COLUMN */}
           <div className="col-6">
-            {/* <ActiveVMs /> */}
+            <ActiveVMs />
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="col-2">
-            {/* <Entry /> */}
+            <Entry />
           </div>
         </div>
 
