@@ -30,14 +30,7 @@ const ActiveVMs = () => {
               className={`hex-wrapper ${i === vmData.length - 1 ? "hex-animate" : ""}`}
               key={vm.id}
             >
-              {/* DASHED OUTLINE */}
-              <svg className="hex-outline-svg" viewBox="0 0 200 220">
-                <polygon
-                  points="50,2 150,2 198,110 150,218 50,218 2,110"
-                />
-              </svg>
-
-              {/* HEX CARD */}
+              <div className="hex-border"></div>
               <div className="hex-card">
                 <div className="hex-content">
                   <div className="hex-small">✉ Email</div>

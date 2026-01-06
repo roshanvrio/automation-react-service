@@ -62,41 +62,35 @@
 .hex-wrapper {
   position: relative;
   width: 200px;
-  height: 230px;
+  height: 170px;
 }
 
-/* Dashed outline */
-.hex-outline-svg {
+/* Dotted border - flat top hexagon using SVG */
+.hex-border {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
 }
 
-.hex-outline-svg polygon {
-  fill: none;
-  stroke: rgba(200, 220, 255, 0.45);
-  stroke-width: 1.4;
-  stroke-dasharray: 4 4;
+.hex-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='170'%3E%3Cpolygon points='40,2 160,2 198,85 160,168 40,168 2,85' fill='none' stroke='%2300e5ff' stroke-width='1.5' stroke-dasharray='4,4'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  opacity: 0.9;
 }
 
-/* Hex card */
+/* Hex card - flat top hexagon */
 .hex-card {
   position: absolute;
-  inset: 10px;
-  background: linear-gradient(180deg, #0b4fc1, #082c6b);
+  inset: 6px;
+  background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
 
-  clip-path: polygon(25% 0%,
-      75% 0%,
-      100% 50%,
-      75% 100%,
-      25% 100%,
-      0% 50%);
+  clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
 
   box-shadow:
-    inset 0 0 18px rgba(120, 180, 255, 0.25),
-    0 0 14px rgba(0, 140, 255, 0.25);
+    inset 0 0 30px rgba(0, 150, 255, 0.3),
+    inset 0 0 60px rgba(0, 100, 200, 0.2);
 
   display: flex;
   align-items: center;
@@ -110,36 +104,53 @@
   font-size: 11px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
 }
 
 .hex-small {
-  font-size: 10px;
-  color: #9cc9ff;
+  font-size: 9px;
+  color: #8ec8ff;
 }
 
 .hex-vm {
   font-size: 14px;
   font-weight: 700;
+  color: #00e5ff;
+  margin: 4px 0;
 }
 
 .hex-name {
-  background: rgba(0, 0, 0, 0.25);
-  padding: 4px;
+  background: linear-gradient(180deg, #0d7377 0%, #065a5c 100%);
+  padding: 5px 10px;
   border-radius: 4px;
+  font-size: 9px;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  border: 1px solid rgba(0, 200, 200, 0.3);
 }
 
 .hex-time {
-  font-size: 10px;
+  font-size: 9px;
+  color: #8ec8ff;
+  margin-top: 2px;
+}
+
+.hex-time strong {
+  color: #ffffff;
 }
 
 .uipath {
   align-self: center;
-  background: #e02020;
+  background: linear-gradient(180deg, #ff6b35 0%, #e04500 100%);
   color: #fff;
-  font-size: 10px;
+  font-size: 8px;
+  font-weight: 600;
   padding: 2px 8px;
-  border-radius: 4px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
 }
 
 /* Animation for new cards - slide in from right with rotation and zoom */
