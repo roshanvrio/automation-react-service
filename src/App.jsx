@@ -17,6 +17,9 @@ const App = () => {
     avgTime: 0
   });
   const [queuePriorityUpdate, setQueuePriorityUpdate] = useState([]);
+  const [activeVmUpdate, setActiveVmUpdate] = useState([]);
+  const [idleVmUpdate, setIdleVmUpdate] = useState([]);
+  const [vmUtilizationUpdate, setVmUtilizationUpdate] = useState([]);
   const wsRef = useRef(null);
 
   useEffect(() => {
@@ -38,6 +41,18 @@ const App = () => {
           if (message.type === "queue_priority_update" && message.data) {
             console.log("Queue Priority Update:", message.data);
             setQueuePriorityUpdate(message.data);
+          }
+          if (message.type === "active_vms_update" && message.data) {
+            console.log("Active VM Update:", message.data);
+            setActiveVmUpdate(message.data);
+          }
+          if (message.type === "idle_vms_update" && message.data) {
+            console.log("Idle VM Update:", message.data);
+            setIdleVmUpdate(message.data);
+          }
+          if (message.type === "vm_utilization_update" && message.data) {
+            console.log("VM Utilization Update:", message.data);
+            setVmUtilizationUpdate(message.data.vmUtilization || []);
           }
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
@@ -89,7 +104,7 @@ const App = () => {
               <div className="col-12">
                 <div className="row gx-2">
                   <div className="col-7">
-                    <VMUtilization />
+                    <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
                   </div>
                   <div className="col-5">
                     <TopPerformingVM />
@@ -103,12 +118,12 @@ const App = () => {
 
           {/* CENTER COLUMN */}
           <div className="col-6">
-            <ActiveVMs />
+            <ActiveVMs activeVmUpdate={activeVmUpdate} />
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="col-2">
-            <Entry />
+            <Entry idleVmUpdate={idleVmUpdate} />
           </div>
         </div>
 
