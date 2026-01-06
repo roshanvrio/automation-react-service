@@ -99,12 +99,12 @@ const App = () => {
 
           <div className="col-4">
             <div className="row gy-3">
-              <div className="col-12">
+              <div className="col-12 mb-5">
                 <BotsInQueue queuePriorityUpdate={queuePriorityUpdate} />
               </div>
 
               <div className="col-12">
-                <div className="row gx-2">
+                <div className="row gx-2 mt-5">
                   <div className="col-7">
                     <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
                   </div>
