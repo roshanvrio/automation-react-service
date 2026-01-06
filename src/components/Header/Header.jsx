@@ -1,6 +1,12 @@
 import "./Header.css";
 
-const Header = ({ metrics }) => {
+const Header = ({ metrics, highlightKeys = [] }) => {
+  // Helper to get highlight class based on highlightKeys passed from parent
+  const getHighlightClass = (key) => {
+    if (highlightKeys.includes(key)) return 'metric-highlight-increase';
+    return '';
+  };
+
   return (
     <div className="mt-3">
       <div className="row g-3 align-items-center">
@@ -11,7 +17,7 @@ const Header = ({ metrics }) => {
           <div className="row g-3">
 
             <div className="col">
-              <div className="header-metric cyan">
+              <div className={`header-metric cyan ${getHighlightClass('totalInQueue')}`}>
                 <div className="metric-icon">
                   <i className="bi bi-inbox-fill"></i>
                 </div>
@@ -23,7 +29,7 @@ const Header = ({ metrics }) => {
             </div>
 
             <div className="col">
-              <div className="header-metric green">
+              <div className={`header-metric green ${getHighlightClass('successful')}`}>
                 <div className="metric-icon">
                   <i className="bi bi-lightning-fill"></i>
                 </div>
@@ -35,7 +41,7 @@ const Header = ({ metrics }) => {
             </div>
 
             <div className="col">
-              <div className="header-metric purple">
+              <div className={`header-metric purple ${getHighlightClass('exceptions')}`}>
                 <div className="metric-icon">
                   <i className="bi bi-activity"></i>
                 </div>
@@ -47,7 +53,7 @@ const Header = ({ metrics }) => {
             </div>
 
             <div className="col">
-              <div className="header-metric red">
+              <div className={`header-metric red ${getHighlightClass('errors')}`}>
                 <div className="metric-icon">
                   <i className="bi bi-exclamation-triangle-fill"></i>
                 </div>
@@ -59,7 +65,7 @@ const Header = ({ metrics }) => {
             </div>
 
             <div className="col">
-              <div className="header-metric teal">
+              <div className={`header-metric teal ${getHighlightClass('avgTime')}`}>
                 <div className="metric-icon">
                   <i className="bi bi-clock-fill"></i>
                 </div>

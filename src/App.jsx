@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "./components/Header/Header";
 import BotsInQueue from "./components/BotsInQueue/BotsInQueue";
 import VMUtilization from "./components/VMUtilization/VMUtilization";
@@ -12,19 +12,95 @@ import "./App.css";
 
 // Inner component that uses animation context
 const AppContent = () => {
-  const [metrics, setMetrics] = useState({
+  // Displayed metrics - what Header shows
+  const [displayedMetrics, setDisplayedMetrics] = useState({
     exceptions: 0,
     successful: 0,
     totalInQueue: 0,
     errors: 0,
     avgTime: 0
   });
+  // Target metrics - from WebSocket
+  const targetMetricsRef = useRef({
+    exceptions: 0,
+    successful: 0,
+    totalInQueue: 0,
+    errors: 0,
+    avgTime: 0
+  });
+  // Keys currently being highlighted
+  const [highlightKeys, setHighlightKeys] = useState([]);
+  // Track if first metrics load
+  const isFirstMetricsLoad = useRef(true);
+  // Track pending VM count in ActiveVMs (shared ref)
+  const pendingVmCountRef = useRef(0);
+
   const [queuePriorityUpdate, setQueuePriorityUpdate] = useState([]);
   const [activeVmUpdate, setActiveVmUpdate] = useState([]);
   const [idleVmUpdate, setIdleVmUpdate] = useState([]);
   const [vmUtilizationUpdate, setVmUtilizationUpdate] = useState([]);
   const [topPerformer, setTopPerformer] = useState(null);
   const wsRef = useRef(null);
+
+  // Sync metrics directly to target (with highlight animation)
+  const syncMetricsToTarget = useCallback(() => {
+    const target = targetMetricsRef.current;
+
+    setDisplayedMetrics(prev => {
+      const keysToHighlight = [];
+      const metricKeys = ['totalInQueue', 'successful', 'exceptions', 'errors', 'avgTime'];
+
+      metricKeys.forEach(key => {
+        const current = prev[key] || 0;
+        const targetVal = target[key] || 0;
+        if (current !== targetVal) {
+          keysToHighlight.push(key);
+        }
+      });
+
+      // Trigger highlight animation (0.4s × 8 blinks = 3.2s)
+      if (keysToHighlight.length > 0) {
+        setHighlightKeys(keysToHighlight);
+        setTimeout(() => setHighlightKeys([]), 3200);
+      }
+
+      return { ...target };
+    });
+  }, []);
+
+  // Called when a VM animation completes - update metrics one step
+  const onVmProcessed = useCallback(() => {
+    const target = targetMetricsRef.current;
+
+    setDisplayedMetrics(prev => {
+      const newMetrics = { ...prev };
+      const keysToHighlight = [];
+
+      // Move each metric one step towards target
+      const metricKeys = ['totalInQueue', 'successful', 'exceptions', 'errors', 'avgTime'];
+
+      metricKeys.forEach(key => {
+        const current = prev[key] || 0;
+        const targetVal = target[key] || 0;
+
+        if (current < targetVal) {
+          newMetrics[key] = current + 1;
+          keysToHighlight.push(key);
+        } else if (current > targetVal) {
+          newMetrics[key] = current - 1;
+          keysToHighlight.push(key);
+        }
+      });
+
+      // Trigger highlight animation (0.4s × 8 blinks = 3.2s)
+      if (keysToHighlight.length > 0) {
+        setHighlightKeys(keysToHighlight);
+        setTimeout(() => setHighlightKeys([]), 3200);
+      }
+
+      return newMetrics;
+    });
+  }, []);
 
   useEffect(() => {
     const connectWebSocket = () => {
@@ -40,7 +116,20 @@ const AppContent = () => {
           console.log("WebSocket Response:", message);
           if (message.type === "metrics_update" && message.data) {
             console.log("Metrics Data:", message.data);
-            setMetrics(message.data);
+            // Store as target
+            targetMetricsRef.current = message.data;
+
+            // First load - set displayed immediately
+            if (isFirstMetricsLoad.current) {
+              isFirstMetricsLoad.current = false;
+              setDisplayedMetrics(message.data);
+            } else {
+              // If no pending VM animations, sync metrics directly
+              if (pendingVmCountRef.current === 0) {
+                syncMetricsToTarget();
+              }
+              // Otherwise, metrics will update via onVmProcessed
+            }
           }
           if (message.type === "queue_priority_update" && message.data) {
             console.log("Queue Priority Update:", message.data);
@@ -94,7 +183,7 @@ const AppContent = () => {
 
         {/*Header */}
         <div className="row gx-3">
-          <Header metrics={metrics} />
+          <Header metrics={displayedMetrics} highlightKeys={highlightKeys} />
 
         </div>
 
@@ -125,7 +214,11 @@ const AppContent = () => {
 
           {/* CENTER COLUMN */}
           <div className="col-6">
-            <ActiveVMs activeVmUpdate={activeVmUpdate} />
+            <ActiveVMs
+              activeVmUpdate={activeVmUpdate}
+              onVmProcessed={onVmProcessed}
+              pendingVmCountRef={pendingVmCountRef}
+            />
           </div>
 
           {/* RIGHT COLUMN */}

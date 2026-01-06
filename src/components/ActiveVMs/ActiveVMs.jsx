@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useAnimation } from "../../context/AnimationContext";
 import "./ActiveVMs.css";
 
-const ActiveVMs = ({ activeVmUpdate }) => {
+const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef }) => {
   const centerRef = useRef(null);
   const { registerActiveCenter, queueAnimations } = useAnimation();
 
@@ -40,6 +40,11 @@ const ActiveVMs = ({ activeVmUpdate }) => {
     // Get the next VM from queue
     const nextVm = pendingQueue.current.shift();
 
+    // Update pending count for parent
+    if (pendingVmCountRef) {
+      pendingVmCountRef.current = pendingQueue.current.length;
+    }
+
     console.log("Processing queue - adding VM:", nextVm.machineName, "Remaining in queue:", pendingQueue.current.length);
 
     // Trigger the fly animation for this VM
@@ -49,6 +54,11 @@ const ActiveVMs = ({ activeVmUpdate }) => {
     setTimeout(() => {
       setDisplayedVMs(prev => [...prev, nextVm]);
       setLatestAddedVm(nextVm.machineName);
+
+      // Notify parent that a VM was processed - update metrics
+      if (onVmProcessed) {
+        onVmProcessed();
+      }
 
       // Clear the latest added flag after animation completes
       setTimeout(() => {
@@ -64,7 +74,7 @@ const ActiveVMs = ({ activeVmUpdate }) => {
         }, ANIMATION_DELAY);
       }
     }, 2800); // Wait for fly animation to complete (matching AnimationContext timing)
-  }, [queueAnimations]);
+  }, [queueAnimations, onVmProcessed, pendingVmCountRef]);
 
   // Detect new VMs and queue them
   useEffect(() => {
@@ -90,6 +100,11 @@ const ActiveVMs = ({ activeVmUpdate }) => {
       // Mark as seen immediately to prevent duplicates
       newVMs.forEach(vm => seenVmsRef.current.add(vm.machineName));
       pendingQueue.current.push(...newVMs);
+
+      // Update pending count for parent
+      if (pendingVmCountRef) {
+        pendingVmCountRef.current = pendingQueue.current.length;
+      }
 
       // Start processing if not already
       if (!isProcessingQueue.current) {
