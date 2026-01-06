@@ -75,3 +75,184 @@
   background: rgba(0, 255, 200, 0.3);
   border-radius: 10px;
 }
+
+/* ========== GLOBAL VM ASSIGNMENT ANIMATION ========== */
+
+.vm-assignment-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Bot flying from LEFT */
+.flying-bot {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 150, 255, 0.2));
+  border: 2px solid #00d4ff;
+  border-radius: 12px;
+  color: #00d4ff;
+  font-size: 18px;
+  font-weight: bold;
+  animation: flyFromLeft 1.2s ease-in-out forwards;
+  filter: drop-shadow(0 0 20px #00d4ff);
+}
+
+.flying-bot i {
+  font-size: 28px;
+}
+
+@keyframes flyFromLeft {
+  0% {
+    left: -200px;
+    top: 30%;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+  }
+  50% {
+    left: calc(50% - 100px);
+    top: 50%;
+    transform: translateY(-50%) scale(1);
+  }
+  70% {
+    left: calc(50% - 60px);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+  100% {
+    left: calc(50% - 40px);
+    top: 50%;
+    opacity: 0;
+    transform: translateY(-50%) scale(0);
+  }
+}
+
+/* VM flying from RIGHT */
+.flying-vm {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(255, 80, 80, 0.2));
+  border: 2px solid #ff6b35;
+  border-radius: 12px;
+  color: #ff6b35;
+  font-size: 18px;
+  font-weight: bold;
+  animation: flyFromRight 1.2s ease-in-out forwards;
+  filter: drop-shadow(0 0 20px #ff6b35);
+}
+
+.flying-vm i {
+  font-size: 28px;
+}
+
+@keyframes flyFromRight {
+  0% {
+    right: -200px;
+    top: 70%;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+  }
+  50% {
+    right: calc(50% - 100px);
+    top: 50%;
+    transform: translateY(-50%) scale(1);
+  }
+  70% {
+    right: calc(50% - 60px);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+  100% {
+    right: calc(50% - 40px);
+    top: 50%;
+    opacity: 0;
+    transform: translateY(-50%) scale(0);
+  }
+}
+
+.flying-label {
+  white-space: nowrap;
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Collision effect in center */
+.collision-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+}
+
+.collision-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid #00ffcc;
+  border-radius: 50%;
+  opacity: 0;
+  animation: ringExpand 0.8s ease-out 0.7s forwards;
+}
+
+.collision-ring.ring-2 {
+  border-color: #ff6b35;
+  animation-delay: 0.85s;
+}
+
+@keyframes ringExpand {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.collision-center .collision-burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #ffffff, #00ffcc, #ff6b35, transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: centerBurst 0.6s ease-out 0.7s forwards;
+}
+
+@keyframes centerBurst {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(6);
+    opacity: 0;
+  }
+}

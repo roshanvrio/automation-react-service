@@ -19,6 +19,16 @@ const App = () => {
   const [queuePriorityUpdate, setQueuePriorityUpdate] = useState([]);
   const wsRef = useRef(null);
 
+  // Animation state for new active VM
+  const [activeAnimation, setActiveAnimation] = useState(null);
+
+  // Trigger animation (for demo - you can connect this to real data)
+  const triggerVMAnimation = (botName, vmId) => {
+    setActiveAnimation({ botName, vmId });
+    // Clear after animation completes
+    setTimeout(() => setActiveAnimation(null), 2000);
+  };
+
   useEffect(() => {
     const connectWebSocket = () => {
       const ws = new WebSocket("ws://127.0.0.1:8000/ws/dashboard");
@@ -68,6 +78,30 @@ const App = () => {
   return (
     <div className="app-root">
 
+      {/* GLOBAL ANIMATION OVERLAY */}
+      {activeAnimation && (
+        <div className="vm-assignment-overlay">
+          {/* Bot flying from LEFT (BotsInQueue) */}
+          <div className="flying-bot">
+            <i className="bi bi-robot"></i>
+            <span className="flying-label">{activeAnimation.botName}</span>
+          </div>
+
+          {/* VM flying from RIGHT (Entry) */}
+          <div className="flying-vm">
+            <i className="bi bi-display"></i>
+            <span className="flying-label">{activeAnimation.vmId}</span>
+          </div>
+
+          {/* Collision effect in center */}
+          <div className="collision-center">
+            <div className="collision-ring"></div>
+            <div className="collision-ring ring-2"></div>
+            <div className="collision-burst"></div>
+          </div>
+        </div>
+      )}
+
       <div className="container-fluid">
 
         {/*Header */}
@@ -103,7 +137,10 @@ const App = () => {
 
           {/* CENTER COLUMN */}
           <div className="col-6">
-            <ActiveVMs />
+            <ActiveVMs
+              onNewVM={() => triggerVMAnimation("User Gatekeeper", "VM-22")}
+              animationActive={activeAnimation !== null}
+            />
           </div>
 
           {/* RIGHT COLUMN */}
