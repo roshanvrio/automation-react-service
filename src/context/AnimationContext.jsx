@@ -267,7 +267,7 @@ export const AnimationProvider = ({ children }) => {
         newMap.delete(machineName);
         return newMap;
       });
-    }, 1000); // 1 second blink animation
+    }, 1600); // 1.6 second blink animation (4 blinks)
   }, []);
 
   // Check if VM is currently completing (for applying blink class)

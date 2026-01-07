@@ -219,73 +219,98 @@
   }
 }
 
-/* Completion blink animations */
-@keyframes blink-success {
+/* Completion blink animations - border glow effect */
+@keyframes blink-border-success {
   0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 0 rgba(76, 175, 80, 0);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  12.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(76, 175, 80, 1));
   }
   25% {
-    opacity: 0.3;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  37.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(76, 175, 80, 1));
   }
   50% {
-    opacity: 1;
-    box-shadow: 0 0 30px rgba(76, 175, 80, 1);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  62.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(76, 175, 80, 1));
   }
   75% {
-    opacity: 0.3;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  87.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(76, 175, 80, 1));
   }
 }
 
-@keyframes blink-error {
+@keyframes blink-border-error {
   0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 0 rgba(244, 67, 54, 0);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  12.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(244, 67, 54, 1));
   }
   25% {
-    opacity: 0.3;
-    box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  37.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(244, 67, 54, 1));
   }
   50% {
-    opacity: 1;
-    box-shadow: 0 0 30px rgba(244, 67, 54, 1);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  62.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(244, 67, 54, 1));
   }
   75% {
-    opacity: 0.3;
-    box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  87.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(244, 67, 54, 1));
   }
 }
 
-@keyframes blink-exception {
+@keyframes blink-border-exception {
   0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 0 rgba(183, 92, 255, 0);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  12.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(183, 92, 255, 1));
   }
   25% {
-    opacity: 0.3;
-    box-shadow: 0 0 20px rgba(183, 92, 255, 0.8);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  37.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(183, 92, 255, 1));
   }
   50% {
-    opacity: 1;
-    box-shadow: 0 0 30px rgba(183, 92, 255, 1);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  62.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(183, 92, 255, 1));
   }
   75% {
-    opacity: 0.3;
-    box-shadow: 0 0 20px rgba(183, 92, 255, 0.8);
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  87.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(183, 92, 255, 1));
   }
 }
 
-.hex-wrapper.blink-success {
-  animation: blink-success 1s ease-in-out;
+/* Apply animations to the hex-border element for visible edge glow */
+.hex-wrapper.blink-success .hex-border::before {
+  animation: blink-border-success 1.6s ease-in-out;
 }
 
-.hex-wrapper.blink-error {
-  animation: blink-error 1s ease-in-out;
+.hex-wrapper.blink-error .hex-border::before {
+  animation: blink-border-error 1.6s ease-in-out;
 }
 
-.hex-wrapper.blink-exception {
-  animation: blink-exception 1s ease-in-out;
+.hex-wrapper.blink-exception .hex-border::before {
+  animation: blink-border-exception 1.6s ease-in-out;
 }
 

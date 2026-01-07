@@ -25,6 +25,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   const isFirstLoad = useRef(true);
   // Track all VMs we've seen (to prevent duplicates)
   const seenVmsRef = useRef(new Set());
+  // Track VMs currently completing (to prevent duplicate animation triggers)
+  const completingVmsRef = useRef(new Set());
   // Animation delay between items (ms)
   const ANIMATION_DELAY = 800;
 
@@ -120,7 +122,10 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
 
     // Handle removed VMs - detect completions and trigger animation
     const activeNames = activeVmUpdate.map(vm => vm.machineName);
-    const removedVMs = displayedVMs.filter(vm => !activeNames.includes(vm.machineName));
+    const removedVMs = displayedVMs.filter(vm =>
+      !activeNames.includes(vm.machineName) &&
+      !completingVmsRef.current.has(vm.machineName) // Don't re-trigger if already completing
+    );
 
     if (removedVMs.length > 0) {
       console.log("VMs removed:", removedVMs.map(vm => vm.machineName));
@@ -130,15 +135,25 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
         const outcome = determineOutcome(removedVm, completedTransactions);
         console.log(`VM ${removedVm.machineName} completed with outcome: ${outcome}`);
 
+        // Mark as completing to prevent duplicate triggers
+        completingVmsRef.current.add(removedVm.machineName);
+
         // Trigger completion animation
         queueCompletionAnimation(removedVm.machineName, outcome);
+        console.log(`✨ Completion animation queued for ${removedVm.machineName} with outcome: ${outcome}`);
       });
 
       // Remove from seen set and displayed VMs after animation delay
       setTimeout(() => {
-        removedVMs.forEach(vm => seenVmsRef.current.delete(vm.machineName));
-        setDisplayedVMs(prev => prev.filter(vm => activeNames.includes(vm.machineName)));
-      }, 1000); // Match blink animation duration
+        // Remove only the specific VMs that were detected as removed
+        const removedNames = new Set(removedVMs.map(vm => vm.machineName));
+        console.log(`🗑️ Removing VMs after blink animation:`, Array.from(removedNames));
+        removedNames.forEach(name => {
+          seenVmsRef.current.delete(name);
+          completingVmsRef.current.delete(name);
+        });
+        setDisplayedVMs(prev => prev.filter(vm => !removedNames.has(vm.machineName)));
+      }, 1600); // Match blink animation duration (1.6s = 4 blinks)
     }
   }, [activeVmUpdate, displayedVMs, processQueue, completedTransactions, queueCompletionAnimation]);
 
