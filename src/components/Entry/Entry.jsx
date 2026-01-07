@@ -99,7 +99,8 @@ const Entry = ({ idleVmUpdate }) => {
         const name = getVmName(vm);
         displayedNamesRef.current.add(name);
       });
-      setDisplayedVMs(prev => [...prev, ...newVMs]);
+      // Use the API order directly instead of appending
+      setDisplayedVMs([...idleVmUpdate]);
     }
 
     // Find VMs to remove (in displayedNamesRef but not in current update)
