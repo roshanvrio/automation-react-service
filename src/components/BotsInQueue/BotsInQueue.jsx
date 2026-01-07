@@ -68,7 +68,7 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
   }, [queuePriorityUpdate]);
 
   return (
-    <div className="dashboard-card card-scroll">
+    <div className="dashboard-cards card-scroll">
       <div className="card-title text-center">Bots in Queue</div>
 
       <div className="bots-list">
