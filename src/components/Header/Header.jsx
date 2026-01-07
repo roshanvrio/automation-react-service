@@ -3,8 +3,21 @@ import "./Header.css";
 const Header = ({ metrics, highlightKeys = [] }) => {
   // Helper to get highlight class based on highlightKeys passed from parent
   const getHighlightClass = (key) => {
-    if (highlightKeys.includes(key)) return 'metric-highlight-increase';
-    return '';
+    if (!highlightKeys.includes(key)) return '';
+
+    // Return color-specific highlight class based on metric type
+    switch (key) {
+      case 'totalInQueue':
+        return 'metric-highlight-cyan';
+      case 'successful':
+        return 'metric-highlight-green';
+      case 'exceptions':
+        return 'metric-highlight-purple';
+      case 'errors':
+        return 'metric-highlight-red';
+      default:
+        return 'metric-highlight-green';
+    }
   };
 
   return (
