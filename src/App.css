@@ -76,3 +76,33 @@
   background: rgba(0, 255, 200, 0.3);
   border-radius: 10px;
 }
+
+/* Main content grid - 3 columns same height */
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 4fr 6fr 2fr;
+  gap: 12px;
+  height: calc(100vh - 140px);
+  margin-top: 12px;
+}
+
+/* Left column grid - BotsInQueue + VMUtilization stacked */
+.left-column-grid {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 12px;
+  height: 100%;
+}
+
+/* Center column */
+.center-column {
+  height: 100%;
+}
+
+/* Right column grid - Entry on top, TopPerforming below */
+.right-column-grid {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 12px;
+  height: 100%;
+}

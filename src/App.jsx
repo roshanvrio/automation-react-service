@@ -198,31 +198,16 @@ const AppContent = () => {
 
 
         {/*Main content */}
-        <div className="row mt-3">
+        <div className="main-content-grid">
 
-          <div className="col-4">
-            <div className="row gy-3">
-              <div className="col-12">
-                <BotsInQueue queuePriorityUpdate={queuePriorityUpdate} />
-              </div>
-
-              <div className="col-12">
-                <div className="row gx-2">
-                  <div className="col-7">
-                    <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
-                  </div>
-                  <div className="col-5">
-                    <TopPerformingVM topPerformer={topPerformer} />
-                  </div>
-                </div>
-              </div>
-
-
-            </div>
+          {/* LEFT COLUMN */}
+          <div className="left-column-grid">
+            <BotsInQueue queuePriorityUpdate={queuePriorityUpdate} />
+            <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
           </div>
 
           {/* CENTER COLUMN */}
-          <div className="col-6">
+          <div className="center-column">
             <ActiveVMs
               activeVmUpdate={activeVmUpdate}
               onVmProcessed={onVmProcessed}
@@ -231,9 +216,10 @@ const AppContent = () => {
             />
           </div>
 
-          {/* RIGHT COLUMN */}
-          <div className="col-2">
+          {/* RIGHT COLUMN - Entry + TopPerforming stacked */}
+          <div className="right-column-grid">
             <Entry idleVmUpdate={idleVmUpdate} />
+            <TopPerformingVM topPerformer={topPerformer} />
           </div>
         </div>
 

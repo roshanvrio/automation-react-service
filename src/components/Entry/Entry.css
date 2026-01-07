@@ -1,6 +1,5 @@
 .entry-card {
   padding: 8px;
-  height: calc(100vh - 140px);
   overflow-y: auto;
 }
 
@@ -28,7 +27,7 @@
 
 /* ROW */
 .entry-row {
-  flex: 1;
+  flex: 0 0 calc(50% - 2px);
   display: flex;
   align-items: center;
   gap: 6px;

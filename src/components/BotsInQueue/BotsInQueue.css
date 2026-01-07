@@ -1,7 +1,6 @@
-/* Card container - increase height and enable content wrapping */
+/* Card container - flexible height */
 .dashboard-cards.card-scroll {
-  min-height: 550px;
-  max-height: 700px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: linear-gradient(180deg,
@@ -67,16 +66,22 @@
 .queue-chip {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 999px;
+  gap: 4px;
+  font-size: 10px;
+  padding: 2px;
+  border-radius: 6px;
   background: #0b3940;
   color: #b8ffff;
+
 }
 
 .queue-chip i {
   font-size: 12px;
+}
+
+.queue-icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* COUNT */
@@ -99,6 +104,8 @@
   animation: glowPulse 0.6s ease-in-out;
   position: relative;
 }
+
+
 
 @keyframes glowPulse {
   0% {
