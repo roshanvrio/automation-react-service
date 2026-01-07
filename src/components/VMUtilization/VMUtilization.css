@@ -1,6 +1,6 @@
 .vm-grid {
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
+    grid-template-columns: repeat(17, 1fr);
     gap: 6px;
     /* reduced gap */
 }
@@ -31,4 +31,9 @@
     /* reduced */
     color: #0a0e27;
     line-height: 1;
+}
+
+.small-card-heights {
+    height: calc(100vh - 800px);
+
 }

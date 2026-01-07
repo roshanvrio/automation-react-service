@@ -2,7 +2,7 @@ import "./VMUtilization.css";
 
 const VMUtilization = ({ vmUtilizationUpdate }) => {
   return (
-    <div className="dashboard-card small-card-height">
+    <div className="dashboard-card small-card-heights">
 
       <h5 className="card-title mb-3">VM Utilization</h5>
 

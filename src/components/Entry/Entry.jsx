@@ -161,7 +161,38 @@ const Entry = ({ idleVmUpdate }) => {
     return vmList;
   };
 
+  // Group VMs into pairs for 2-column layout
+  const groupIntoPairs = (list) => {
+    const pairs = [];
+    for (let i = 0; i < list.length; i += 2) {
+      pairs.push(list.slice(i, i + 2));
+    }
+    return pairs;
+  };
+
   const vmList = buildVmList();
+  const vmPairs = groupIntoPairs(vmList);
+
+  // Render a single VM row
+  const renderVmRow = (vm, index) => {
+    const vmName = getVmName(vm);
+    const isHighlighted = highlightedVm &&
+      (highlightedVm === vmName ||
+       highlightedVm.toLowerCase() === vmName.toLowerCase());
+    const isGhost = vm.isGhost === true;
+    const isRemoving = removingVm === vmName;
+
+    return (
+      <div
+        className={`entry-row ${isHighlighted ? 'vm-highlighted' : ''} ${isGhost ? 'vm-ghost' : ''} ${isRemoving ? 'vm-removing' : ''}`}
+        key={vmName || index}
+        ref={setRowRef(vmName)}
+      >
+        <i className="bi bi-display"></i>
+        <span>{vmName}</span>
+      </div>
+    );
+  };
 
   return (
     <div className="dashboard-card entry-card">
@@ -169,26 +200,11 @@ const Entry = ({ idleVmUpdate }) => {
       <div className="entry-title">ENTRY</div>
 
       <div className="entry-list">
-        {vmList.map((vm, i) => {
-          const vmName = getVmName(vm);
-          // Check highlight with case-insensitive comparison for robustness
-          const isHighlighted = highlightedVm &&
-            (highlightedVm === vmName ||
-             highlightedVm.toLowerCase() === vmName.toLowerCase());
-          const isGhost = vm.isGhost === true;
-          const isRemoving = removingVm === vmName;
-
-          return (
-            <div
-              className={`entry-row ${isHighlighted ? 'vm-highlighted' : ''} ${isGhost ? 'vm-ghost' : ''} ${isRemoving ? 'vm-removing' : ''}`}
-              key={vmName || i}
-              ref={setRowRef(vmName)}
-            >
-              <i className="bi bi-display"></i>
-              <span>{vmName}</span>
-            </div>
-          );
-        })}
+        {vmPairs.map((pair, pairIndex) => (
+          <div className="entry-row-pair" key={pairIndex}>
+            {pair.map((vm, vmIndex) => renderVmRow(vm, pairIndex * 2 + vmIndex))}
+          </div>
+        ))}
       </div>
 
     </div>

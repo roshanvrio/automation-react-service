@@ -76,3 +76,11 @@
   background: rgba(0, 255, 200, 0.3);
   border-radius: 10px;
 }
+
+/* Right column grid - Entry on top, TopPerforming below */
+.right-column-grid {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 12px;
+  height: calc(100vh - 140px);
+}

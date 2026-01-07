@@ -198,14 +198,7 @@ const AppContent = () => {
               </div>
 
               <div className="col-12">
-                <div className="row gx-2">
-                  <div className="col-7">
-                    <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
-                  </div>
-                  <div className="col-5">
-                    <TopPerformingVM topPerformer={topPerformer} />
-                  </div>
-                </div>
+                <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
               </div>
 
 
@@ -221,9 +214,12 @@ const AppContent = () => {
             />
           </div>
 
-          {/* RIGHT COLUMN */}
+          {/* RIGHT COLUMN - Entry + TopPerforming stacked */}
           <div className="col-2">
-            <Entry idleVmUpdate={idleVmUpdate} />
+            <div className="right-column-grid">
+              <Entry idleVmUpdate={idleVmUpdate} />
+              <TopPerformingVM topPerformer={topPerformer} />
+            </div>
           </div>
         </div>
 
