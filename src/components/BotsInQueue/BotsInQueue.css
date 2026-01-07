@@ -1,7 +1,6 @@
-/* Card container - increase height and enable content wrapping */
+/* Card container - flexible height */
 .dashboard-cards.card-scroll {
-  min-height: 650px;
-  max-height: 700px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background: linear-gradient(180deg,

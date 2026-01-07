@@ -1,8 +1,9 @@
 .vm-grid {
     display: grid;
-    grid-template-columns: repeat(17, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+    grid-template-rows: repeat(3, 1fr);
     gap: 6px;
-    /* reduced gap */
+    overflow: hidden;
 }
 
 /* VM CELL – smaller */
@@ -34,6 +35,6 @@
 }
 
 .small-card-heights {
-    height: calc(100vh - 800px);
-
+    height: auto;
+    overflow: hidden;
 }
