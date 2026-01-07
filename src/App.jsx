@@ -40,6 +40,11 @@ const AppContent = () => {
   const [idleVmUpdate, setIdleVmUpdate] = useState([]);
   const [vmUtilizationUpdate, setVmUtilizationUpdate] = useState([]);
   const [topPerformer, setTopPerformer] = useState(null);
+  const [completedTransactions, setCompletedTransactions] = useState({
+    successful: [],
+    error: [],
+    exception: []
+  });
   const wsRef = useRef(null);
 
   // Sync metrics directly to target (with highlight animation)
@@ -148,6 +153,10 @@ const AppContent = () => {
             setVmUtilizationUpdate(message.data.vmUtilization || []);
             setTopPerformer(message.data.topPerformer || null);
           }
+          if (message.type === "completed_transactions_update" && message.data) {
+            console.log("Completed Transactions Update:", message.data);
+            setCompletedTransactions(message.data);
+          }
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
         }
@@ -203,6 +212,7 @@ const AppContent = () => {
               activeVmUpdate={activeVmUpdate}
               onVmProcessed={onVmProcessed}
               pendingVmCountRef={pendingVmCountRef}
+              completedTransactions={completedTransactions}
             />
           </div>
 

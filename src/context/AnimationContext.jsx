@@ -26,6 +26,8 @@ export const AnimationProvider = ({ children }) => {
   const [ghostVm, setGhostVm] = useState(null);
   // Ghost Bot to show in BotsInQueue during animation (in case it's removed from queue)
   const [ghostBot, setGhostBot] = useState(null);
+  // Track VMs completing transactions with outcome
+  const [completingVms, setCompletingVms] = useState(new Map()); // Map<machineName, outcome>
 
   // Refs for element positions
   const botRefs = useRef({});
@@ -248,6 +250,36 @@ export const AnimationProvider = ({ children }) => {
     });
   }, []);
 
+  // Queue completion animation for a VM
+  const queueCompletionAnimation = useCallback((machineName, outcome) => {
+    console.log(`Queueing completion animation for ${machineName} with outcome: ${outcome}`);
+
+    setCompletingVms(prev => {
+      const newMap = new Map(prev);
+      newMap.set(machineName, outcome);
+      return newMap;
+    });
+
+    // Auto-clear after animation completes (blink duration)
+    setTimeout(() => {
+      setCompletingVms(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(machineName);
+        return newMap;
+      });
+    }, 1600); // 1.6 second blink animation (4 blinks)
+  }, []);
+
+  // Check if VM is currently completing (for applying blink class)
+  const isVmCompleting = useCallback((machineName) => {
+    return completingVms.has(machineName);
+  }, [completingVms]);
+
+  // Get completion outcome for a VM
+  const getVmCompletionOutcome = useCallback((machineName) => {
+    return completingVms.get(machineName);
+  }, [completingVms]);
+
   // Check if a VM should be visible in ActiveVMs
   const isVmVisible = useCallback((machineName) => {
     // VM is visible if it has completed animation
@@ -284,7 +316,11 @@ export const AnimationProvider = ({ children }) => {
     getAnimatingVms,
     completedAnimations,
     clearCompletedAnimation,
-    pendingAnimations
+    pendingAnimations,
+    queueCompletionAnimation,
+    isVmCompleting,
+    getVmCompletionOutcome,
+    completingVms
   };
 
   return (
