@@ -8,6 +8,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     registerActiveCenter,
     queueAnimations,
     queueCompletionAnimation,
+    queueExitAnimation,
     isVmCompleting,
     getVmCompletionOutcome
   } = useAnimation();
@@ -150,25 +151,25 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
           console.log(`VM ${removedVm.machineName} completed with outcome: ${outcome}`);
           console.log(`📊 Checking against completedTransactions:`, latestCompletedData);
 
-          // Trigger completion animation
+          // Trigger completion blink animation
           queueCompletionAnimation(removedVm.machineName, outcome);
           console.log(`✨ Completion animation queued for ${removedVm.machineName} with outcome: ${outcome}`);
+
+          // After blink animation (2.5s), trigger exit animation and remove from display
+          setTimeout(() => {
+            console.log(`🚀 Starting exit animation for ${removedVm.machineName}`);
+            queueExitAnimation(removedVm, outcome);
+
+            // Remove from displayed VMs immediately after fade-out (the flying icon takes over)
+            seenVmsRef.current.delete(removedVm.machineName);
+            completingVmsRef.current.delete(removedVm.machineName);
+            setDisplayedVMs(prev => prev.filter(vm => vm.machineName !== removedVm.machineName));
+            console.log(`🗑️ Removed ${removedVm.machineName} from displayed VMs`);
+          }, 2700); // 2.5s blink + 0.2s fade-out
         });
       }, 100); // Small delay to ensure completedTransactions is updated
-
-      // Remove from seen set and displayed VMs after animation delay (2.5s blink + 0.5s fade)
-      setTimeout(() => {
-        // Remove only the specific VMs that were detected as removed
-        const removedNames = new Set(removedVMs.map(vm => vm.machineName));
-        console.log(`🗑️ Removing VMs after blink animation:`, Array.from(removedNames));
-        removedNames.forEach(name => {
-          seenVmsRef.current.delete(name);
-          completingVmsRef.current.delete(name);
-        });
-        setDisplayedVMs(prev => prev.filter(vm => !removedNames.has(vm.machineName)));
-      }, 3000); // 2.5s blink + 0.5s fade = 3s total
     }
-  }, [activeVmUpdate, displayedVMs, processQueue, queueCompletionAnimation]);
+  }, [activeVmUpdate, displayedVMs, processQueue, queueCompletionAnimation, queueExitAnimation]);
 
   // Determine transaction outcome by matching transactionId
   const determineOutcome = (vm, completedTransactionsData) => {

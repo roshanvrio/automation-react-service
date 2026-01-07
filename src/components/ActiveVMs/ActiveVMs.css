@@ -1000,11 +1000,12 @@
 }
 
 /* Apply fade-out to entire wrapper during completion (starts after 2.5s blink) */
+/* Quick fade-out (0.2s) to transition into exit animation flying back to Entry */
 .hex-wrapper.blink-success,
 .hex-wrapper.blink-error,
 .hex-wrapper.blink-exception,
 .hex-wrapper.blink-unknown {
-  animation: hex-fade-out 0.5s ease-in 2.5s forwards;
+  animation: hex-fade-out 0.2s ease-in 2.5s forwards;
 }
 
 /* Unknown outcome - neutral gray blink */

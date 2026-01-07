@@ -123,10 +123,50 @@
   }
 }
 
-/* Ghost VM - temporary placeholder during animation */
+/* Ghost VM - temporary placeholder during entry animation (VM leaving Entry) */
 .entry-row.vm-ghost {
   opacity: 0.7;
   border: 1px dashed rgba(0, 255, 136, 0.5);
+}
+
+/* Landing Ghost VM - placeholder during exit animation (VM returning to Entry) */
+.entry-row.vm-landing {
+  animation: vmLandingPulse 0.6s ease-in-out infinite;
+  border: 1px dashed rgba(0, 230, 255, 0.6);
+  position: relative;
+}
+
+.entry-row.vm-landing::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 230, 255, 0.4);
+  animation: vmLandingRing 0.8s ease-out infinite;
+}
+
+@keyframes vmLandingPulse {
+  0%, 100% {
+    opacity: 0.4;
+    background: linear-gradient(90deg, #0e3a44, #0b2730);
+    box-shadow: inset 0 0 10px rgba(0, 230, 255, 0.3);
+  }
+  50% {
+    opacity: 0.7;
+    background: linear-gradient(90deg, #124a56, #0d3540);
+    box-shadow: inset 0 0 20px rgba(0, 230, 255, 0.5), 0 0 15px rgba(0, 230, 255, 0.3);
+  }
+}
+
+@keyframes vmLandingRing {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0;
+  }
 }
 
 /* Removal animation - blink before removing */

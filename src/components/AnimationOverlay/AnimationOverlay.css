@@ -314,6 +314,260 @@
 }
 
 /* ========================================
+   EXIT ANIMATION - VM flying back to Entry
+   ======================================== */
+
+/* Exit animation - flies from center to right */
+.flying-icon.vm-icon-exit {
+  animation: flyToRight 1.8s ease-in-out forwards;
+}
+
+/* Exit animation styling based on outcome */
+.flying-icon.vm-icon-exit.exit-success .flying-icon-inner {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.4), rgba(46, 125, 50, 0.5));
+  border: 2px solid rgba(76, 175, 80, 0.9);
+  box-shadow:
+    0 0 20px rgba(76, 175, 80, 0.7),
+    0 0 40px rgba(46, 125, 50, 0.5),
+    inset 0 0 20px rgba(76, 175, 80, 0.3);
+  animation: pulseGlowSuccess 0.4s ease-in-out infinite alternate;
+}
+
+.flying-icon.vm-icon-exit.exit-success .flying-icon-inner i {
+  color: #4caf50;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.9);
+}
+
+.flying-icon.vm-icon-exit.exit-error .flying-icon-inner {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.4), rgba(183, 28, 28, 0.5));
+  border: 2px solid rgba(244, 67, 54, 0.9);
+  box-shadow:
+    0 0 20px rgba(244, 67, 54, 0.7),
+    0 0 40px rgba(183, 28, 28, 0.5),
+    inset 0 0 20px rgba(244, 67, 54, 0.3);
+  animation: pulseGlowError 0.4s ease-in-out infinite alternate;
+}
+
+.flying-icon.vm-icon-exit.exit-error .flying-icon-inner i {
+  color: #f44336;
+  text-shadow: 0 0 10px rgba(244, 67, 54, 0.9);
+}
+
+.flying-icon.vm-icon-exit.exit-exception .flying-icon-inner {
+  background: linear-gradient(135deg, rgba(183, 92, 255, 0.4), rgba(106, 27, 154, 0.5));
+  border: 2px solid rgba(183, 92, 255, 0.9);
+  box-shadow:
+    0 0 20px rgba(183, 92, 255, 0.7),
+    0 0 40px rgba(106, 27, 154, 0.5),
+    inset 0 0 20px rgba(183, 92, 255, 0.3);
+  animation: pulseGlowException 0.4s ease-in-out infinite alternate;
+}
+
+.flying-icon.vm-icon-exit.exit-exception .flying-icon-inner i {
+  color: #b75cff;
+  text-shadow: 0 0 10px rgba(183, 92, 255, 0.9);
+}
+
+.flying-icon.vm-icon-exit.exit-unknown .flying-icon-inner {
+  background: linear-gradient(135deg, rgba(158, 158, 158, 0.4), rgba(97, 97, 97, 0.5));
+  border: 2px solid rgba(158, 158, 158, 0.9);
+  box-shadow:
+    0 0 20px rgba(158, 158, 158, 0.7),
+    0 0 40px rgba(97, 97, 97, 0.5),
+    inset 0 0 20px rgba(158, 158, 158, 0.3);
+  animation: pulseGlowUnknown 0.4s ease-in-out infinite alternate;
+}
+
+.flying-icon.vm-icon-exit.exit-unknown .flying-icon-inner i {
+  color: #9e9e9e;
+  text-shadow: 0 0 10px rgba(158, 158, 158, 0.9);
+}
+
+/* Exit trail - trails to the left (icon moving right) */
+.flying-trail.vm-trail-exit {
+  left: 0;
+  transform: translate(-100%, -50%);
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.8));
+  animation: trailLeft 1.8s ease-in-out forwards;
+}
+
+.exit-success .flying-trail.vm-trail-exit {
+  background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.8));
+}
+
+.exit-error .flying-trail.vm-trail-exit {
+  background: linear-gradient(90deg, transparent, rgba(244, 67, 54, 0.8));
+}
+
+.exit-exception .flying-trail.vm-trail-exit {
+  background: linear-gradient(90deg, transparent, rgba(183, 92, 255, 0.8));
+}
+
+.exit-unknown .flying-trail.vm-trail-exit {
+  background: linear-gradient(90deg, transparent, rgba(158, 158, 158, 0.8));
+}
+
+/* Keyframe for flying from center to right (exit animation) */
+@keyframes flyToRight {
+  0% {
+    left: var(--start-x);
+    top: var(--start-y);
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  50% {
+    left: calc((var(--start-x) + var(--end-x)) / 2);
+    top: calc(var(--start-y) - 40px);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  85% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    left: var(--end-x);
+    top: var(--end-y);
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Pulse glow animations for different outcomes */
+@keyframes pulseGlowSuccess {
+  from {
+    box-shadow:
+      0 0 20px rgba(76, 175, 80, 0.7),
+      0 0 40px rgba(46, 125, 50, 0.5),
+      inset 0 0 20px rgba(76, 175, 80, 0.3);
+  }
+  to {
+    box-shadow:
+      0 0 30px rgba(76, 175, 80, 0.9),
+      0 0 60px rgba(46, 125, 50, 0.7),
+      inset 0 0 30px rgba(76, 175, 80, 0.4);
+  }
+}
+
+@keyframes pulseGlowError {
+  from {
+    box-shadow:
+      0 0 20px rgba(244, 67, 54, 0.7),
+      0 0 40px rgba(183, 28, 28, 0.5),
+      inset 0 0 20px rgba(244, 67, 54, 0.3);
+  }
+  to {
+    box-shadow:
+      0 0 30px rgba(244, 67, 54, 0.9),
+      0 0 60px rgba(183, 28, 28, 0.7),
+      inset 0 0 30px rgba(244, 67, 54, 0.4);
+  }
+}
+
+@keyframes pulseGlowException {
+  from {
+    box-shadow:
+      0 0 20px rgba(183, 92, 255, 0.7),
+      0 0 40px rgba(106, 27, 154, 0.5),
+      inset 0 0 20px rgba(183, 92, 255, 0.3);
+  }
+  to {
+    box-shadow:
+      0 0 30px rgba(183, 92, 255, 0.9),
+      0 0 60px rgba(106, 27, 154, 0.7),
+      inset 0 0 30px rgba(183, 92, 255, 0.4);
+  }
+}
+
+@keyframes pulseGlowUnknown {
+  from {
+    box-shadow:
+      0 0 20px rgba(158, 158, 158, 0.7),
+      0 0 40px rgba(97, 97, 97, 0.5),
+      inset 0 0 20px rgba(158, 158, 158, 0.3);
+  }
+  to {
+    box-shadow:
+      0 0 30px rgba(158, 158, 158, 0.9),
+      0 0 60px rgba(97, 97, 97, 0.7),
+      inset 0 0 30px rgba(158, 158, 158, 0.4);
+  }
+}
+
+/* Landing effect at Entry */
+.landing-effect {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: landingAppear 1s ease-out forwards;
+  animation-delay: 1.2s;
+}
+
+.landing-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.landing-ring.landing-ring-1 {
+  width: clamp(30px, 3vmin, 50px);
+  height: clamp(30px, 3vmin, 50px);
+  animation: landingRingExpand 0.6s ease-out forwards;
+  animation-delay: 1.2s;
+}
+
+.landing-ring.landing-ring-2 {
+  width: clamp(50px, 5vmin, 80px);
+  height: clamp(50px, 5vmin, 80px);
+  animation: landingRingExpand 0.6s ease-out forwards;
+  animation-delay: 1.35s;
+}
+
+/* Landing ring colors based on outcome */
+.landing-ring.landing-success {
+  border: 2px solid rgba(76, 175, 80, 0.8);
+}
+
+.landing-ring.landing-error {
+  border: 2px solid rgba(244, 67, 54, 0.8);
+}
+
+.landing-ring.landing-exception {
+  border: 2px solid rgba(183, 92, 255, 0.8);
+}
+
+.landing-ring.landing-unknown {
+  border: 2px solid rgba(158, 158, 158, 0.8);
+}
+
+@keyframes landingAppear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes landingRingExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+    border-width: 3px;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+/* ========================================
    RESPONSIVE BREAKPOINTS FOR ANIMATION OVERLAY
    ======================================== */
 

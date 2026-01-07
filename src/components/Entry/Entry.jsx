@@ -3,7 +3,7 @@ import { useAnimation } from "../../context/AnimationContext";
 import "./Entry.css";
 
 const Entry = ({ idleVmUpdate }) => {
-  const { registerVmRef, highlightedVm, ghostVm } = useAnimation();
+  const { registerVmRef, highlightedVm, ghostVm, landingGhostVm } = useAnimation();
   const rowRefs = useRef({});
 
   // Displayed VMs - what's actually rendered on screen
@@ -151,11 +151,19 @@ const Entry = ({ idleVmUpdate }) => {
   const buildVmList = () => {
     const vmList = [...displayedVMs];
 
-    // Add ghost VM if it's not already in the list
+    // Add ghost VM if it's not already in the list (entry animation - VM leaving Entry)
     if (ghostVm && ghostVm.name) {
       const ghostExists = vmList.some(vm => getVmName(vm) === ghostVm.name);
       if (!ghostExists) {
         vmList.push({ name: ghostVm.name, isGhost: true });
+      }
+    }
+
+    // Add landing ghost VM if it's not already in the list (exit animation - VM returning to Entry)
+    if (landingGhostVm && landingGhostVm.name) {
+      const landingExists = vmList.some(vm => getVmName(vm) === landingGhostVm.name);
+      if (!landingExists) {
+        vmList.push({ name: landingGhostVm.name, isLandingGhost: true });
       }
     }
 
@@ -181,11 +189,12 @@ const Entry = ({ idleVmUpdate }) => {
       (highlightedVm === vmName ||
        highlightedVm.toLowerCase() === vmName.toLowerCase());
     const isGhost = vm.isGhost === true;
+    const isLandingGhost = vm.isLandingGhost === true;
     const isRemoving = removingVm === vmName;
 
     return (
       <div
-        className={`entry-row ${isHighlighted ? 'vm-highlighted' : ''} ${isGhost ? 'vm-ghost' : ''} ${isRemoving ? 'vm-removing' : ''}`}
+        className={`entry-row ${isHighlighted ? 'vm-highlighted' : ''} ${isGhost ? 'vm-ghost' : ''} ${isLandingGhost ? 'vm-landing' : ''} ${isRemoving ? 'vm-removing' : ''}`}
         key={vmName || index}
         ref={setRowRef(vmName)}
       >

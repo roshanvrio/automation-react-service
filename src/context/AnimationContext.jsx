@@ -28,6 +28,10 @@ export const AnimationProvider = ({ children }) => {
   const [ghostBot, setGhostBot] = useState(null);
   // Track VMs completing transactions with outcome
   const [completingVms, setCompletingVms] = useState(new Map()); // Map<machineName, outcome>
+  // Exit animation state - VM flying back to Entry
+  const [exitAnimation, setExitAnimation] = useState(null);
+  // Ghost VM to show in Entry during exit animation (landing target)
+  const [landingGhostVm, setLandingGhostVm] = useState(null);
 
   // Refs for element positions
   const botRefs = useRef({});
@@ -89,6 +93,27 @@ export const AnimationProvider = ({ children }) => {
       width: 100,
       height: 40
     };
+  };
+
+  // Get Entry panel position for exit animation target
+  const getEntryTargetPosition = (machineName) => {
+    // Try to get cached position from vmRefs
+    const { element } = findVmElement(machineName);
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        width: rect.width,
+        height: rect.height
+      };
+    }
+    // Use cached position if available
+    if (vmPositionsCache.current[machineName]) {
+      return vmPositionsCache.current[machineName];
+    }
+    // Fallback to right side of screen
+    return getFallbackVmPosition();
   };
 
   // Process the next animation in queue
@@ -250,7 +275,7 @@ export const AnimationProvider = ({ children }) => {
     });
   }, []);
 
-  // Queue completion animation for a VM
+  // Queue completion animation for a VM (just sets the blink state, no removal)
   const queueCompletionAnimation = useCallback((machineName, outcome) => {
     console.log(`Queueing completion animation for ${machineName} with outcome: ${outcome}`);
 
@@ -259,15 +284,53 @@ export const AnimationProvider = ({ children }) => {
       newMap.set(machineName, outcome);
       return newMap;
     });
+  }, []);
 
-    // Auto-clear after animation completes (2.5s blink + 0.5s fade = 3s total)
+  // Queue exit animation - VM flies back to Entry list
+  const queueExitAnimation = useCallback((vmData, outcome) => {
+    const { machineName } = vmData;
+    console.log(`Queueing exit animation for ${machineName} with outcome: ${outcome}`);
+
+    // Get center position (start point - from ActiveVMs)
+    const centerElement = activeCenterRef.current;
+    const centerPos = getElementPosition(centerElement);
+
+    // Always use right side position for exit animation (where Entry is located)
+    // This matches the entry animation behavior
+    const entryTargetPos = getFallbackVmPosition();
+
+    console.log("Exit animation positions:", {
+      center: centerPos,
+      entryTarget: entryTargetPos,
+      machineName
+    });
+
+    // Set landing ghost in Entry to show where VM will land
+    setLandingGhostVm({
+      name: machineName,
+      position: entryTargetPos
+    });
+
+    // Start exit animation
+    setExitAnimation({
+      machineName,
+      outcome,
+      startPosition: centerPos,
+      endPosition: entryTargetPos,
+      id: Date.now()
+    });
+
+    // Clear exit animation after it completes (1.8s fly animation)
     setTimeout(() => {
+      setExitAnimation(null);
+      setLandingGhostVm(null);
+      // Clear the completing state after exit animation
       setCompletingVms(prev => {
         const newMap = new Map(prev);
         newMap.delete(machineName);
         return newMap;
       });
-    }, 3000); // 3 second animation (2.5s blink + 0.5s fade)
+    }, 1800);
   }, []);
 
   // Check if VM is currently completing (for applying blink class)
@@ -318,9 +381,12 @@ export const AnimationProvider = ({ children }) => {
     clearCompletedAnimation,
     pendingAnimations,
     queueCompletionAnimation,
+    queueExitAnimation,
     isVmCompleting,
     getVmCompletionOutcome,
-    completingVms
+    completingVms,
+    exitAnimation,
+    landingGhostVm
   };
 
   return (

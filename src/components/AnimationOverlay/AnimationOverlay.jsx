@@ -2,23 +2,26 @@ import { useAnimation } from "../../context/AnimationContext";
 import "./AnimationOverlay.css";
 
 const AnimationOverlay = () => {
-  const { currentAnimation, animationPhase } = useAnimation();
+  const { currentAnimation, animationPhase, exitAnimation } = useAnimation();
 
-  // Only show flying animation during "fly" phase
-  if (!currentAnimation || animationPhase !== "fly") return null;
+  // Show entry animation during "fly" phase OR exit animation
+  const showEntryAnimation = currentAnimation && animationPhase === "fly";
+  const showExitAnimation = exitAnimation !== null;
 
-  const { botPosition, vmPosition, centerPosition, processName, machineName, triggerIndication } = currentAnimation;
+  if (!showEntryAnimation && !showExitAnimation) return null;
+
+  const { botPosition, vmPosition, centerPosition, processName, machineName, triggerIndication } = currentAnimation || {};
 
   // Calculate if we have valid positions
   const hasBotAnimation = botPosition && centerPosition;
   const hasVmAnimation = vmPosition && centerPosition;
 
-  console.log("AnimationOverlay rendering:", { hasBotAnimation, hasVmAnimation, vmPosition });
+  console.log("AnimationOverlay rendering:", { hasBotAnimation, hasVmAnimation, vmPosition, showExitAnimation });
 
   return (
     <div className="animation-overlay">
-      {/* Bot icon flying from left */}
-      {hasBotAnimation && (
+      {/* Bot icon flying from left (entry animation only) */}
+      {showEntryAnimation && hasBotAnimation && (
         <div
           className="flying-icon bot-icon"
           style={{
@@ -36,8 +39,8 @@ const AnimationOverlay = () => {
         </div>
       )}
 
-      {/* VM icon flying from right */}
-      {hasVmAnimation && (
+      {/* VM icon flying from right (entry animation only) */}
+      {showEntryAnimation && hasVmAnimation && (
         <div
           className="flying-icon vm-icon"
           style={{
@@ -56,7 +59,7 @@ const AnimationOverlay = () => {
       )}
 
       {/* Center merge effect */}
-      {(hasBotAnimation || hasVmAnimation) && centerPosition && (
+      {showEntryAnimation && (hasBotAnimation || hasVmAnimation) && centerPosition && (
         <div
           className="merge-effect"
           style={{
@@ -70,6 +73,40 @@ const AnimationOverlay = () => {
           <div className="merge-icon">
             <span>{triggerIndication === "Email" ? "✉" : "🕐"}</span>
           </div>
+        </div>
+      )}
+
+      {/* Exit animation - VM flying back to Entry */}
+      {showExitAnimation && exitAnimation.startPosition && exitAnimation.endPosition && (
+        <div
+          className={`flying-icon vm-icon-exit exit-${exitAnimation.outcome}`}
+          key={exitAnimation.id}
+          style={{
+            '--start-x': `${exitAnimation.startPosition.x}px`,
+            '--start-y': `${exitAnimation.startPosition.y}px`,
+            '--end-x': `${exitAnimation.endPosition.x}px`,
+            '--end-y': `${exitAnimation.endPosition.y}px`
+          }}
+        >
+          <div className="flying-icon-inner">
+            <i className="bi bi-display"></i>
+            <span className="flying-label">{exitAnimation.machineName}</span>
+          </div>
+          <div className="flying-trail vm-trail-exit"></div>
+        </div>
+      )}
+
+      {/* Landing effect at Entry */}
+      {showExitAnimation && exitAnimation.endPosition && (
+        <div
+          className="landing-effect"
+          style={{
+            left: `${exitAnimation.endPosition.x}px`,
+            top: `${exitAnimation.endPosition.y}px`
+          }}
+        >
+          <div className={`landing-ring landing-ring-1 landing-${exitAnimation.outcome}`}></div>
+          <div className={`landing-ring landing-ring-2 landing-${exitAnimation.outcome}`}></div>
         </div>
       )}
     </div>
