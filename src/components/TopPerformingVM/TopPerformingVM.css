@@ -2,14 +2,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px 0;
+  padding: clamp(3px, 0.4vmin, 8px) 0;
   width: 100%;
 }
 
 .performer-badge {
   position: relative;
-  width: clamp(100px, 10vw, 140px);
-  height: clamp(100px, 10vw, 140px);
+  width: clamp(80px, 8vmin, 160px);
+  height: clamp(80px, 8vmin, 160px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +50,7 @@
   top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: clamp(8px, 0.8vw, 12px);
+  font-size: clamp(6px, 0.6vmin, 12px);
   color: #00ff88;
   text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 16px rgba(0, 255, 136, 0.5);
   animation: starGlow 1.5s ease-in-out infinite;
@@ -91,12 +91,11 @@
   top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: clamp(6px, 0.6vw, 8px);
+  font-size: clamp(5px, 0.45vmin, 8px);
   color: #00ff88;
   text-shadow: 0 0 6px rgba(0, 255, 136, 0.8), 0 0 12px rgba(0, 255, 136, 0.5);
   animation: starGlow 2s ease-in-out infinite;
 }
-
 
 /* Center content circle */
 .performer-content {
@@ -106,8 +105,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: clamp(45px, 4.5vw, 55px);
-  height: clamp(45px, 4.5vw, 55px);
+  width: clamp(36px, 3.6vmin, 65px);
+  height: clamp(36px, 3.6vmin, 65px);
   background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, rgba(10, 14, 39, 0.9) 100%);
   border: 2px dashed #00ff88;
   border-radius: 50%;
@@ -119,7 +118,7 @@
 }
 
 .performer-vm-id {
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: clamp(9px, 0.9vmin, 16px);
   font-weight: 700;
   color: #00ff88;
   font-family: 'Courier New', monospace;
@@ -128,9 +127,9 @@
 }
 
 .performer-time {
-  font-size: clamp(6px, 0.6vw, 8px);
+  font-size: clamp(5px, 0.5vmin, 9px);
   color: #34d399;
-  margin-top: 2px;
+  margin-top: clamp(1px, 0.15vmin, 3px);
   line-height: 1;
   text-shadow: 0 0 5px rgba(52, 211, 153, 0.5);
 }
@@ -140,7 +139,6 @@
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(360deg);
   }
@@ -150,21 +148,17 @@
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(-360deg);
   }
 }
 
 @keyframes starGlow {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.7;
     text-shadow: 0 0 8px rgba(0, 255, 136, 0.8), 0 0 16px rgba(0, 255, 136, 0.5);
     transform: translateX(-50%) scale(1);
   }
-
   50% {
     opacity: 1;
     text-shadow: 0 0 12px rgba(0, 255, 136, 1), 0 0 24px rgba(0, 255, 136, 0.8), 0 0 36px rgba(0, 255, 136, 0.4);
@@ -173,13 +167,10 @@
 }
 
 @keyframes dashGlow {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.4;
     filter: drop-shadow(0 0 2px rgba(0, 255, 136, 0.5));
   }
-
   50% {
     opacity: 0.9;
     filter: drop-shadow(0 0 6px rgba(0, 255, 136, 1));
@@ -187,19 +178,320 @@
 }
 
 @keyframes centerGlow {
-
-  0%,
-  100% {
+  0%, 100% {
     box-shadow:
       0 0 20px rgba(0, 255, 136, 0.4),
       0 0 40px rgba(0, 255, 136, 0.2),
       inset 0 0 20px rgba(0, 255, 136, 0.1);
   }
-
   50% {
     box-shadow:
       0 0 30px rgba(0, 255, 136, 0.6),
       0 0 60px rgba(0, 255, 136, 0.3),
       inset 0 0 30px rgba(0, 255, 136, 0.2);
+  }
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS FOR TOP PERFORMING VM
+   ======================================== */
+
+/* 4K / Ultra-wide (3440px+) */
+@media (min-width: 3440px) {
+  .performer-display {
+    padding: 10px 0;
+  }
+
+  .performer-badge {
+    width: 180px;
+    height: 180px;
+  }
+
+  .star-icon {
+    font-size: 14px;
+  }
+
+  .star-icon-inner {
+    font-size: 10px;
+  }
+
+  .performer-content {
+    width: 75px;
+    height: 75px;
+    border-width: 3px;
+  }
+
+  .performer-vm-id {
+    font-size: 18px;
+  }
+
+  .performer-time {
+    font-size: 10px;
+    margin-top: 4px;
+  }
+}
+
+/* 2K / QHD (2560px - 3439px) */
+@media (min-width: 2560px) and (max-width: 3439px) {
+  .performer-display {
+    padding: 8px 0;
+  }
+
+  .performer-badge {
+    width: 160px;
+    height: 160px;
+  }
+
+  .star-icon {
+    font-size: 12px;
+  }
+
+  .star-icon-inner {
+    font-size: 9px;
+  }
+
+  .performer-content {
+    width: 65px;
+    height: 65px;
+  }
+
+  .performer-vm-id {
+    font-size: 16px;
+  }
+
+  .performer-time {
+    font-size: 9px;
+    margin-top: 3px;
+  }
+}
+
+/* Full HD (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .performer-display {
+    padding: 6px 0;
+  }
+
+  .performer-badge {
+    width: 140px;
+    height: 140px;
+  }
+
+  .star-icon {
+    font-size: 11px;
+  }
+
+  .star-icon-inner {
+    font-size: 8px;
+  }
+
+  .performer-content {
+    width: 55px;
+    height: 55px;
+  }
+
+  .performer-vm-id {
+    font-size: 14px;
+  }
+
+  .performer-time {
+    font-size: 8px;
+    margin-top: 2px;
+  }
+}
+
+/* HD+ (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .performer-display {
+    padding: 5px 0;
+  }
+
+  .performer-badge {
+    width: 120px;
+    height: 120px;
+  }
+
+  .star-icon {
+    font-size: 10px;
+  }
+
+  .star-icon-inner {
+    font-size: 7px;
+  }
+
+  .performer-content {
+    width: 48px;
+    height: 48px;
+  }
+
+  .performer-vm-id {
+    font-size: 12px;
+  }
+
+  .performer-time {
+    font-size: 7px;
+    margin-top: 2px;
+  }
+}
+
+/* HD (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .performer-display {
+    padding: 4px 0;
+  }
+
+  .performer-badge {
+    width: 100px;
+    height: 100px;
+  }
+
+  .star-icon {
+    font-size: 9px;
+  }
+
+  .star-icon-inner {
+    font-size: 6px;
+  }
+
+  .performer-content {
+    width: 42px;
+    height: 42px;
+  }
+
+  .performer-vm-id {
+    font-size: 11px;
+  }
+
+  .performer-time {
+    font-size: 6px;
+    margin-top: 1px;
+  }
+}
+
+/* Tablet Landscape (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .performer-badge {
+    width: 90px;
+    height: 90px;
+  }
+
+  .star-icon {
+    font-size: 8px;
+  }
+
+  .star-icon-inner {
+    font-size: 6px;
+  }
+
+  .performer-content {
+    width: 38px;
+    height: 38px;
+  }
+
+  .performer-vm-id {
+    font-size: 10px;
+  }
+
+  .performer-time {
+    font-size: 6px;
+  }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .performer-display {
+    padding: 4px 0;
+  }
+
+  .performer-badge {
+    width: 85px;
+    height: 85px;
+  }
+
+  .star-icon {
+    font-size: 7px;
+  }
+
+  .star-icon-inner {
+    font-size: 5px;
+  }
+
+  .performer-content {
+    width: 35px;
+    height: 35px;
+  }
+
+  .performer-vm-id {
+    font-size: 9px;
+  }
+
+  .performer-time {
+    font-size: 5px;
+  }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .performer-display {
+    padding: 6px 0;
+  }
+
+  .performer-badge {
+    width: 110px;
+    height: 110px;
+  }
+
+  .star-icon {
+    font-size: 9px;
+  }
+
+  .star-icon-inner {
+    font-size: 7px;
+  }
+
+  .performer-content {
+    width: 45px;
+    height: 45px;
+  }
+
+  .performer-vm-id {
+    font-size: 12px;
+  }
+
+  .performer-time {
+    font-size: 7px;
+    margin-top: 2px;
+  }
+}
+
+/* Extra small mobile (< 480px) */
+@media (max-width: 479px) {
+  .performer-display {
+    padding: 5px 0;
+  }
+
+  .performer-badge {
+    width: 95px;
+    height: 95px;
+  }
+
+  .star-icon {
+    font-size: 8px;
+  }
+
+  .star-icon-inner {
+    font-size: 6px;
+  }
+
+  .performer-content {
+    width: 40px;
+    height: 40px;
+  }
+
+  .performer-vm-id {
+    font-size: 11px;
+  }
+
+  .performer-time {
+    font-size: 6px;
   }
 }

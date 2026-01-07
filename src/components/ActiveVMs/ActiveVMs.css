@@ -3,27 +3,31 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
+  height: 100%;
 }
 
 /* Header */
 .activevms-header {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
-  margin-bottom: 12px;
+  font-size: clamp(11px, 0.9vmin, 15px);
+  margin-bottom: clamp(8px, 0.9vmin, 14px);
+  flex-wrap: wrap;
+  gap: clamp(6px, 0.5vmin, 10px);
 }
 
 /* Legend */
 .legend span {
-  margin-left: 12px;
-  font-size: 11px;
+  margin-left: clamp(8px, 0.8vmin, 14px);
+  font-size: clamp(9px, 0.8vmin, 13px);
   position: relative;
-  padding-left: 14px;
+  padding-left: clamp(10px, 1vmin, 16px);
 }
 
 .legend span::before {
   content: "";
-  width: 8px;
+  width: clamp(6px, 0.6vmin, 10px);
   height: 2px;
   position: absolute;
   left: 0;
@@ -47,22 +51,23 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 6px;
+  padding-right: clamp(4px, 0.4vmin, 8px);
+  min-height: 0;
 }
 
-/* Grid */
+/* Grid - Responsive columns */
 .hex-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 34px;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 12vmin, 220px), 1fr));
+  gap: clamp(20px, 2.5vmin, 40px);
   justify-items: center;
 }
 
 /* Wrapper keeps outline + card aligned */
 .hex-wrapper {
   position: relative;
-  width: 200px;
-  height: 170px;
+  width: clamp(140px, 12vmin, 220px);
+  height: clamp(120px, 10vmin, 190px);
 }
 
 /* Dotted border - flat top hexagon using SVG */
@@ -83,15 +88,12 @@
 /* Hex card - flat top hexagon */
 .hex-card {
   position: absolute;
-  inset: 6px;
+  inset: clamp(4px, 0.4vmin, 7px);
   background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
-
   clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
-
   box-shadow:
     inset 0 0 30px rgba(0, 150, 255, 0.3),
     inset 0 0 60px rgba(0, 100, 200, 0.2);
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,41 +103,44 @@
 .hex-content {
   text-align: center;
   color: #e5f0ff;
-  font-size: 11px;
+  font-size: clamp(9px, 0.8vmin, 12px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 8px;
+  gap: clamp(2px, 0.3vmin, 5px);
+  padding: clamp(5px, 0.5vmin, 10px);
 }
 
 .hex-small {
-  font-size: 9px;
+  font-size: clamp(7px, 0.65vmin, 10px);
   color: #8ec8ff;
 }
 
 .hex-vm {
-  font-size: 14px;
+  font-size: clamp(11px, 1vmin, 16px);
   font-weight: 700;
   color: #00e5ff;
-  margin: 4px 0;
+  margin: clamp(2px, 0.3vmin, 5px) 0;
 }
 
 .hex-name {
   background: linear-gradient(180deg, #0d7377 0%, #065a5c 100%);
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 9px;
+  padding: clamp(3px, 0.35vmin, 6px) clamp(6px, 0.7vmin, 12px);
+  border-radius: clamp(3px, 0.3vmin, 5px);
+  font-size: clamp(7px, 0.65vmin, 10px);
   font-weight: 500;
   color: #ffffff;
   white-space: nowrap;
   border: 1px solid rgba(0, 200, 200, 0.3);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hex-time {
-  font-size: 9px;
+  font-size: clamp(7px, 0.65vmin, 10px);
   color: #8ec8ff;
-  margin-top: 2px;
+  margin-top: clamp(1px, 0.15vmin, 3px);
 }
 
 .hex-time strong {
@@ -146,10 +151,10 @@
   align-self: center;
   background: linear-gradient(180deg, #ff6b35 0%, #e04500 100%);
   color: #fff;
-  font-size: 8px;
+  font-size: clamp(6px, 0.55vmin, 9px);
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 3px;
+  padding: clamp(1px, 0.15vmin, 3px) clamp(5px, 0.5vmin, 10px);
+  border-radius: clamp(2px, 0.2vmin, 4px);
   letter-spacing: 0.5px;
 }
 
@@ -219,3 +224,517 @@
   }
 }
 
+/* ========================================
+   RESPONSIVE BREAKPOINTS FOR ACTIVE VMS
+   ======================================== */
+
+/* 4K / Ultra-wide (3440px+) */
+@media (min-width: 3440px) {
+  .activevms-header {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .legend span {
+    font-size: 14px;
+    margin-left: 16px;
+    padding-left: 18px;
+  }
+
+  .legend span::before {
+    width: 12px;
+    height: 3px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 45px;
+  }
+
+  .hex-wrapper {
+    width: 240px;
+    height: 205px;
+  }
+
+  .hex-card {
+    inset: 8px;
+  }
+
+  .hex-content {
+    font-size: 13px;
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .hex-small {
+    font-size: 11px;
+  }
+
+  .hex-vm {
+    font-size: 18px;
+  }
+
+  .hex-name {
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 6px;
+  }
+
+  .hex-time {
+    font-size: 11px;
+  }
+
+  .uipath {
+    font-size: 10px;
+    padding: 4px 12px;
+  }
+}
+
+/* 2K / QHD (2560px - 3439px) */
+@media (min-width: 2560px) and (max-width: 3439px) {
+  .activevms-header {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  .legend span {
+    font-size: 12px;
+    margin-left: 14px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 38px;
+  }
+
+  .hex-wrapper {
+    width: 210px;
+    height: 180px;
+  }
+
+  .hex-content {
+    font-size: 12px;
+    gap: 5px;
+  }
+
+  .hex-small {
+    font-size: 10px;
+  }
+
+  .hex-vm {
+    font-size: 16px;
+  }
+
+  .hex-name {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+
+  .hex-time {
+    font-size: 10px;
+  }
+
+  .uipath {
+    font-size: 9px;
+  }
+}
+
+/* Full HD (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .activevms-header {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .legend span {
+    font-size: 11px;
+    margin-left: 12px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 34px;
+  }
+
+  .hex-wrapper {
+    width: 200px;
+    height: 170px;
+  }
+
+  .hex-content {
+    font-size: 11px;
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .hex-small {
+    font-size: 9px;
+  }
+
+  .hex-vm {
+    font-size: 14px;
+  }
+
+  .hex-name {
+    font-size: 9px;
+    padding: 5px 10px;
+  }
+
+  .hex-time {
+    font-size: 9px;
+  }
+
+  .uipath {
+    font-size: 8px;
+    padding: 2px 8px;
+  }
+}
+
+/* HD+ (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .activevms-header {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .legend span {
+    font-size: 10px;
+    margin-left: 10px;
+    padding-left: 12px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
+  }
+
+  .hex-wrapper {
+    width: 170px;
+    height: 145px;
+  }
+
+  .hex-content {
+    font-size: 10px;
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .hex-small {
+    font-size: 8px;
+  }
+
+  .hex-vm {
+    font-size: 12px;
+  }
+
+  .hex-name {
+    font-size: 8px;
+    padding: 4px 8px;
+    border-radius: 3px;
+  }
+
+  .hex-time {
+    font-size: 8px;
+  }
+
+  .uipath {
+    font-size: 7px;
+    padding: 2px 6px;
+  }
+}
+
+/* HD (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .activevms-header {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .legend span {
+    font-size: 9px;
+    margin-left: 8px;
+    padding-left: 10px;
+  }
+
+  .legend span::before {
+    width: 6px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .hex-wrapper {
+    width: 150px;
+    height: 128px;
+  }
+
+  .hex-card {
+    inset: 5px;
+  }
+
+  .hex-content {
+    font-size: 9px;
+    gap: 2px;
+    padding: 5px;
+  }
+
+  .hex-small {
+    font-size: 7px;
+  }
+
+  .hex-vm {
+    font-size: 11px;
+  }
+
+  .hex-name {
+    font-size: 7px;
+    padding: 3px 6px;
+  }
+
+  .hex-time {
+    font-size: 7px;
+  }
+
+  .uipath {
+    font-size: 6px;
+    padding: 1px 5px;
+  }
+}
+
+/* Tablet Landscape (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .activevms-header {
+    font-size: 11px;
+  }
+
+  .legend span {
+    font-size: 9px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .hex-wrapper {
+    width: 140px;
+    height: 120px;
+  }
+
+  .hex-content {
+    font-size: 8px;
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .hex-small {
+    font-size: 7px;
+  }
+
+  .hex-vm {
+    font-size: 10px;
+  }
+
+  .hex-name {
+    font-size: 7px;
+    padding: 2px 5px;
+  }
+
+  .hex-time {
+    font-size: 7px;
+  }
+
+  .uipath {
+    font-size: 6px;
+  }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .activevms-header {
+    font-size: 10px;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .legend span {
+    font-size: 8px;
+    margin-left: 0;
+    padding-left: 10px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .hex-wrapper {
+    width: 130px;
+    height: 111px;
+  }
+
+  .hex-card {
+    inset: 4px;
+  }
+
+  .hex-content {
+    font-size: 8px;
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .hex-small {
+    font-size: 6px;
+  }
+
+  .hex-vm {
+    font-size: 10px;
+  }
+
+  .hex-name {
+    font-size: 6px;
+    padding: 2px 5px;
+  }
+
+  .hex-time {
+    font-size: 6px;
+  }
+
+  .uipath {
+    font-size: 5px;
+    padding: 1px 4px;
+  }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .activevms-header {
+    font-size: 11px;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .legend span {
+    font-size: 9px;
+    margin-left: 0;
+    padding-left: 12px;
+  }
+
+  .activevms-scroll {
+    padding-right: 4px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+  }
+
+  .hex-wrapper {
+    width: 140px;
+    height: 120px;
+  }
+
+  .hex-card {
+    inset: 5px;
+  }
+
+  .hex-content {
+    font-size: 9px;
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .hex-small {
+    font-size: 7px;
+  }
+
+  .hex-vm {
+    font-size: 11px;
+  }
+
+  .hex-name {
+    font-size: 7px;
+    padding: 3px 6px;
+    border-radius: 3px;
+  }
+
+  .hex-time {
+    font-size: 7px;
+  }
+
+  .uipath {
+    font-size: 6px;
+    padding: 2px 6px;
+  }
+}
+
+/* Extra small mobile (< 480px) */
+@media (max-width: 479px) {
+  .activevms-header {
+    font-size: 10px;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .legend span {
+    font-size: 8px;
+    padding-left: 10px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .hex-wrapper {
+    width: 120px;
+    height: 102px;
+  }
+
+  .hex-card {
+    inset: 4px;
+  }
+
+  .hex-content {
+    font-size: 8px;
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .hex-small {
+    font-size: 6px;
+  }
+
+  .hex-vm {
+    font-size: 10px;
+  }
+
+  .hex-name {
+    font-size: 6px;
+    padding: 2px 5px;
+  }
+
+  .hex-time {
+    font-size: 6px;
+  }
+
+  .uipath {
+    font-size: 5px;
+    padding: 1px 5px;
+  }
+}

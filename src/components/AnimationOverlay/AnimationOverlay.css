@@ -34,9 +34,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 12px 16px;
-  border-radius: 12px;
+  gap: clamp(2px, 0.3vmin, 5px);
+  padding: clamp(8px, 0.9vmin, 16px) clamp(10px, 1.1vmin, 20px);
+  border-radius: clamp(8px, 0.9vmin, 14px);
   backdrop-filter: blur(8px);
 }
 
@@ -52,7 +52,7 @@
 }
 
 .bot-icon .flying-icon-inner i {
-  font-size: 28px;
+  font-size: clamp(18px, 2vmin, 34px);
   color: #00e6ff;
   text-shadow: 0 0 10px rgba(0, 230, 255, 0.8);
 }
@@ -69,17 +69,17 @@
 }
 
 .vm-icon .flying-icon-inner i {
-  font-size: 28px;
+  font-size: clamp(18px, 2vmin, 34px);
   color: #00ff88;
   text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
 }
 
 .flying-label {
-  font-size: 10px;
+  font-size: clamp(8px, 0.75vmin, 12px);
   font-weight: 600;
   color: #fff;
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  max-width: 100px;
+  max-width: clamp(60px, 7vmin, 120px);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -90,8 +90,8 @@
 .flying-trail {
   position: absolute;
   top: 50%;
-  width: 60px;
-  height: 4px;
+  width: clamp(40px, 4vmin, 70px);
+  height: clamp(3px, 0.3vmin, 5px);
   border-radius: 2px;
   filter: blur(2px);
   opacity: 0;
@@ -132,22 +132,22 @@
 }
 
 .merge-ring.ring-1 {
-  width: 60px;
-  height: 60px;
+  width: clamp(40px, 4vmin, 70px);
+  height: clamp(40px, 4vmin, 70px);
   animation: ringExpand 0.8s ease-out forwards;
   animation-delay: 1.4s;
 }
 
 .merge-ring.ring-2 {
-  width: 100px;
-  height: 100px;
+  width: clamp(65px, 6.5vmin, 115px);
+  height: clamp(65px, 6.5vmin, 115px);
   animation: ringExpand 0.8s ease-out forwards;
   animation-delay: 1.5s;
 }
 
 .merge-ring.ring-3 {
-  width: 140px;
-  height: 140px;
+  width: clamp(90px, 9vmin, 160px);
+  height: clamp(90px, 9vmin, 160px);
   animation: ringExpand 0.8s ease-out forwards;
   animation-delay: 1.6s;
 }
@@ -157,7 +157,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  font-size: 32px;
+  font-size: clamp(22px, 2.2vmin, 38px);
   animation: iconPop 0.5s ease-out forwards;
   animation-delay: 1.6s;
 }
@@ -310,5 +310,396 @@
   100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+  }
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS FOR ANIMATION OVERLAY
+   ======================================== */
+
+/* 4K / Ultra-wide (3440px+) */
+@media (min-width: 3440px) {
+  .flying-icon-inner {
+    gap: 6px;
+    padding: 18px 22px;
+    border-radius: 16px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 38px;
+  }
+
+  .flying-label {
+    font-size: 14px;
+    max-width: 140px;
+  }
+
+  .flying-trail {
+    width: 80px;
+    height: 6px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 80px;
+    height: 80px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 130px;
+    height: 130px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 180px;
+    height: 180px;
+  }
+
+  .merge-icon {
+    font-size: 42px;
+  }
+}
+
+/* 2K / QHD (2560px - 3439px) */
+@media (min-width: 2560px) and (max-width: 3439px) {
+  .flying-icon-inner {
+    gap: 5px;
+    padding: 16px 20px;
+    border-radius: 14px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 34px;
+  }
+
+  .flying-label {
+    font-size: 12px;
+    max-width: 120px;
+  }
+
+  .flying-trail {
+    width: 70px;
+    height: 5px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 70px;
+    height: 70px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 115px;
+    height: 115px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 160px;
+    height: 160px;
+  }
+
+  .merge-icon {
+    font-size: 38px;
+  }
+}
+
+/* Full HD (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .flying-icon-inner {
+    gap: 4px;
+    padding: 12px 16px;
+    border-radius: 12px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 28px;
+  }
+
+  .flying-label {
+    font-size: 10px;
+    max-width: 100px;
+  }
+
+  .flying-trail {
+    width: 60px;
+    height: 4px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 60px;
+    height: 60px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 100px;
+    height: 100px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 140px;
+    height: 140px;
+  }
+
+  .merge-icon {
+    font-size: 32px;
+  }
+}
+
+/* HD+ (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .flying-icon-inner {
+    gap: 3px;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 24px;
+  }
+
+  .flying-label {
+    font-size: 9px;
+    max-width: 85px;
+  }
+
+  .flying-trail {
+    width: 50px;
+    height: 3px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 50px;
+    height: 50px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 85px;
+    height: 85px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 120px;
+    height: 120px;
+  }
+
+  .merge-icon {
+    font-size: 28px;
+  }
+}
+
+/* HD (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .flying-icon-inner {
+    gap: 3px;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 22px;
+  }
+
+  .flying-label {
+    font-size: 8px;
+    max-width: 75px;
+  }
+
+  .flying-trail {
+    width: 45px;
+    height: 3px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 45px;
+    height: 45px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 75px;
+    height: 75px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 105px;
+    height: 105px;
+  }
+
+  .merge-icon {
+    font-size: 26px;
+  }
+}
+
+/* Tablet Landscape (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .flying-icon-inner {
+    gap: 3px;
+    padding: 8px 10px;
+    border-radius: 8px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 20px;
+  }
+
+  .flying-label {
+    font-size: 8px;
+    max-width: 70px;
+  }
+
+  .flying-trail {
+    width: 40px;
+    height: 3px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 40px;
+    height: 40px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 65px;
+    height: 65px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 90px;
+    height: 90px;
+  }
+
+  .merge-icon {
+    font-size: 24px;
+  }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .flying-icon-inner {
+    gap: 2px;
+    padding: 7px 9px;
+    border-radius: 8px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 18px;
+  }
+
+  .flying-label {
+    font-size: 7px;
+    max-width: 60px;
+  }
+
+  .flying-trail {
+    width: 35px;
+    height: 2px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 35px;
+    height: 35px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 55px;
+    height: 55px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 75px;
+    height: 75px;
+  }
+
+  .merge-icon {
+    font-size: 22px;
+  }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .flying-icon-inner {
+    gap: 3px;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 22px;
+  }
+
+  .flying-label {
+    font-size: 8px;
+    max-width: 80px;
+  }
+
+  .flying-trail {
+    width: 45px;
+    height: 3px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 45px;
+    height: 45px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 75px;
+    height: 75px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 105px;
+    height: 105px;
+  }
+
+  .merge-icon {
+    font-size: 26px;
+  }
+}
+
+/* Extra small mobile (< 480px) */
+@media (max-width: 479px) {
+  .flying-icon-inner {
+    gap: 2px;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+
+  .bot-icon .flying-icon-inner i,
+  .vm-icon .flying-icon-inner i {
+    font-size: 20px;
+  }
+
+  .flying-label {
+    font-size: 7px;
+    max-width: 65px;
+  }
+
+  .flying-trail {
+    width: 40px;
+    height: 3px;
+  }
+
+  .merge-ring.ring-1 {
+    width: 40px;
+    height: 40px;
+  }
+
+  .merge-ring.ring-2 {
+    width: 65px;
+    height: 65px;
+  }
+
+  .merge-ring.ring-3 {
+    width: 90px;
+    height: 90px;
+  }
+
+  .merge-icon {
+    font-size: 24px;
   }
 }
