@@ -39,7 +39,7 @@ const TopPerformingVM = ({ topPerformer }) => {
           {/* Center circle with VM info */}
           <div className="performer-content">
             <span className="performer-vm-id">{topPerformer?.vmName || "N/A"}</span>
-            <span className="performer-time">{topPerformer?.utilizationHours || 0} hrs</span>
+            <span className="performer-time">{topPerformer?.utilizationMinutes ? (topPerformer.utilizationMinutes / 60).toFixed(1) : 0} hrs</span>
           </div>
         </div>
       </div>
