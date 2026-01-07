@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAnimation } from "../../context/AnimationContext";
 import "./BotsInQueue.css";
+import Queue from "../../assets/Queue.png"
 
 const BotsInQueue = ({ queuePriorityUpdate }) => {
   const [changes, setChanges] = useState({});
@@ -96,7 +97,7 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
               {/* RIGHT STATUS */}
               <div className="bot-right">
                 <span className="queue-chip">
-                  <i className="bi bi-robot"></i> In Queue
+                  <img src={Queue} alt="In Queue" className="queue-icon" /> In Queue
                 </span>
 
                 <span className="count-container">
