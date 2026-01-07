@@ -2,9 +2,15 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useAnimation } from "../../context/AnimationContext";
 import "./ActiveVMs.css";
 
-const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef }) => {
+const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions }) => {
   const centerRef = useRef(null);
-  const { registerActiveCenter, queueAnimations } = useAnimation();
+  const {
+    registerActiveCenter,
+    queueAnimations,
+    queueCompletionAnimation,
+    isVmCompleting,
+    getVmCompletionOutcome
+  } = useAnimation();
 
   // Displayed VMs - what's actually rendered on screen
   const [displayedVMs, setDisplayedVMs] = useState([]);
@@ -112,17 +118,64 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef }) => {
       }
     }
 
-    // Handle removed VMs - remove from displayed if no longer in activeVmUpdate
+    // Handle removed VMs - detect completions and trigger animation
     const activeNames = activeVmUpdate.map(vm => vm.machineName);
     const removedVMs = displayedVMs.filter(vm => !activeNames.includes(vm.machineName));
 
     if (removedVMs.length > 0) {
       console.log("VMs removed:", removedVMs.map(vm => vm.machineName));
-      // Remove from seen set as well
-      removedVMs.forEach(vm => seenVmsRef.current.delete(vm.machineName));
-      setDisplayedVMs(prev => prev.filter(vm => activeNames.includes(vm.machineName)));
+
+      // For each removed VM, determine outcome and trigger blink animation
+      removedVMs.forEach(removedVm => {
+        const outcome = determineOutcome(removedVm, completedTransactions);
+        console.log(`VM ${removedVm.machineName} completed with outcome: ${outcome}`);
+
+        // Trigger completion animation
+        queueCompletionAnimation(removedVm.machineName, outcome);
+      });
+
+      // Remove from seen set and displayed VMs after animation delay
+      setTimeout(() => {
+        removedVMs.forEach(vm => seenVmsRef.current.delete(vm.machineName));
+        setDisplayedVMs(prev => prev.filter(vm => activeNames.includes(vm.machineName)));
+      }, 1000); // Match blink animation duration
     }
-  }, [activeVmUpdate, displayedVMs, processQueue]);
+  }, [activeVmUpdate, displayedVMs, processQueue, completedTransactions, queueCompletionAnimation]);
+
+  // Determine transaction outcome by matching transaction ID
+  const determineOutcome = (vm, completedTransactionsData) => {
+    if (!completedTransactionsData || !vm.transactionId) {
+      return 'unknown'; // Fallback if no data available
+    }
+
+    const txId = vm.transactionId;
+
+    // Check successful list
+    if (completedTransactionsData.successful?.some(t => t.transactionId === txId)) {
+      return 'success';
+    }
+
+    // Check error list
+    if (completedTransactionsData.error?.some(t => t.transactionId === txId)) {
+      return 'error';
+    }
+
+    // Check exception list
+    if (completedTransactionsData.exception?.some(t => t.transactionId === txId)) {
+      return 'exception';
+    }
+
+    // Fallback: check by machine name and process name
+    const matchByName = (list) => list?.some(t =>
+      t.machineName === vm.machineName && t.processName === vm.processName
+    );
+
+    if (matchByName(completedTransactionsData.successful)) return 'success';
+    if (matchByName(completedTransactionsData.error)) return 'error';
+    if (matchByName(completedTransactionsData.exception)) return 'exception';
+
+    return 'unknown'; // Couldn't determine outcome
+  };
 
   return (
     <div className="dashboard-card center-height activevms-card">
@@ -140,10 +193,18 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef }) => {
         <div className="hex-grid">
           {displayedVMs.map((vm, i) => {
             const isNewlyAdded = vm.machineName === latestAddedVm;
+            const isCompleting = isVmCompleting(vm.machineName);
+            const completionOutcome = getVmCompletionOutcome(vm.machineName);
+
+            // Determine blink class based on outcome
+            let blinkClass = '';
+            if (isCompleting) {
+              blinkClass = `blink-${completionOutcome}`; // blink-success, blink-error, blink-exception
+            }
 
             return (
               <div
-                className={`hex-wrapper ${isNewlyAdded ? 'hex-popup-animate' : ''}`}
+                className={`hex-wrapper ${isNewlyAdded ? 'hex-popup-animate' : ''} ${blinkClass}`}
                 key={vm.machineName || i}
               >
                 <div className="hex-border"></div>
