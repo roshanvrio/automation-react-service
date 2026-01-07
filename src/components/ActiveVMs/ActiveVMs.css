@@ -857,13 +857,190 @@
 
 /* Apply animations to the hex-border element for visible edge glow */
 .hex-wrapper.blink-success .hex-border::before {
-  animation: blink-border-success 1.6s ease-in-out;
+  animation: blink-border-success 2.5s ease-in-out;
 }
 
 .hex-wrapper.blink-error .hex-border::before {
-  animation: blink-border-error 1.6s ease-in-out;
+  animation: blink-border-error 2.5s ease-in-out;
 }
 
 .hex-wrapper.blink-exception .hex-border::before {
-  animation: blink-border-exception 1.6s ease-in-out;
+  animation: blink-border-exception 2.5s ease-in-out;
+}
+
+/* Background color blink animations for hex-card */
+@keyframes blink-bg-success {
+  0% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  12.5% {
+    background: linear-gradient(180deg, #1b5e20 0%, #0a3d12 100%);
+    box-shadow: inset 0 0 40px rgba(76, 175, 80, 0.6), inset 0 0 80px rgba(46, 125, 50, 0.4);
+  }
+  25% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  37.5% {
+    background: linear-gradient(180deg, #1b5e20 0%, #0a3d12 100%);
+    box-shadow: inset 0 0 40px rgba(76, 175, 80, 0.6), inset 0 0 80px rgba(46, 125, 50, 0.4);
+  }
+  50% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  62.5% {
+    background: linear-gradient(180deg, #1b5e20 0%, #0a3d12 100%);
+    box-shadow: inset 0 0 40px rgba(76, 175, 80, 0.6), inset 0 0 80px rgba(46, 125, 50, 0.4);
+  }
+  75% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  87.5% {
+    background: linear-gradient(180deg, #1b5e20 0%, #0a3d12 100%);
+    box-shadow: inset 0 0 40px rgba(76, 175, 80, 0.6), inset 0 0 80px rgba(46, 125, 50, 0.4);
+  }
+  100% {
+    background: linear-gradient(180deg, #1b5e20 0%, #0a3d12 100%);
+    box-shadow: inset 0 0 40px rgba(76, 175, 80, 0.6), inset 0 0 80px rgba(46, 125, 50, 0.4);
+  }
+}
+
+@keyframes blink-bg-error {
+  0% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  12.5% {
+    background: linear-gradient(180deg, #b71c1c 0%, #7f0000 100%);
+    box-shadow: inset 0 0 40px rgba(244, 67, 54, 0.6), inset 0 0 80px rgba(183, 28, 28, 0.4);
+  }
+  25% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  37.5% {
+    background: linear-gradient(180deg, #b71c1c 0%, #7f0000 100%);
+    box-shadow: inset 0 0 40px rgba(244, 67, 54, 0.6), inset 0 0 80px rgba(183, 28, 28, 0.4);
+  }
+  50% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  62.5% {
+    background: linear-gradient(180deg, #b71c1c 0%, #7f0000 100%);
+    box-shadow: inset 0 0 40px rgba(244, 67, 54, 0.6), inset 0 0 80px rgba(183, 28, 28, 0.4);
+  }
+  75% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  87.5% {
+    background: linear-gradient(180deg, #b71c1c 0%, #7f0000 100%);
+    box-shadow: inset 0 0 40px rgba(244, 67, 54, 0.6), inset 0 0 80px rgba(183, 28, 28, 0.4);
+  }
+  100% {
+    background: linear-gradient(180deg, #b71c1c 0%, #7f0000 100%);
+    box-shadow: inset 0 0 40px rgba(244, 67, 54, 0.6), inset 0 0 80px rgba(183, 28, 28, 0.4);
+  }
+}
+
+@keyframes blink-bg-exception {
+  0% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  12.5% {
+    background: linear-gradient(180deg, #6a1b9a 0%, #4a0072 100%);
+    box-shadow: inset 0 0 40px rgba(183, 92, 255, 0.6), inset 0 0 80px rgba(106, 27, 154, 0.4);
+  }
+  25% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  37.5% {
+    background: linear-gradient(180deg, #6a1b9a 0%, #4a0072 100%);
+    box-shadow: inset 0 0 40px rgba(183, 92, 255, 0.6), inset 0 0 80px rgba(106, 27, 154, 0.4);
+  }
+  50% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  62.5% {
+    background: linear-gradient(180deg, #6a1b9a 0%, #4a0072 100%);
+    box-shadow: inset 0 0 40px rgba(183, 92, 255, 0.6), inset 0 0 80px rgba(106, 27, 154, 0.4);
+  }
+  75% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  87.5% {
+    background: linear-gradient(180deg, #6a1b9a 0%, #4a0072 100%);
+    box-shadow: inset 0 0 40px rgba(183, 92, 255, 0.6), inset 0 0 80px rgba(106, 27, 154, 0.4);
+  }
+  100% {
+    background: linear-gradient(180deg, #6a1b9a 0%, #4a0072 100%);
+    box-shadow: inset 0 0 40px rgba(183, 92, 255, 0.6), inset 0 0 80px rgba(106, 27, 154, 0.4);
+  }
+}
+
+/* Apply background animations to hex-card */
+.hex-wrapper.blink-success .hex-card {
+  animation: blink-bg-success 2.5s ease-in-out forwards;
+}
+
+.hex-wrapper.blink-error .hex-card {
+  animation: blink-bg-error 2.5s ease-in-out forwards;
+}
+
+.hex-wrapper.blink-exception .hex-card {
+  animation: blink-bg-exception 2.5s ease-in-out forwards;
+}
+
+/* Smooth fade-out removal animation for completing VMs */
+@keyframes hex-fade-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* Apply fade-out to entire wrapper during completion (starts after 2.5s blink) */
+.hex-wrapper.blink-success,
+.hex-wrapper.blink-error,
+.hex-wrapper.blink-exception,
+.hex-wrapper.blink-unknown {
+  animation: hex-fade-out 0.5s ease-in 2.5s forwards;
+}
+
+/* Unknown outcome - neutral gray blink */
+@keyframes blink-border-unknown {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+  12.5%, 37.5%, 62.5%, 87.5% {
+    filter: brightness(2) drop-shadow(0 0 15px rgba(158, 158, 158, 1));
+  }
+  25%, 50%, 75% {
+    filter: brightness(1) drop-shadow(0 0 0 transparent);
+  }
+}
+
+@keyframes blink-bg-unknown {
+  0% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  12.5%, 37.5%, 62.5%, 87.5% {
+    background: linear-gradient(180deg, #424242 0%, #212121 100%);
+    box-shadow: inset 0 0 40px rgba(158, 158, 158, 0.6), inset 0 0 80px rgba(97, 97, 97, 0.4);
+  }
+  25%, 50%, 75% {
+    background: linear-gradient(180deg, #0a3d91 0%, #061d47 100%);
+  }
+  100% {
+    background: linear-gradient(180deg, #424242 0%, #212121 100%);
+    box-shadow: inset 0 0 40px rgba(158, 158, 158, 0.6), inset 0 0 80px rgba(97, 97, 97, 0.4);
+  }
+}
+
+.hex-wrapper.blink-unknown .hex-border::before {
+  animation: blink-border-unknown 2.5s ease-in-out;
+}
+
+.hex-wrapper.blink-unknown .hex-card {
+  animation: blink-bg-unknown 2.5s ease-in-out forwards;
 }

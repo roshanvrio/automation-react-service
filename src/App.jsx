@@ -118,9 +118,9 @@ const AppContent = () => {
       ws.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          console.log("WebSocket Response:", message);
+          //console.log("WebSocket Response:", message);
           if (message.type === "metrics_update" && message.data) {
-            console.log("Metrics Data:", message.data);
+            //console.log("Metrics Data:", message.data);
             // Store as target
             targetMetricsRef.current = message.data;
 
@@ -137,24 +137,24 @@ const AppContent = () => {
             }
           }
           if (message.type === "queue_priority_update" && message.data) {
-            console.log("Queue Priority Update:", message.data);
+            //console.log("Queue Priority Update:", message.data);
             setQueuePriorityUpdate(message.data);
           }
           if (message.type === "active_vms_update" && message.data) {
-            console.log("Active VM Update:", message.data);
+            //console.log("Active VM Update:", message.data);
             setActiveVmUpdate(message.data);
           }
           if (message.type === "idle_vms_update" && message.data) {
-            console.log("Idle VM Update:", message.data);
+            //console.log("Idle VM Update:", message.data);
             setIdleVmUpdate(message.data);
           }
           if (message.type === "vm_utilization_update" && message.data) {
-            console.log("VM Utilization Update:", message.data);
+            //console.log("VM Utilization Update:", message.data);
             setVmUtilizationUpdate(message.data.vmUtilization || []);
             setTopPerformer(message.data.topPerformer || null);
           }
           if (message.type === "completed_transactions_update" && message.data) {
-            console.log("Completed Transactions Update:", message.data);
+            //console.log("Completed Transactions Update:", message.data);
             setCompletedTransactions(message.data);
           }
         } catch (error) {

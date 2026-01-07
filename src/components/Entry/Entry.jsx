@@ -42,7 +42,7 @@ const Entry = ({ idleVmUpdate }) => {
     const vmToRemove = removalQueue.current.shift();
     const vmName = getVmName(vmToRemove);
 
-    console.log("Entry: Processing removal - VM:", vmName, "Remaining in queue:", removalQueue.current.length);
+    //console.log("Entry: Processing removal - VM:", vmName, "Remaining in queue:", removalQueue.current.length);
 
     // Start blink animation
     setRemovingVm(vmName);
@@ -68,12 +68,12 @@ const Entry = ({ idleVmUpdate }) => {
   useEffect(() => {
     if (!Array.isArray(idleVmUpdate)) return;
 
-    console.log("Entry: idleVmUpdate received:", idleVmUpdate.map(vm => getVmName(vm)));
-    console.log("Entry: Current displayedNamesRef:", [...displayedNamesRef.current]);
+    //console.log("Entry: idleVmUpdate received:", idleVmUpdate.map(vm => getVmName(vm)));
+    //console.log("Entry: Current displayedNamesRef:", [...displayedNamesRef.current]);
 
     // First load - display all immediately
     if (isFirstLoad.current) {
-      console.log("Entry: First load - displaying all VMs immediately");
+      //console.log("Entry: First load - displaying all VMs immediately");
       isFirstLoad.current = false;
       const names = new Set();
       idleVmUpdate.forEach(vm => {
@@ -94,7 +94,7 @@ const Entry = ({ idleVmUpdate }) => {
     });
 
     if (newVMs.length > 0) {
-      console.log("Entry: New VMs detected:", newVMs.map(vm => getVmName(vm)));
+      //console.log("Entry: New VMs detected:", newVMs.map(vm => getVmName(vm)));
       newVMs.forEach(vm => {
         const name = getVmName(vm);
         displayedNamesRef.current.add(name);
@@ -116,7 +116,7 @@ const Entry = ({ idleVmUpdate }) => {
     });
 
     if (vmsToRemove.length > 0) {
-      console.log("Entry: VMs to remove:", vmsToRemove.map(vm => getVmName(vm)));
+      //console.log("Entry: VMs to remove:", vmsToRemove.map(vm => getVmName(vm)));
       removalQueue.current.push(...vmsToRemove);
 
       // Start processing if not already
