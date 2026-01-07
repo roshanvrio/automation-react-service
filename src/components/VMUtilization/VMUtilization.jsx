@@ -14,7 +14,7 @@ const VMUtilization = ({ vmUtilizationUpdate }) => {
             style={{ backgroundColor: "#14b8a6" }}
           >
             <div className="vm-id">{vm.vmName}</div>
-            <div className="vm-time">{vm.utilizationHours} hrs</div>
+            <div className="vm-time">{vm.utilizationMinutes}</div>
           </div>
         ))}
       </div>
