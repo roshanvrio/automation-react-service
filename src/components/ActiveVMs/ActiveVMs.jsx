@@ -27,8 +27,15 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   const seenVmsRef = useRef(new Set());
   // Track VMs currently completing (to prevent duplicate animation triggers)
   const completingVmsRef = useRef(new Set());
+  // Keep latest completedTransactions in ref for immediate access
+  const completedTransactionsRef = useRef(completedTransactions);
   // Animation delay between items (ms)
   const ANIMATION_DELAY = 800;
+
+  // Keep ref updated with latest completedTransactions
+  useEffect(() => {
+    completedTransactionsRef.current = completedTransactions;
+  }, [completedTransactions]);
 
   // Register the center area for animation target
   useEffect(() => {
@@ -130,20 +137,26 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     if (removedVMs.length > 0) {
       console.log("VMs removed:", removedVMs.map(vm => vm.machineName));
 
-      // For each removed VM, determine outcome and trigger blink animation
-      removedVMs.forEach(removedVm => {
-        const outcome = determineOutcome(removedVm, completedTransactions);
-        console.log(`VM ${removedVm.machineName} completed with outcome: ${outcome}`);
+      // Mark all as completing immediately to prevent duplicate triggers
+      removedVMs.forEach(vm => completingVmsRef.current.add(vm.machineName));
 
-        // Mark as completing to prevent duplicate triggers
-        completingVmsRef.current.add(removedVm.machineName);
+      // Small delay to allow completedTransactions to update from websocket
+      setTimeout(() => {
+        // For each removed VM, determine outcome and trigger blink animation
+        removedVMs.forEach(removedVm => {
+          // Use ref to get the latest completedTransactions data
+          const latestCompletedData = completedTransactionsRef.current;
+          const outcome = determineOutcome(removedVm, latestCompletedData);
+          console.log(`VM ${removedVm.machineName} completed with outcome: ${outcome}`);
+          console.log(`📊 Checking against completedTransactions:`, latestCompletedData);
 
-        // Trigger completion animation
-        queueCompletionAnimation(removedVm.machineName, outcome);
-        console.log(`✨ Completion animation queued for ${removedVm.machineName} with outcome: ${outcome}`);
-      });
+          // Trigger completion animation
+          queueCompletionAnimation(removedVm.machineName, outcome);
+          console.log(`✨ Completion animation queued for ${removedVm.machineName} with outcome: ${outcome}`);
+        });
+      }, 100); // Small delay to ensure completedTransactions is updated
 
-      // Remove from seen set and displayed VMs after animation delay
+      // Remove from seen set and displayed VMs after animation delay (2.5s blink + 0.5s fade)
       setTimeout(() => {
         // Remove only the specific VMs that were detected as removed
         const removedNames = new Set(removedVMs.map(vm => vm.machineName));
@@ -153,43 +166,46 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
           completingVmsRef.current.delete(name);
         });
         setDisplayedVMs(prev => prev.filter(vm => !removedNames.has(vm.machineName)));
-      }, 1600); // Match blink animation duration (1.6s = 4 blinks)
+      }, 3000); // 2.5s blink + 0.5s fade = 3s total
     }
-  }, [activeVmUpdate, displayedVMs, processQueue, completedTransactions, queueCompletionAnimation]);
+  }, [activeVmUpdate, displayedVMs, processQueue, queueCompletionAnimation]);
 
-  // Determine transaction outcome by matching transaction ID
+  // Determine transaction outcome by matching transactionId
   const determineOutcome = (vm, completedTransactionsData) => {
-    if (!completedTransactionsData || !vm.transactionId) {
-      return 'unknown'; // Fallback if no data available
+    const txId = String(vm.transactionId); // Convert to string for comparison
+    console.log(`🔍 determineOutcome for VM: ${vm.machineName}, txId: ${txId}, type: ${typeof vm.transactionId}`);
+
+    if (!completedTransactionsData) {
+      console.log(`❌ No completedTransactionsData available`);
+      return 'unknown';
     }
 
-    const txId = vm.transactionId;
+    if (!vm.transactionId) {
+      console.log(`❌ No transactionId on VM`);
+      return 'unknown';
+    }
 
-    // Check successful list
-    if (completedTransactionsData.successful?.some(t => t.transactionId === txId)) {
+    // Check successful list by transactionId (convert both to string for comparison)
+    if (completedTransactionsData.successful?.some(t => String(t.transactionId) === txId)) {
+      console.log(`✅ Found txId ${txId} in successful`);
       return 'success';
     }
 
-    // Check error list
-    if (completedTransactionsData.error?.some(t => t.transactionId === txId)) {
+    // Check error list by transactionId
+    if (completedTransactionsData.error?.some(t => String(t.transactionId) === txId)) {
+      console.log(`❗ Found txId ${txId} in error`);
       return 'error';
     }
 
-    // Check exception list
-    if (completedTransactionsData.exception?.some(t => t.transactionId === txId)) {
+    // Check exception list by transactionId
+    if (completedTransactionsData.exception?.some(t => String(t.transactionId) === txId)) {
+      console.log(`⚠️ Found txId ${txId} in exception`);
       return 'exception';
     }
 
-    // Fallback: check by machine name and process name
-    const matchByName = (list) => list?.some(t =>
-      t.machineName === vm.machineName && t.processName === vm.processName
-    );
-
-    if (matchByName(completedTransactionsData.successful)) return 'success';
-    if (matchByName(completedTransactionsData.error)) return 'error';
-    if (matchByName(completedTransactionsData.exception)) return 'exception';
-
-    return 'unknown'; // Couldn't determine outcome
+    console.log(`❓ txId ${txId} not found. Available successful txIds:`,
+      completedTransactionsData.successful?.map(t => t.transactionId).slice(0, 5));
+    return 'unknown';
   };
 
   return (

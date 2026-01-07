@@ -260,14 +260,14 @@ export const AnimationProvider = ({ children }) => {
       return newMap;
     });
 
-    // Auto-clear after animation completes (blink duration)
+    // Auto-clear after animation completes (2.5s blink + 0.5s fade = 3s total)
     setTimeout(() => {
       setCompletingVms(prev => {
         const newMap = new Map(prev);
         newMap.delete(machineName);
         return newMap;
       });
-    }, 1600); // 1.6 second blink animation (4 blinks)
+    }, 3000); // 3 second animation (2.5s blink + 0.5s fade)
   }, []);
 
   // Check if VM is currently completing (for applying blink class)
@@ -277,7 +277,7 @@ export const AnimationProvider = ({ children }) => {
 
   // Get completion outcome for a VM
   const getVmCompletionOutcome = useCallback((machineName) => {
-    return completingVms.get(machineName);
+    return completingVms.get(machineName) || 'unknown';
   }, [completingVms]);
 
   // Check if a VM should be visible in ActiveVMs
