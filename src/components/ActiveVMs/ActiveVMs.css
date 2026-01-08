@@ -72,19 +72,11 @@
   height: clamp(120px, 10vmin, 190px);
 }
 
-/* Dotted border - flat top hexagon using SVG */
+/* Hexagon border container - timeline will be rendered here */
 .hex-border {
   position: absolute;
   inset: 0;
-}
-
-.hex-border::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='170'%3E%3Cpolygon points='40,2 160,2 198,85 160,168 40,168 2,85' fill='none' stroke='%2300e5ff' stroke-width='1.5' stroke-dasharray='4,4'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  opacity: 0.9;
+  pointer-events: none;
 }
 
 /* Hex card - flat top hexagon */
@@ -857,16 +849,16 @@
   }
 }
 
-/* Apply animations to the hex-border element for visible edge glow */
-.hex-wrapper.blink-success .hex-border::before {
+/* Apply animations to the hex-timeline for visible edge glow */
+.hex-wrapper.blink-success .hex-timeline {
   animation: blink-border-success 2.5s ease-in-out;
 }
 
-.hex-wrapper.blink-error .hex-border::before {
+.hex-wrapper.blink-error .hex-timeline {
   animation: blink-border-error 2.5s ease-in-out;
 }
 
-.hex-wrapper.blink-exception .hex-border::before {
+.hex-wrapper.blink-exception .hex-timeline {
   animation: blink-border-exception 2.5s ease-in-out;
 }
 
@@ -1040,7 +1032,7 @@
   }
 }
 
-.hex-wrapper.blink-unknown .hex-border::before {
+.hex-wrapper.blink-unknown .hex-timeline {
   animation: blink-border-unknown 2.5s ease-in-out;
 }
 

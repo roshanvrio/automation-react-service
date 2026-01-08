@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useAnimation } from "../../context/AnimationContext";
+import HexTimeline from "./HexTimeline";
 import "./ActiveVMs.css";
 
-const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions }) => {
+const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions, vmCompletedTransactions = [] }) => {
   const centerRef = useRef(null);
   const {
     registerActiveCenter,
@@ -34,6 +35,23 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   const completedTransactionsRef = useRef(completedTransactions);
   // Animation delay between items (ms)
   const ANIMATION_DELAY = 800;
+
+  // Create a map of VM transactions for timeline display
+  const vmTransactionsMap = useMemo(() => {
+    const map = new Map();
+    if (Array.isArray(vmCompletedTransactions)) {
+      console.log('📊 vmCompletedTransactions received:', vmCompletedTransactions);
+      vmCompletedTransactions.forEach(vmData => {
+        if (vmData.machineName && Array.isArray(vmData.transactions)) {
+          // Merge transactions if VM already exists in map
+          const existing = map.get(vmData.machineName) || [];
+          map.set(vmData.machineName, [...existing, ...vmData.transactions]);
+        }
+      });
+      console.log('📊 vmTransactionsMap:', [...map.entries()]);
+    }
+    return map;
+  }, [vmCompletedTransactions]);
 
   // Calculate optimal grid layout based on container size and VM count
   const calculateGridLayout = useCallback(() => {
@@ -328,12 +346,19 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
               blinkClass = `blink-${completionOutcome}`; // blink-success, blink-error, blink-exception
             }
 
+            // Get transactions for this VM's timeline
+            const vmTransactions = vmTransactionsMap.get(vm.machineName) || [];
+
             return (
               <div
                 className={`hex-wrapper ${isNewlyAdded ? 'hex-popup-animate' : ''} ${blinkClass}`}
                 key={vm.machineName || i}
               >
-                <div className="hex-border"></div>
+                {/* 24-hour timeline around hexagon (always render for dotted border) */}
+                <HexTimeline
+                  transactions={vmTransactions}
+                  machineName={vm.machineName}
+                />
                 <div className="hex-card">
                   <div className="hex-content">
                     <div className="hex-small">{vm.triggerIndication === "Email" ? "✉" : "🕐"} {vm.triggerIndication}</div>
