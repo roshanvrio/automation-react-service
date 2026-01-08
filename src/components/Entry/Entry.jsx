@@ -187,7 +187,7 @@ const Entry = ({ idleVmUpdate }) => {
     const vmName = getVmName(vm);
     const isHighlighted = highlightedVm &&
       (highlightedVm === vmName ||
-       highlightedVm.toLowerCase() === vmName.toLowerCase());
+        highlightedVm.toLowerCase() === vmName.toLowerCase());
     const isGhost = vm.isGhost === true;
     const isLandingGhost = vm.isLandingGhost === true;
     const isRemoving = removingVm === vmName;
@@ -207,7 +207,7 @@ const Entry = ({ idleVmUpdate }) => {
   return (
     <div className="dashboard-card entry-card">
 
-      <div className="entry-title">ENTRY</div>
+      <div className="entry-title">IN-ACTIVE</div>
 
       <div className="entry-list">
         {vmPairs.map((pair, pairIndex) => (
