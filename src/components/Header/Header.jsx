@@ -1,4 +1,5 @@
 import "./Header.css";
+import MindsprintLogo from "../../assets/mindsprint.png";
 
 const Header = ({ metrics, highlightKeys = [] }) => {
   // Helper to get highlight class based on highlightKeys passed from parent
@@ -28,6 +29,14 @@ const Header = ({ metrics, highlightKeys = [] }) => {
         {/* METRICS */}
         <div className="col-lg-12 col-md-12">
           <div className="row g-3">
+
+
+            <div className="col d-flex align-items-center justify-content-center">
+              <img src={MindsprintLogo} alt="Mindsprint" className="mindsprint-logo" />
+            </div>
+
+
+
 
             <div className="col">
               <div className={`header-metric cyan ${getHighlightClass('totalInQueue')}`}>
