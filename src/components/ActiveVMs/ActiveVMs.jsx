@@ -223,6 +223,18 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     // Find new VMs that we haven't seen before
     const newVMs = activeVmUpdate.filter(vm => !seenVmsRef.current.has(vm.machineName));
 
+    // Update existing VMs with new data (e.g., lastRunTime)
+    setDisplayedVMs(prev => {
+      return prev.map(displayedVm => {
+        const updatedVm = activeVmUpdate.find(vm => vm.machineName === displayedVm.machineName);
+        if (updatedVm) {
+          // Return updated VM data if something changed
+          return updatedVm;
+        }
+        return displayedVm;
+      });
+    });
+
     if (newVMs.length > 0) {
       console.log("New VMs detected - adding to queue:", newVMs.map(vm => vm.machineName));
       // Mark as seen immediately to prevent duplicates
