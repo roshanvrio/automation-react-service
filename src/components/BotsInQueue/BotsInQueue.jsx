@@ -3,6 +3,50 @@ import { useAnimation } from "../../context/AnimationContext";
 import "./BotsInQueue.css";
 import Queue from "../../assets/Queue.png"
 
+// Component to animate a single count value step by step
+const AnimatedCount = ({ value, stepDuration = 400, className }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+  const animationRef = useRef(null);
+
+  useEffect(() => {
+    // Clear any existing animation
+    if (animationRef.current) {
+      clearInterval(animationRef.current);
+      animationRef.current = null;
+    }
+
+    if (displayValue === value) return;
+
+    const step = value > displayValue ? 1 : -1;
+
+    animationRef.current = setInterval(() => {
+      setDisplayValue(prev => {
+        const next = prev + step;
+        // Check if we've reached or passed the target
+        if ((step > 0 && next >= value) || (step < 0 && next <= value)) {
+          clearInterval(animationRef.current);
+          animationRef.current = null;
+          return value;
+        }
+        return next;
+      });
+    }, stepDuration);
+
+    return () => {
+      if (animationRef.current) {
+        clearInterval(animationRef.current);
+      }
+    };
+  }, [value, stepDuration]);
+
+  // Initialize on first render with actual value
+  useEffect(() => {
+    setDisplayValue(value);
+  }, []);
+
+  return <span className={className}>{displayValue}</span>;
+};
+
 const BotsInQueue = ({ queuePriorityUpdate }) => {
   const [changes, setChanges] = useState({});
   const prevCounts = useRef({});
@@ -106,9 +150,11 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
                       {change.inQueueDiff > 0 ? `+${change.inQueueDiff}` : change.inQueueDiff}
                     </span>
                   )}
-                  <span className={`queue-count ${change?.inQueueDiff ? 'glow-pulse' : ''}`}>
-                    {bot.inQueueCount}
-                  </span>
+                  <AnimatedCount
+                    value={bot.inQueueCount}
+                    stepDuration={3100}
+                    className={`queue-count ${change?.inQueueDiff ? 'glow-pulse' : ''}`}
+                  />
                 </span>
 
                 <span className="queue-count"> / </span>
@@ -119,9 +165,11 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
                       {change.totalDiff > 0 ? `+${change.totalDiff}` : change.totalDiff}
                     </span>
                   )}
-                  <span className={`queue-count ${change?.totalDiff ? 'glow-pulse' : ''}`}>
-                    {bot.totalCount}
-                  </span>
+                  <AnimatedCount
+                    value={bot.totalCount}
+                    stepDuration={3100}
+                    className={`queue-count ${change?.totalDiff ? 'glow-pulse' : ''}`}
+                  />
                 </span>
               </div>
 

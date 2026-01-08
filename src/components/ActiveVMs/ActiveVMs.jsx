@@ -17,6 +17,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   const [displayedVMs, setDisplayedVMs] = useState([]);
   // Track the latest added VM for popup animation
   const [latestAddedVm, setLatestAddedVm] = useState(null);
+  // Dynamic grid dimensions
+  const [gridStyle, setGridStyle] = useState({});
 
   // Pending queue - new VMs waiting to be added
   const pendingQueue = useRef([]);
@@ -32,6 +34,98 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   const completedTransactionsRef = useRef(completedTransactions);
   // Animation delay between items (ms)
   const ANIMATION_DELAY = 800;
+
+  // Calculate optimal grid layout based on container size and VM count
+  const calculateGridLayout = useCallback(() => {
+    if (!centerRef.current || displayedVMs.length === 0) return;
+
+    const container = centerRef.current;
+    const containerWidth = container.clientWidth - 20; // Account for padding
+    const containerHeight = container.clientHeight - 20;
+    const vmCount = displayedVMs.length;
+
+    // Hexagon aspect ratio (width:height = 1:0.85)
+    const hexRatio = 0.85;
+
+    // Minimum and maximum card dimensions
+    const minCardWidth = 80;
+    const maxCardWidth = 220;
+    const gapSize = 15;
+
+    // Calculate optimal columns to fill the space
+    // Try different column counts and find the best fit
+    let bestLayout = { cols: 1, cardWidth: maxCardWidth, rows: vmCount };
+    let bestScore = 0;
+
+    for (let cols = 1; cols <= Math.min(vmCount, 10); cols++) {
+      const rows = Math.ceil(vmCount / cols);
+
+      // Calculate card width based on available width
+      const availableWidth = containerWidth - (gapSize * (cols - 1));
+      let cardWidth = Math.floor(availableWidth / cols);
+
+      // Calculate card height
+      const cardHeight = cardWidth * hexRatio;
+
+      // Calculate total height needed
+      const totalHeight = (rows * cardHeight) + (gapSize * (rows - 1));
+
+      // Clamp card width
+      cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
+
+      // Score based on how well it fills the space without overflow
+      if (totalHeight <= containerHeight && cardWidth >= minCardWidth) {
+        // Prefer layouts that use more of the available space
+        const widthUtilization = (cols * cardWidth + (cols - 1) * gapSize) / containerWidth;
+        const heightUtilization = totalHeight / containerHeight;
+        const score = (widthUtilization * 0.4) + (heightUtilization * 0.6);
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestLayout = { cols, cardWidth, rows };
+        }
+      }
+    }
+
+    // If no layout fits, use minimum size with scrolling
+    if (bestScore === 0) {
+      const cols = Math.floor((containerWidth + gapSize) / (minCardWidth + gapSize));
+      bestLayout = {
+        cols: Math.max(1, cols),
+        cardWidth: minCardWidth,
+        rows: Math.ceil(vmCount / Math.max(1, cols))
+      };
+    }
+
+    const cardHeight = Math.floor(bestLayout.cardWidth * hexRatio);
+
+    // Set CSS variables for the grid
+    setGridStyle({
+      '--hex-cols': bestLayout.cols,
+      '--hex-card-width': `${bestLayout.cardWidth}px`,
+      '--hex-card-height': `${cardHeight}px`,
+      '--hex-gap': `${gapSize}px`,
+      '--hex-font-scale': Math.max(0.5, Math.min(1, bestLayout.cardWidth / 150)),
+    });
+  }, [displayedVMs.length]);
+
+  // Recalculate layout when VM count changes or window resizes
+  useEffect(() => {
+    calculateGridLayout();
+
+    const handleResize = () => {
+      calculateGridLayout();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [calculateGridLayout]);
+
+  // Also recalculate after a short delay to ensure container is properly sized
+  useEffect(() => {
+    const timer = setTimeout(calculateGridLayout, 100);
+    return () => clearTimeout(timer);
+  }, [displayedVMs.length, calculateGridLayout]);
 
   // Keep ref updated with latest completedTransactions
   useEffect(() => {
@@ -222,7 +316,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       </div>
 
       <div className="activevms-scroll card-scroll" ref={centerRef}>
-        <div className="hex-grid">
+        <div className="hex-grid hex-dynamic" style={gridStyle}>
           {displayedVMs.map((vm, i) => {
             const isNewlyAdded = vm.machineName === latestAddedVm;
             const isCompleting = isVmCompleting(vm.machineName);
