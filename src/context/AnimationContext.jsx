@@ -286,10 +286,21 @@ export const AnimationProvider = ({ children }) => {
     });
   }, []);
 
+  // Track VMs currently in exit animation to prevent duplicates
+  const exitAnimatingVmsRef = useRef(new Set());
+
   // Queue exit animation - VM flies back to Entry list
   const queueExitAnimation = useCallback((vmData, outcome) => {
     const { machineName } = vmData;
+
+    // Prevent duplicate exit animations for the same VM
+    if (exitAnimatingVmsRef.current.has(machineName)) {
+      console.log(`⚠️ Exit animation already in progress for ${machineName}, skipping duplicate`);
+      return;
+    }
+
     console.log(`Queueing exit animation for ${machineName} with outcome: ${outcome}`);
+    exitAnimatingVmsRef.current.add(machineName);
 
     // Get center position (start point - from ActiveVMs)
     const centerElement = activeCenterRef.current;
@@ -324,6 +335,7 @@ export const AnimationProvider = ({ children }) => {
     setTimeout(() => {
       setExitAnimation(null);
       setLandingGhostVm(null);
+      exitAnimatingVmsRef.current.delete(machineName);
       // Clear the completing state after exit animation
       setCompletingVms(prev => {
         const newMap = new Map(prev);

@@ -36,6 +36,13 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   // Animation delay between items (ms)
   const ANIMATION_DELAY = 800;
 
+  // Exit queue - VMs waiting to be removed one by one
+  const exitQueue = useRef([]);
+  // Flag to track if we're processing the exit queue
+  const isProcessingExitQueue = useRef(false);
+  // Exit animation delay between items (ms)
+  const EXIT_ANIMATION_DELAY = 800;
+
   // Create a map of VM transactions for timeline display
   const vmTransactionsMap = useMemo(() => {
     const map = new Map();
@@ -204,6 +211,94 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     }, 2800); // Wait for fly animation to complete (matching AnimationContext timing)
   }, [queueAnimations, onVmProcessed, pendingVmCountRef]);
 
+  // Determine transaction outcome by matching transactionId
+  const determineOutcome = useCallback((vm, completedTransactionsData) => {
+    const txId = String(vm.transactionId); // Convert to string for comparison
+    console.log(`🔍 determineOutcome for VM: ${vm.machineName}, txId: ${txId}, type: ${typeof vm.transactionId}`);
+
+    if (!completedTransactionsData) {
+      console.log(`❌ No completedTransactionsData available`);
+      return 'unknown';
+    }
+
+    if (!vm.transactionId) {
+      console.log(`❌ No transactionId on VM`);
+      return 'unknown';
+    }
+
+    // Check successful list by transactionId (convert both to string for comparison)
+    if (completedTransactionsData.successful?.some(t => String(t.transactionId) === txId)) {
+      console.log(`✅ Found txId ${txId} in successful`);
+      return 'success';
+    }
+
+    // Check error list by transactionId
+    if (completedTransactionsData.error?.some(t => String(t.transactionId) === txId)) {
+      console.log(`❗ Found txId ${txId} in error`);
+      return 'error';
+    }
+
+    // Check exception list by transactionId
+    if (completedTransactionsData.exception?.some(t => String(t.transactionId) === txId)) {
+      console.log(`⚠️ Found txId ${txId} in exception`);
+      return 'exception';
+    }
+
+    console.log(`❓ txId ${txId} not found. Available successful txIds:`,
+      completedTransactionsData.successful?.map(t => t.transactionId).slice(0, 5));
+    return 'unknown';
+  }, []);
+
+  // Process the exit queue one by one
+  const processExitQueue = useCallback(() => {
+    if (isProcessingExitQueue.current || exitQueue.current.length === 0) {
+      return;
+    }
+
+    isProcessingExitQueue.current = true;
+
+    // Get the next VM from exit queue
+    const nextVm = exitQueue.current.shift();
+
+    console.log("Processing exit queue - removing VM:", nextVm.machineName, "Remaining in queue:", exitQueue.current.length);
+
+    // Use ref to get the latest completedTransactions data
+    const latestCompletedData = completedTransactionsRef.current;
+    const outcome = determineOutcome(nextVm, latestCompletedData);
+    console.log(`VM ${nextVm.machineName} completed with outcome: ${outcome}`);
+    console.log(`📊 Checking against completedTransactions:`, latestCompletedData);
+
+    // Trigger completion blink animation
+    queueCompletionAnimation(nextVm.machineName, outcome);
+    console.log(`✨ Completion animation queued for ${nextVm.machineName} with outcome: ${outcome}`);
+
+    // After blink animation (2.5s), trigger exit animation and remove from display
+    setTimeout(() => {
+      console.log(`🚀 Starting exit animation for ${nextVm.machineName}`);
+      queueExitAnimation(nextVm, outcome);
+
+      // Remove from displayed VMs immediately after fade-out (the flying icon takes over)
+      seenVmsRef.current.delete(nextVm.machineName);
+      setDisplayedVMs(prev => prev.filter(vm => vm.machineName !== nextVm.machineName));
+      console.log(`🗑️ Removed ${nextVm.machineName} from displayed VMs`);
+
+      // Clear completing state only after exit animation completes (1.8s)
+      setTimeout(() => {
+        completingVmsRef.current.delete(nextVm.machineName);
+        console.log(`✅ Fully completed exit for ${nextVm.machineName}`);
+      }, 1800);
+
+      isProcessingExitQueue.current = false;
+
+      // Process next item in exit queue after delay
+      if (exitQueue.current.length > 0) {
+        setTimeout(() => {
+          processExitQueue();
+        }, EXIT_ANIMATION_DELAY);
+      }
+    }, 2700); // 2.5s blink + 0.2s fade-out
+  }, [queueCompletionAnimation, queueExitAnimation, determineOutcome]);
+
   // Detect new VMs and queue them
   useEffect(() => {
     if (!Array.isArray(activeVmUpdate) || activeVmUpdate.length === 0) {
@@ -252,86 +347,31 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       }
     }
 
-    // Handle removed VMs - detect completions and trigger animation
+    // Handle removed VMs - detect completions and queue for one-by-one exit animation
     const activeNames = activeVmUpdate.map(vm => vm.machineName);
     const removedVMs = displayedVMs.filter(vm =>
       !activeNames.includes(vm.machineName) &&
-      !completingVmsRef.current.has(vm.machineName) // Don't re-trigger if already completing
+      !completingVmsRef.current.has(vm.machineName) && // Don't re-trigger if already completing
+      !exitQueue.current.some(queuedVm => queuedVm.machineName === vm.machineName) // Don't add if already in queue
     );
 
     if (removedVMs.length > 0) {
-      console.log("VMs removed:", removedVMs.map(vm => vm.machineName));
+      console.log("VMs removed - adding to exit queue:", removedVMs.map(vm => vm.machineName));
 
       // Mark all as completing immediately to prevent duplicate triggers
       removedVMs.forEach(vm => completingVmsRef.current.add(vm.machineName));
 
-      // Small delay to allow completedTransactions to update from websocket
-      setTimeout(() => {
-        // For each removed VM, determine outcome and trigger blink animation
-        removedVMs.forEach(removedVm => {
-          // Use ref to get the latest completedTransactions data
-          const latestCompletedData = completedTransactionsRef.current;
-          const outcome = determineOutcome(removedVm, latestCompletedData);
-          console.log(`VM ${removedVm.machineName} completed with outcome: ${outcome}`);
-          console.log(`📊 Checking against completedTransactions:`, latestCompletedData);
+      // Add to exit queue
+      exitQueue.current.push(...removedVMs);
 
-          // Trigger completion blink animation
-          queueCompletionAnimation(removedVm.machineName, outcome);
-          console.log(`✨ Completion animation queued for ${removedVm.machineName} with outcome: ${outcome}`);
-
-          // After blink animation (2.5s), trigger exit animation and remove from display
-          setTimeout(() => {
-            console.log(`🚀 Starting exit animation for ${removedVm.machineName}`);
-            queueExitAnimation(removedVm, outcome);
-
-            // Remove from displayed VMs immediately after fade-out (the flying icon takes over)
-            seenVmsRef.current.delete(removedVm.machineName);
-            completingVmsRef.current.delete(removedVm.machineName);
-            setDisplayedVMs(prev => prev.filter(vm => vm.machineName !== removedVm.machineName));
-            console.log(`🗑️ Removed ${removedVm.machineName} from displayed VMs`);
-          }, 2700); // 2.5s blink + 0.2s fade-out
-        });
-      }, 100); // Small delay to ensure completedTransactions is updated
+      // Start processing exit queue if not already (with small delay for completedTransactions to update)
+      if (!isProcessingExitQueue.current) {
+        setTimeout(() => {
+          processExitQueue();
+        }, 100); // Small delay to ensure completedTransactions is updated
+      }
     }
-  }, [activeVmUpdate, displayedVMs, processQueue, queueCompletionAnimation, queueExitAnimation]);
-
-  // Determine transaction outcome by matching transactionId
-  const determineOutcome = (vm, completedTransactionsData) => {
-    const txId = String(vm.transactionId); // Convert to string for comparison
-    console.log(`🔍 determineOutcome for VM: ${vm.machineName}, txId: ${txId}, type: ${typeof vm.transactionId}`);
-
-    if (!completedTransactionsData) {
-      console.log(`❌ No completedTransactionsData available`);
-      return 'unknown';
-    }
-
-    if (!vm.transactionId) {
-      console.log(`❌ No transactionId on VM`);
-      return 'unknown';
-    }
-
-    // Check successful list by transactionId (convert both to string for comparison)
-    if (completedTransactionsData.successful?.some(t => String(t.transactionId) === txId)) {
-      console.log(`✅ Found txId ${txId} in successful`);
-      return 'success';
-    }
-
-    // Check error list by transactionId
-    if (completedTransactionsData.error?.some(t => String(t.transactionId) === txId)) {
-      console.log(`❗ Found txId ${txId} in error`);
-      return 'error';
-    }
-
-    // Check exception list by transactionId
-    if (completedTransactionsData.exception?.some(t => String(t.transactionId) === txId)) {
-      console.log(`⚠️ Found txId ${txId} in exception`);
-      return 'exception';
-    }
-
-    console.log(`❓ txId ${txId} not found. Available successful txIds:`,
-      completedTransactionsData.successful?.map(t => t.transactionId).slice(0, 5));
-    return 'unknown';
-  };
+  }, [activeVmUpdate, displayedVMs, processQueue, processExitQueue]);
 
   return (
     <div className="dashboard-card center-height activevms-card">
