@@ -5,7 +5,7 @@ import "./HexTimeline.css";
  * HexTimeline - 24-hour timeline around hexagon
  * Each side = 4 hours (6 sides = 24 hours)
  * Green = SUCCESS, Red = ERROR, Orange = EXCEPTION
- * Static glowing dot = current time
+ * Pulsing glowing dot = current time (with ripple effect every ~12s)
  */
 
 const SVG_WIDTH = 100;
@@ -148,6 +148,11 @@ const HexTimeline = ({ transactions = [], machineName }) => {
   const currentPos = useMemo(() => hoursToPoint(currentTime), [currentTime]);
   const hexPath = HEX_POINTS.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]},${p[1]}`).join(' ') + ' Z';
 
+  // Path for the tracer light - from 00:00 around the full hexagon
+  const tracerPath = `M ${HEX_POINTS[0][0]},${HEX_POINTS[0][1]} ` +
+    HEX_POINTS.slice(1).map(p => `L ${p[0]},${p[1]}`).join(' ') +
+    ` L ${HEX_POINTS[0][0]},${HEX_POINTS[0][1]}`;
+
   return (
     <svg
       className="hex-timeline"
@@ -195,6 +200,22 @@ const HexTimeline = ({ transactions = [], machineName }) => {
         className="timeline-base"
       />
 
+      {/* Tracer light - moving glow along the hexagon edge */}
+      <circle r="2" className="timeline-tracer">
+        <animateMotion
+          dur="8s"
+          repeatCount="indefinite"
+          path={tracerPath}
+        />
+      </circle>
+      <circle r="1.5" className="timeline-tracer-core">
+        <animateMotion
+          dur="8s"
+          repeatCount="indefinite"
+          path={tracerPath}
+        />
+      </circle>
+
       {/* 00:00 Start marker at top-left (midnight) */}
       <circle cx={HEX_POINTS[0][0]} cy={HEX_POINTS[0][1]} r="3" className="start-dot" />
 
@@ -213,7 +234,15 @@ const HexTimeline = ({ transactions = [], machineName }) => {
         </polyline>
       ))}
 
-      {/* Current time dot - static glow */}
+      {/* Ripple effect - expanding ring to show direction */}
+      <circle
+        cx={currentPos.x}
+        cy={currentPos.y}
+        r="3"
+        className="timeline-ripple"
+      />
+
+      {/* Current time dot - pulsing glow to indicate movement */}
       <circle
         cx={currentPos.x}
         cy={currentPos.y}
