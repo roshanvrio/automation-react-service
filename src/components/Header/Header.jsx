@@ -32,7 +32,7 @@ const Header = ({ metrics, highlightKeys = [] }) => {
             <div className="col">
               <div className={`header-metric cyan ${getHighlightClass('totalInQueue')}`}>
                 <div className="metric-icon">
-                  <i className="bi bi-inbox-fill"></i>
+                  <i className="bi bi-cpu-fill"></i>
                 </div>
                 <div className="metric-text">
                   <div className="metric-value">{metrics?.totalInQueue || 0}</div>
