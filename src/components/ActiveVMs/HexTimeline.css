@@ -1,0 +1,76 @@
+/* HexTimeline - 24-hour progress around hexagon */
+
+.hex-timeline {
+  position: absolute;
+  inset: -1%;
+  width: 102%;
+  height: 102%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Base dotted hexagon border - darker white for visibility */
+.timeline-base {
+  opacity: 1;
+  stroke: rgba(200, 210, 220, 0.7);
+  stroke-width: 1.5;
+}
+
+/* Transaction segments */
+.timeline-segment {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* SUCCESS - Green with glow */
+.timeline-success {
+  stroke: #4caf50;
+  filter: drop-shadow(0 0 4px #4caf50) drop-shadow(0 0 8px rgba(76, 175, 80, 0.6));
+}
+
+/* ERROR - Red with glow */
+.timeline-error {
+  stroke: #f44336;
+  filter: drop-shadow(0 0 4px #f44336) drop-shadow(0 0 8px rgba(244, 67, 54, 0.6));
+}
+
+/* EXCEPTION - Red with glow (same as error) */
+.timeline-exception {
+  stroke: #f44336;
+  filter: drop-shadow(0 0 4px #f44336) drop-shadow(0 0 8px rgba(244, 67, 54, 0.6));
+}
+
+/* Start point markers for segments */
+.segment-start {
+  stroke: #fff;
+  stroke-width: 1;
+}
+
+.timeline-success-fill {
+  fill: #4caf50;
+  filter: drop-shadow(0 0 3px #4caf50);
+}
+
+.timeline-error-fill {
+  fill: #f44336;
+  filter: drop-shadow(0 0 3px #f44336);
+}
+
+.timeline-exception-fill {
+  fill: #f44336;
+  filter: drop-shadow(0 0 3px #f44336);
+}
+
+/* 00:00 Midnight start marker (dot only) */
+.start-dot {
+  fill: rgba(255, 255, 255, 0.9);
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1;
+}
+
+/* Current time dot - static bright glow */
+.timeline-dot {
+  fill: #00e5ff;
+  filter: drop-shadow(0 0 3px #00e5ff) drop-shadow(0 0 6px #00e5ff) drop-shadow(0 0 10px rgba(0, 229, 255, 0.8));
+}

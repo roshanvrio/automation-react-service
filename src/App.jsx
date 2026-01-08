@@ -45,6 +45,7 @@ const AppContent = () => {
     error: [],
     exception: []
   });
+  const [vmCompletedTransactions, setVmCompletedTransactions] = useState([]);
   const wsRef = useRef(null);
 
   // Sync metrics directly to target (with highlight animation)
@@ -157,6 +158,10 @@ const AppContent = () => {
             //console.log("Completed Transactions Update:", message.data);
             setCompletedTransactions(message.data);
           }
+          if (message.type === "vm_completed_transactions_update" && message.data) {
+            console.log("VM Completed Transactions Update:", message.data);
+            setVmCompletedTransactions(message.data);
+          }
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
         }
@@ -213,6 +218,7 @@ const AppContent = () => {
               onVmProcessed={onVmProcessed}
               pendingVmCountRef={pendingVmCountRef}
               completedTransactions={completedTransactions}
+              vmCompletedTransactions={vmCompletedTransactions}
             />
           </div>
 
