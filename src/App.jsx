@@ -6,6 +6,7 @@ import TopPerformingVM from "./components/TopPerformingVM/TopPerformingVM";
 import ActiveVMs from "./components/ActiveVMs/ActiveVMs";
 import Entry from "./components/Entry/Entry";
 import AnimationOverlay from "./components/AnimationOverlay/AnimationOverlay";
+import RobotAnimator from "./components/RobotAnimator";
 import { AnimationProvider } from "./context/AnimationContext";
 
 import "./App.css";
@@ -192,6 +193,8 @@ const AppContent = () => {
     <div className="app-root">
       {/* Animation overlay for flying icons */}
       <AnimationOverlay />
+      {/* Robot mascot animation */}
+      <RobotAnimator />
 
       <div className="container-fluid">
 

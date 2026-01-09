@@ -7,8 +7,10 @@ import AutomationAnywhere from "../../assets/AutomationAnywhere_circleLogo.png";
 
 const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions, vmCompletedTransactions = [] }) => {
   const centerRef = useRef(null);
+  const hexRefsMap = useRef({});
   const {
     registerActiveCenter,
+    registerActiveVmHex,
     queueAnimations,
     queueCompletionAnimation,
     queueExitAnimation,
@@ -270,8 +272,24 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     console.log(`VM ${nextVm.machineName} completed with outcome: ${outcome}`);
     console.log(`📊 Checking against completedTransactions:`, latestCompletedData);
 
-    // Trigger completion blink animation
-    queueCompletionAnimation(nextVm.machineName, outcome);
+    // Get fresh hex position from ref (important for first/last VM)
+    let freshHexPosition = null;
+    const hexElement = hexRefsMap.current[nextVm.machineName];
+    if (hexElement) {
+      const rect = hexElement.getBoundingClientRect();
+      freshHexPosition = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        width: rect.width,
+        height: rect.height
+      };
+      console.log(`📍 Fresh hex position for ${nextVm.machineName}:`, freshHexPosition);
+    } else {
+      console.log(`⚠️ No hex element found for ${nextVm.machineName}`);
+    }
+
+    // Trigger completion blink animation with fresh position
+    queueCompletionAnimation(nextVm.machineName, outcome, freshHexPosition);
     console.log(`✨ Completion animation queued for ${nextVm.machineName} with outcome: ${outcome}`);
 
     // After blink animation (2.5s), trigger exit animation and remove from display
@@ -303,17 +321,24 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
 
   // Detect new VMs and queue them
   useEffect(() => {
-    if (!Array.isArray(activeVmUpdate) || activeVmUpdate.length === 0) {
+    // Handle first load case - set flag immediately regardless of data
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+
+      if (!Array.isArray(activeVmUpdate) || activeVmUpdate.length === 0) {
+        // First load with empty array - future VMs will animate in
+        console.log("First load with no VMs - future VMs will animate");
+        return;
+      }
+
+      // First load with VMs - display immediately without animation
+      console.log("First load - displaying all VMs immediately:", activeVmUpdate.map(vm => vm.machineName));
+      activeVmUpdate.forEach(vm => seenVmsRef.current.add(vm.machineName));
+      setDisplayedVMs(activeVmUpdate);
       return;
     }
 
-    // First load - display all immediately without animation
-    if (isFirstLoad.current) {
-      console.log("First load - displaying all VMs immediately:", activeVmUpdate.map(vm => vm.machineName));
-      isFirstLoad.current = false;
-      // Mark all initial VMs as seen
-      activeVmUpdate.forEach(vm => seenVmsRef.current.add(vm.machineName));
-      setDisplayedVMs(activeVmUpdate);
+    if (!Array.isArray(activeVmUpdate) || activeVmUpdate.length === 0) {
       return;
     }
 
@@ -409,6 +434,12 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
               <div
                 className={`hex-wrapper ${isNewlyAdded ? 'hex-popup-animate' : ''} ${blinkClass}`}
                 key={vm.machineName || i}
+                ref={(el) => {
+                  if (el) {
+                    hexRefsMap.current[vm.machineName] = el;
+                    registerActiveVmHex(vm.machineName, el);
+                  }
+                }}
               >
                 {/* 24-hour timeline around hexagon (always render for dotted border) */}
                 <HexTimeline

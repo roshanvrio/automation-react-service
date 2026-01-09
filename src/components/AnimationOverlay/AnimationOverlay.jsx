@@ -18,9 +18,12 @@ const AnimationOverlay = () => {
 
   console.log("AnimationOverlay rendering:", { hasBotAnimation, hasVmAnimation, vmPosition, showExitAnimation });
 
+  // COMMENTED OUT: Flying animations disabled - using RobotAnimator instead
+  // Uncomment below to re-enable flying icon animations
   return (
     <div className="animation-overlay">
       {/* Bot icon flying from left (entry animation only) */}
+      {/* COMMENTED OUT - Robot animation handles this now
       {showEntryAnimation && hasBotAnimation && (
         <div
           className="flying-icon bot-icon"
@@ -38,8 +41,10 @@ const AnimationOverlay = () => {
           <div className="flying-trail bot-trail"></div>
         </div>
       )}
+      */}
 
       {/* VM icon flying from right (entry animation only) */}
+      {/* COMMENTED OUT - Robot animation handles this now
       {showEntryAnimation && hasVmAnimation && (
         <div
           className="flying-icon vm-icon"
@@ -57,8 +62,10 @@ const AnimationOverlay = () => {
           <div className="flying-trail vm-trail"></div>
         </div>
       )}
+      */}
 
       {/* Center merge effect */}
+      {/* COMMENTED OUT - Robot animation handles this now
       {showEntryAnimation && (hasBotAnimation || hasVmAnimation) && centerPosition && (
         <div
           className="merge-effect"
@@ -75,8 +82,10 @@ const AnimationOverlay = () => {
           </div>
         </div>
       )}
+      */}
 
       {/* Exit animation - VM flying back to Entry */}
+      {/* COMMENTED OUT - Robot animation handles this now
       {showExitAnimation && exitAnimation.startPosition && exitAnimation.endPosition && (
         <div
           className={`flying-icon vm-icon-exit exit-${exitAnimation.outcome}`}
@@ -95,8 +104,10 @@ const AnimationOverlay = () => {
           <div className="flying-trail vm-trail-exit"></div>
         </div>
       )}
+      */}
 
       {/* Landing effect at Entry */}
+      {/* COMMENTED OUT - Robot animation handles this now
       {showExitAnimation && exitAnimation.endPosition && (
         <div
           className="landing-effect"
@@ -109,6 +120,7 @@ const AnimationOverlay = () => {
           <div className={`landing-ring landing-ring-2 landing-${exitAnimation.outcome}`}></div>
         </div>
       )}
+      */}
     </div>
   );
 };

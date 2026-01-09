@@ -32,12 +32,16 @@ export const AnimationProvider = ({ children }) => {
   const [exitAnimation, setExitAnimation] = useState(null);
   // Ghost VM to show in Entry during exit animation (landing target)
   const [landingGhostVm, setLandingGhostVm] = useState(null);
+  // Completion animation state - when VM starts blinking (for robot to pick up)
+  const [completionAnimation, setCompletionAnimation] = useState(null);
 
   // Refs for element positions
   const botRefs = useRef({});
   const vmRefs = useRef({});
   const vmPositionsCache = useRef({}); // Cache positions before VMs disappear
   const activeCenterRef = useRef(null);
+  // Cache for active VM hexagon positions
+  const activeVmHexPositionsRef = useRef({});
 
   // Animation in progress flag
   const isAnimating = useRef(false);
@@ -69,6 +73,24 @@ export const AnimationProvider = ({ children }) => {
     if (element) {
       activeCenterRef.current = element;
     }
+  }, []);
+
+  // Register an active VM hexagon position (for exit animation targeting)
+  const registerActiveVmHex = useCallback((machineName, element) => {
+    if (element && machineName) {
+      const rect = element.getBoundingClientRect();
+      activeVmHexPositionsRef.current[machineName] = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+        width: rect.width,
+        height: rect.height
+      };
+    }
+  }, []);
+
+  // Get active VM hex position
+  const getActiveVmHexPosition = useCallback((machineName) => {
+    return activeVmHexPositionsRef.current[machineName] || null;
   }, []);
 
   // Get element position relative to viewport
@@ -133,7 +155,7 @@ export const AnimationProvider = ({ children }) => {
       const botPos = getElementPosition(botElement);
       const centerPos = getElementPosition(centerElement);
 
-      // Always use right side position for VM animation
+      // Always use right side position for VM (Entry component is on the right)
       const vmPos = getFallbackVmPosition();
       const vmPosSource = "right-side";
 
@@ -275,9 +297,25 @@ export const AnimationProvider = ({ children }) => {
     });
   }, []);
 
-  // Queue completion animation for a VM (just sets the blink state, no removal)
-  const queueCompletionAnimation = useCallback((machineName, outcome) => {
+  // Queue completion animation for a VM (sets blink state AND triggers robot animation)
+  // Optional hexPosition parameter allows passing fresh position from component
+  const queueCompletionAnimation = useCallback((machineName, outcome, hexPosition = null) => {
     console.log(`Queueing completion animation for ${machineName} with outcome: ${outcome}`);
+
+    // Use passed position, or fallback to cached position, or fallback to center
+    const vmHexPos = hexPosition || activeVmHexPositionsRef.current[machineName];
+    const entryPos = getFallbackVmPosition();
+
+    console.log(`VM hex position for ${machineName}:`, vmHexPos, hexPosition ? '(fresh)' : '(cached)');
+
+    // Set the completion animation state (robot will listen to this)
+    setCompletionAnimation({
+      machineName,
+      outcome,
+      vmPosition: vmHexPos || getElementPosition(activeCenterRef.current), // fallback to center
+      entryPosition: entryPos,
+      id: Date.now()
+    });
 
     setCompletingVms(prev => {
       const newMap = new Map(prev);
@@ -386,6 +424,8 @@ export const AnimationProvider = ({ children }) => {
     registerBotRef,
     registerVmRef,
     registerActiveCenter,
+    registerActiveVmHex,
+    getActiveVmHexPosition,
     queueAnimations,
     isVmVisible,
     getAnimatingVms,
@@ -398,6 +438,7 @@ export const AnimationProvider = ({ children }) => {
     getVmCompletionOutcome,
     completingVms,
     exitAnimation,
+    completionAnimation,
     landingGhostVm
   };
 
