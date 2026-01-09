@@ -148,7 +148,7 @@
 }
 
 .hex-time {
-  font-size: clamp(7px, 0.65vmin, 10px);
+  font-size: clamp(9px, 0.75vmin, 12px);
   color: #8ec8ff;
   margin-top: clamp(1px, 0.15vmin, 3px);
 }
@@ -298,7 +298,7 @@
   }
 
   .hex-time {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .uipath {
@@ -348,7 +348,7 @@
   }
 
   .hex-time {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .uipath {
@@ -398,7 +398,7 @@
   }
 
   .hex-time {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .uipath {
@@ -451,7 +451,7 @@
   }
 
   .hex-time {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .uipath {
@@ -511,7 +511,7 @@
   }
 
   .hex-time {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .uipath {
@@ -560,7 +560,7 @@
   }
 
   .hex-time {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .uipath {
@@ -622,7 +622,7 @@
   }
 
   .hex-time {
-    font-size: 6px;
+    font-size: 8px;
   }
 
   .uipath {
@@ -691,7 +691,7 @@
   }
 
   .hex-time {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .uipath {
@@ -747,7 +747,7 @@
   }
 
   .hex-time {
-    font-size: 6px;
+    font-size: 8px;
   }
 
   .uipath {
@@ -1150,7 +1150,7 @@
 }
 
 .hex-grid.hex-dynamic .hex-time {
-  font-size: calc(8px * var(--hex-font-scale));
+  font-size: calc(10px * var(--hex-font-scale));
   margin-top: calc(2px * var(--hex-font-scale));
 }
 
