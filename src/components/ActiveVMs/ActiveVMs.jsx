@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useAnimation } from "../../context/AnimationContext";
 import HexTimeline from "./HexTimeline";
 import "./ActiveVMs.css";
+import uiPath from "../../assets/uiPath.png";
+import AutomationAnywhere from "../../assets/AutomationAnywhereLogo.png";
 
 const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions, vmCompletedTransactions = [] }) => {
   const centerRef = useRef(null);
@@ -419,7 +421,13 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
                     <div className="hex-time">
                       Last Run Time <strong>{vm.lastRunTime}</strong>
                     </div>
-                    <span className="uipath">{vm.rpaTool}</span>
+                    {/* <span className="uipath">{vm.rpaTool}</span> */}
+                    {vm.rpaTool === "UiPath" && (
+                      <img src={uiPath} alt="UiPathLogo" className="uipath-logo" />
+                    )}
+                    {vm.rpaTool === "AutomationAnywhere" && (
+                      <img src={AutomationAnywhere} alt="AutomationAnywhere" className="AutomationAnywhere" />
+                    )}
                   </div>
                 </div>
               </div>
