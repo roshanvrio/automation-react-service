@@ -77,7 +77,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     // Minimum and maximum card dimensions
     const minCardWidth = 80;
     const maxCardWidth = 220;
-    const gapSize = 15;
+    const gapSize = 25;
 
     // Calculate optimal columns to fill the space
     // Try different column counts and find the best fit
