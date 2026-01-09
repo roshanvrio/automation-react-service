@@ -46,6 +46,22 @@
   background: var(--accent-red);
 }
 
+.legend .rounded-white::before {
+  width: clamp(8px, 0.8vmin, 12px);
+  height: clamp(8px, 0.8vmin, 12px);
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+}
+
+.legend .rounded-blue::before {
+  width: clamp(8px, 0.8vmin, 12px);
+  height: clamp(8px, 0.8vmin, 12px);
+  border-radius: 50%;
+  background: #00e5ff;
+  transform: translateY(-50%);
+}
+
 /* Scroll */
 .activevms-scroll {
   flex: 1;

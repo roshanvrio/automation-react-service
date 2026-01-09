@@ -381,6 +381,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
         <span><i className="bi bi-display"></i> Active VMs <strong>{activeVmUpdate?.length || 0}</strong></span>
 
         <div className="legend">
+          <span className="rounded-white">Start Hour</span>
+          <span className="rounded-blue">Current Hour</span>
           <span className="busy">Idle</span>
           <span className="success">Success</span>
           <span className="error">Error</span>
