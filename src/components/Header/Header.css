@@ -75,6 +75,27 @@
   color: #00dcc8;
 }
 
+/* Metric value colors based on parent variant */
+.header-metric.cyan .metric-value {
+  color: #00f6ff;
+}
+
+.header-metric.green .metric-value {
+  color: #2dff8f;
+}
+
+.header-metric.purple .metric-value {
+  color: #b75cff;
+}
+
+.header-metric.red .metric-value {
+  color: #ff4d4f;
+}
+
+.header-metric.teal .metric-value {
+  color: #00dcc8;
+}
+
 /* Highlight animations for value changes - Color specific */
 
 /* Cyan/Blue glow for Total in Queue */
