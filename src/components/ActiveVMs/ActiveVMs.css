@@ -1160,10 +1160,15 @@
 }
 
 /* RPA Tool logos */
-.uipath-logo,
-.AutomationAnywhere {
+.uipath-logo {
   width: calc(50px * var(--hex-font-scale, 1));
   height: auto;
+  margin-top: calc(2px * var(--hex-font-scale, 1));
+}
+
+.AutomationAnywhere {
+  width: calc(30px * var(--hex-font-scale, 1));
+  height: calc(22px * var(--hex-font-scale, 1));
   margin-top: calc(2px * var(--hex-font-scale, 1));
 }
 

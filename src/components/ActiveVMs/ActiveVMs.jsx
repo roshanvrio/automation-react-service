@@ -3,7 +3,7 @@ import { useAnimation } from "../../context/AnimationContext";
 import HexTimeline from "./HexTimeline";
 import "./ActiveVMs.css";
 import uiPath from "../../assets/uiPath.png";
-import AutomationAnywhere from "../../assets/AutomationAnywhereLogo.png";
+import AutomationAnywhere from "../../assets/AutomationAnywhere_circleLogo.png";
 
 const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions, vmCompletedTransactions = [] }) => {
   const centerRef = useRef(null);
