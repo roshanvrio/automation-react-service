@@ -28,7 +28,7 @@
 }
 
 .app-root .container-fluid {
-  padding: clamp(0.3rem, 0.6vmin, 0.8rem);
+  padding: clamp(0.5rem, 0.6vmin, 0.8rem);
   max-width: 100%;
   height: 100%;
   display: flex;
@@ -132,6 +132,11 @@
   gap: var(--gap-lg);
   min-height: 0;
   overflow: hidden;
+  padding-right: 2.5rem;
+}
+
+.header-card{
+  margin-right: 20px !important;
 }
 
 /* ========================================
