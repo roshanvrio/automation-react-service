@@ -157,7 +157,7 @@
   background: linear-gradient(180deg, #0d7377 0%, #065a5c 100%);
   padding: clamp(3px, 0.35vmin, 6px) clamp(6px, 0.7vmin, 12px);
   border-radius: clamp(3px, 0.3vmin, 5px);
-  font-size: clamp(7px, 0.65vmin, 10px);
+  font-size: clamp(8px, 0.65vmin, 11px);
   font-weight: 500;
   color: #ffffff;
   white-space: nowrap;
@@ -312,7 +312,7 @@
   }
 
   .hex-name {
-    font-size: 11px;
+    font-size: 12px;
     padding: 7px 14px;
     border-radius: 6px;
   }
@@ -363,7 +363,7 @@
   }
 
   .hex-name {
-    font-size: 10px;
+    font-size: 11px;
     padding: 6px 12px;
   }
 
@@ -413,7 +413,7 @@
   }
 
   .hex-name {
-    font-size: 9px;
+    font-size: 10px;
     padding: 5px 10px;
   }
 
@@ -465,7 +465,7 @@
   }
 
   .hex-name {
-    font-size: 8px;
+    font-size: 9px;
     padding: 4px 8px;
     border-radius: 3px;
   }
@@ -526,7 +526,7 @@
   }
 
   .hex-name {
-    font-size: 7px;
+    font-size: 8px;
     padding: 3px 6px;
   }
 
@@ -575,7 +575,7 @@
   }
 
   .hex-name {
-    font-size: 7px;
+    font-size: 8px;
     padding: 2px 5px;
   }
 
@@ -637,7 +637,7 @@
   }
 
   .hex-name {
-    font-size: 6px;
+    font-size: 7px;
     padding: 2px 5px;
   }
 
@@ -705,7 +705,7 @@
   }
 
   .hex-name {
-    font-size: 7px;
+    font-size: 8px;
     padding: 3px 6px;
     border-radius: 3px;
   }
@@ -762,7 +762,7 @@
   }
 
   .hex-name {
-    font-size: 6px;
+    font-size: 7px;
     padding: 2px 5px;
   }
 
@@ -1164,7 +1164,7 @@
 }
 
 .hex-grid.hex-dynamic .hex-name {
-  font-size: calc(8px * var(--hex-font-scale));
+  font-size: calc(9px * var(--hex-font-scale));
   padding: calc(4px * var(--hex-font-scale)) calc(8px * var(--hex-font-scale));
   border-radius: calc(4px * var(--hex-font-scale));
 }
