@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
+import Lottie from "lottie-react";
 import { useAnimation } from "../../context/AnimationContext";
 import "./BotsInQueue.css";
-import Queue from "../../assets/Queue.png"
+import aiRobotLoadingAnimation from "../../assets/lottie/ai-robot-loading.json";
 
 // Component to animate a single count value step by step
 const AnimatedCount = ({ value, stepDuration = 400, className }) => {
@@ -141,7 +142,13 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
               {/* RIGHT STATUS */}
               <div className="bot-right">
                 <span className="queue-chip">
-                  <img src={Queue} alt="In Queue" className="queue-icon" /> In Queue
+                  <Lottie
+                    animationData={aiRobotLoadingAnimation}
+                    loop={true}
+                    className="queue-icon"
+                    style={{ width: 20, height: 20 }}
+                  />
+                  In Queue
                 </span>
 
                 <span className="count-container">

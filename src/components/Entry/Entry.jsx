@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import Lottie from "lottie-react";
 import { useAnimation } from "../../context/AnimationContext";
 import "./Entry.css";
+import workAnimation from "../../assets/lottie/work-animation.json";
 
 const Entry = ({ idleVmUpdate }) => {
   const { registerVmRef, highlightedVm, ghostVm, landingGhostVm } = useAnimation();
@@ -198,7 +200,12 @@ const Entry = ({ idleVmUpdate }) => {
         key={vmName || index}
         ref={setRowRef(vmName)}
       >
-        <i className="bi bi-display"></i>
+        <Lottie
+          animationData={workAnimation}
+          loop={true}
+          className="entry-icon"
+          style={{ width: 20, height: 20 }}
+        />
         <span>{vmName}</span>
       </div>
     );
