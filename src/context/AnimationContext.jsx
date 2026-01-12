@@ -39,6 +39,7 @@ export const AnimationProvider = ({ children }) => {
   const botRefs = useRef({});
   const vmRefs = useRef({});
   const vmPositionsCache = useRef({}); // Cache positions before VMs disappear
+  const botPositionsCache = useRef({}); // Cache bot positions before they disappear from queue
   const activeCenterRef = useRef(null);
   // Cache for active VM hexagon positions
   const activeVmHexPositionsRef = useRef({});
@@ -46,10 +47,20 @@ export const AnimationProvider = ({ children }) => {
   // Animation in progress flag
   const isAnimating = useRef(false);
 
-  // Register a bot row element
+  // Register a bot row element and cache its position
   const registerBotRef = useCallback((processName, element) => {
     if (element) {
       botRefs.current[processName] = element;
+      // Cache the position immediately
+      const rect = element.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        botPositionsCache.current[processName] = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+          width: rect.width,
+          height: rect.height
+        };
+      }
     }
   }, []);
 
@@ -152,7 +163,18 @@ export const AnimationProvider = ({ children }) => {
       const botElement = botRefs.current[nextAnimation.processName];
       const centerElement = activeCenterRef.current;
 
-      const botPos = getElementPosition(botElement);
+      // Try to get bot position from element first, then fall back to cache, then fallback position
+      let botPos = getElementPosition(botElement);
+      if (!botPos || botPos.x === 0 || botPos.y === 0) {
+        // Element is gone or has invalid position, use cached position
+        botPos = botPositionsCache.current[nextAnimation.processName];
+        console.log(`Using cached bot position for ${nextAnimation.processName}:`, botPos);
+      }
+      // Final fallback if still no position
+      if (!botPos) {
+        botPos = getFallbackBotPosition();
+        console.log(`No cached position, using fallback for ${nextAnimation.processName}:`, botPos);
+      }
       const centerPos = getElementPosition(centerElement);
 
       // Always use right side position for VM (Entry component is on the right)
@@ -251,17 +273,53 @@ export const AnimationProvider = ({ children }) => {
     return { element: null, key: null };
   };
 
+  // Get fallback position for bot from left side of screen
+  const getFallbackBotPosition = () => {
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    return {
+      x: viewportWidth * 0.15, // Left side of screen (BotsInQueue area)
+      y: viewportHeight * 0.45, // Middle height
+      width: 200,
+      height: 40
+    };
+  };
+
   // Add animations to queue
   const queueAnimations = useCallback((newActiveVms) => {
     if (!newActiveVms || newActiveVms.length === 0) return;
 
     console.log("queueAnimations called with:", newActiveVms);
     console.log("Available VM refs:", Object.keys(vmRefs.current));
-    console.log("Already cached positions:", Object.keys(vmPositionsCache.current));
+    console.log("Available Bot refs:", Object.keys(botRefs.current));
+    console.log("Already cached VM positions:", Object.keys(vmPositionsCache.current));
+    console.log("Already cached Bot positions:", Object.keys(botPositionsCache.current));
 
     // Cache current VM positions before they disappear from Entry
     newActiveVms.forEach(vm => {
       const machineName = vm.machineName;
+      const processName = vm.processName;
+
+      // Cache bot position FIRST (before it might disappear from queue)
+      const botElement = botRefs.current[processName];
+      if (botElement) {
+        const botRect = botElement.getBoundingClientRect();
+        if (botRect.width > 0 && botRect.height > 0) {
+          botPositionsCache.current[processName] = {
+            x: botRect.left + botRect.width / 2,
+            y: botRect.top + botRect.height / 2,
+            width: botRect.width,
+            height: botRect.height
+          };
+          console.log(`Cached bot position for ${processName}:`, botPositionsCache.current[processName]);
+        }
+      } else if (!botPositionsCache.current[processName]) {
+        // No element and no cache - use fallback
+        botPositionsCache.current[processName] = getFallbackBotPosition();
+        console.log(`No bot element for ${processName}, using fallback:`, botPositionsCache.current[processName]);
+      }
+
+      // Cache VM position
       const { element, key } = findVmElement(machineName);
 
       console.log(`Looking for VM element: "${machineName}", found:`, !!element, key ? `(matched key: ${key})` : '');
