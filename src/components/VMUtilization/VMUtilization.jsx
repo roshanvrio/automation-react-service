@@ -23,16 +23,22 @@ const VMUtilization = ({ vmUtilizationUpdate }) => {
         </div>
       </div>
       <div className="vm-grid">
-        {vms.map((vm, index) => (
-          <div
-            key={index}
-            className="vm-cell"
-            style={{ backgroundColor: getColor(vm.utilizationMinutes || 0) }}
-          >
-            <div className="vm-id">{vm.vmName}</div>
-            <div className="vm-time">{vm.utilizationMinutes}</div>
-          </div>
-        ))}
+        {vms.map((vm, index) => {
+          const hasUtilization = vm.utilizationMinutes > 0;
+          return (
+            <div
+              key={index}
+              className="vm-cell"
+              style={{
+                backgroundColor: getColor(vm.utilizationMinutes || 0),
+                color: hasUtilization ? "#ffffff" : "#0a0e27",
+              }}
+            >
+              <div className="vm-id">{vm.vmName}</div>
+              <div className="vm-time">{vm.utilizationMinutes}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

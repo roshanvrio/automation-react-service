@@ -46,15 +46,15 @@
 
 /* TEXT */
 .vm-id {
-  font-size: clamp(7px, 0.65vmin, 11px);
+  font-size: clamp(8px, 0.65vmin, 12px);
   font-weight: 600;
-  color: #0a0e27;
+  color: inherit;
   line-height: 1;
 }
 
 .vm-time {
-  font-size: clamp(5px, 0.5vmin, 9px);
-  color: #0a0e27;
+  font-size: clamp(6px, 0.5vmin, 10px);
+  color: inherit;
   line-height: 1;
 }
 
@@ -80,11 +80,11 @@
   }
 
   .vm-id {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .vm-time {
-    font-size: 10px;
+    font-size: 11px;
   }
 }
 
@@ -101,11 +101,11 @@
   }
 
   .vm-id {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .vm-time {
-    font-size: 9px;
+    font-size: 10px;
   }
 }
 
@@ -122,11 +122,11 @@
   }
 
   .vm-id {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .vm-time {
-    font-size: 8px;
+    font-size: 9px;
   }
 }
 
@@ -138,11 +138,11 @@
   }
 
   .vm-id {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .vm-time {
-    font-size: 7px;
+    font-size: 8px;
   }
 }
 
@@ -154,11 +154,11 @@
   }
 
   .vm-id {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .vm-time {
-    font-size: 6px;
+    font-size: 7px;
   }
 }
 
@@ -170,11 +170,11 @@
   }
 
   .vm-id {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .vm-time {
-    font-size: 6px;
+    font-size: 7px;
   }
 }
 
@@ -186,11 +186,11 @@
   }
 
   .vm-id {
-    font-size: 7px;
+    font-size: 8px;
   }
 
   .vm-time {
-    font-size: 5px;
+    font-size: 6px;
   }
 }
 
@@ -208,11 +208,11 @@
   }
 
   .vm-id {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .vm-time {
-    font-size: 7px;
+    font-size: 8px;
   }
 }
 
@@ -224,10 +224,10 @@
   }
 
   .vm-id {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .vm-time {
-    font-size: 6px;
+    font-size: 7px;
   }
 }

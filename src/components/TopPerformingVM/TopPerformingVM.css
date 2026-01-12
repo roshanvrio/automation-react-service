@@ -118,7 +118,7 @@
 }
 
 .performer-vm-id {
-  font-size: clamp(9px, 0.9vmin, 16px);
+  font-size: clamp(10px, 0.9vmin, 17px);
   font-weight: 700;
   color: #00ff88;
   font-family: 'Courier New', monospace;
@@ -127,7 +127,7 @@
 }
 
 .performer-time {
-  font-size: clamp(5px, 0.5vmin, 9px);
+  font-size: clamp(6px, 0.5vmin, 10px);
   color: #34d399;
   margin-top: clamp(1px, 0.15vmin, 3px);
   line-height: 1;
@@ -222,11 +222,11 @@
   }
 
   .performer-vm-id {
-    font-size: 18px;
+    font-size: 19px;
   }
 
   .performer-time {
-    font-size: 10px;
+    font-size: 11px;
     margin-top: 4px;
   }
 }
@@ -256,11 +256,11 @@
   }
 
   .performer-vm-id {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .performer-time {
-    font-size: 9px;
+    font-size: 10px;
     margin-top: 3px;
   }
 }
@@ -290,11 +290,11 @@
   }
 
   .performer-vm-id {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .performer-time {
-    font-size: 8px;
+    font-size: 9px;
     margin-top: 2px;
   }
 }
@@ -324,11 +324,11 @@
   }
 
   .performer-vm-id {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .performer-time {
-    font-size: 7px;
+    font-size: 8px;
     margin-top: 2px;
   }
 }
@@ -358,11 +358,11 @@
   }
 
   .performer-vm-id {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .performer-time {
-    font-size: 6px;
+    font-size: 7px;
     margin-top: 1px;
   }
 }
@@ -388,11 +388,11 @@
   }
 
   .performer-vm-id {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .performer-time {
-    font-size: 6px;
+    font-size: 7px;
   }
 }
 
@@ -421,11 +421,11 @@
   }
 
   .performer-vm-id {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .performer-time {
-    font-size: 5px;
+    font-size: 6px;
   }
 }
 
@@ -454,11 +454,11 @@
   }
 
   .performer-vm-id {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .performer-time {
-    font-size: 7px;
+    font-size: 8px;
     margin-top: 2px;
   }
 }
@@ -488,10 +488,10 @@
   }
 
   .performer-vm-id {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .performer-time {
-    font-size: 6px;
+    font-size: 7px;
   }
 }
