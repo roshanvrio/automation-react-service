@@ -33,8 +33,6 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   const isProcessingQueue = useRef(false);
   // Track if this is first data load
   const isFirstLoad = useRef(true);
-  // Track if we're in stabilization period (skip exit animations right after first load)
-  const isStabilizingRef = useRef(true);
   // Track all VMs we've seen (to prevent duplicates)
   const seenVmsRef = useRef(new Set());
   // Track VMs currently completing (to prevent duplicate animation triggers)
@@ -257,7 +255,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     return 'unknown';
   }, []);
 
-  // Process the exit queue one by one
+  // Process the exit queue one by one (synced with robot animation)
   const processExitQueue = useCallback(() => {
     if (isProcessingExitQueue.current || exitQueue.current.length === 0) {
       return;
@@ -274,7 +272,10 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     const latestCompletedData = completedTransactionsRef.current;
     const outcome = determineOutcome(nextVm, latestCompletedData);
     console.log(`VM ${nextVm.machineName} completed with outcome: ${outcome}`);
-    console.log(`📊 Checking against completedTransactions:`, latestCompletedData);
+
+    // Add THIS VM to visual exit queue NOW (starts blinking for this one only)
+    addToExitQueue([{ machineName: nextVm.machineName, outcome }]);
+    console.log(`📋 Added ${nextVm.machineName} to visual exit queue (blinking starts)`);
 
     // Get fresh hex position from ref (important for first/last VM)
     let freshHexPosition = null;
@@ -292,38 +293,39 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       console.log(`⚠️ No hex element found for ${nextVm.machineName}`);
     }
 
-    // Trigger completion blink animation with fresh position
+    // Trigger robot completion animation (robot will go to this VM)
     queueCompletionAnimation(nextVm.machineName, outcome, freshHexPosition);
-    console.log(`✨ Completion animation queued for ${nextVm.machineName} with outcome: ${outcome}`);
+    console.log(`✨ Robot animation queued for ${nextVm.machineName}`);
 
-    // After blink animation (2.5s), trigger exit animation and remove from display
+    // Wait for robot to reach VM and pick it up, then remove hexagon
+    // Robot animation: 0ms move → 400ms arrive → 600ms react → 1200ms pick up
+    // Remove hexagon when robot picks it up (1200ms)
     setTimeout(() => {
-      console.log(`🚀 Starting exit animation for ${nextVm.machineName}`);
-      queueExitAnimation(nextVm, outcome);
-
-      // Remove from displayed VMs immediately after fade-out (the flying icon takes over)
+      console.log(`🗑️ Robot picked up ${nextVm.machineName} - removing from display`);
       seenVmsRef.current.delete(nextVm.machineName);
       setDisplayedVMs(prev => prev.filter(vm => vm.machineName !== nextVm.machineName));
-      console.log(`🗑️ Removed ${nextVm.machineName} from displayed VMs`);
 
-      // Clear completing state only after exit animation completes (1.8s)
-      setTimeout(() => {
-        completingVmsRef.current.delete(nextVm.machineName);
-        // Remove from visual exit queue (ExitQueue component)
-        removeFromExitQueue(nextVm.machineName);
-        console.log(`✅ Fully completed exit for ${nextVm.machineName}`);
-      }, 1800);
+      // Trigger exit animation (flying VM icon) when robot starts returning
+      queueExitAnimation(nextVm, outcome);
+    }, 1200);
+
+    // Robot continues: 1400ms return → 1900ms place → 2200ms idle
+    // Wait for full robot animation to complete before processing next VM
+    setTimeout(() => {
+      console.log(`✅ Robot animation complete for ${nextVm.machineName}`);
+      completingVmsRef.current.delete(nextVm.machineName);
+      removeFromExitQueue(nextVm.machineName);
 
       isProcessingExitQueue.current = false;
 
-      // Process next item in exit queue after delay
+      // Process next item in exit queue
       if (exitQueue.current.length > 0) {
         setTimeout(() => {
           processExitQueue();
         }, EXIT_ANIMATION_DELAY);
       }
-    }, 2700); // 2.5s blink + 0.2s fade-out
-  }, [queueCompletionAnimation, queueExitAnimation, determineOutcome, removeFromExitQueue]);
+    }, 2500); // Wait for full robot exit animation (2200ms + buffer)
+  }, [queueCompletionAnimation, queueExitAnimation, determineOutcome, addToExitQueue, removeFromExitQueue]);
 
   // Keep track of displayed VMs in a ref for exit detection (avoids dependency issues)
   const displayedVmsRef = useRef([]);
@@ -350,11 +352,6 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       setDisplayedVMs(activeVmUpdate);
       // Update ref immediately so exit detection works
       displayedVmsRef.current = activeVmUpdate;
-      // Allow exit animations after a short stabilization period
-      setTimeout(() => {
-        isStabilizingRef.current = false;
-        console.log("Stabilization complete - exit animations now enabled");
-      }, 500);
       return;
     }
 
@@ -362,18 +359,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     const activeNames = Array.isArray(activeVmUpdate) ? activeVmUpdate.map(vm => vm.machineName) : [];
     const currentDisplayedVMs = displayedVmsRef.current;
 
-    // During stabilization period, silently sync displayedVMs without animation
-    if (isStabilizingRef.current) {
-      const vmsToRemove = currentDisplayedVMs.filter(vm => !activeNames.includes(vm.machineName));
-      if (vmsToRemove.length > 0) {
-        console.log("Stabilization: silently removing VMs without animation:", vmsToRemove.map(vm => vm.machineName));
-        vmsToRemove.forEach(vm => seenVmsRef.current.delete(vm.machineName));
-        setDisplayedVMs(prev => prev.filter(vm => activeNames.includes(vm.machineName)));
-        displayedVmsRef.current = displayedVmsRef.current.filter(vm => activeNames.includes(vm.machineName));
-      }
-    }
-
-    const removedVMs = isStabilizingRef.current ? [] : currentDisplayedVMs.filter(vm =>
+    // Find VMs that were removed (exit animations should always work after first load)
+    const removedVMs = currentDisplayedVMs.filter(vm =>
       !activeNames.includes(vm.machineName) &&
       !completingVmsRef.current.has(vm.machineName) &&
       !exitQueue.current.some(queuedVm => queuedVm.machineName === vm.machineName)
@@ -385,18 +372,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       // Mark all as completing immediately to prevent duplicate triggers
       removedVMs.forEach(vm => completingVmsRef.current.add(vm.machineName));
 
-      // Determine outcomes for ALL removed VMs and add to visual queue immediately
-      const latestCompletedData = completedTransactionsRef.current;
-      const vmsWithOutcomes = removedVMs.map(vm => ({
-        machineName: vm.machineName,
-        outcome: determineOutcome(vm, latestCompletedData)
-      }));
-
-      // Add ALL to visual exit queue immediately (shows in ExitQueue component)
-      addToExitQueue(vmsWithOutcomes);
-      console.log("📋 Added all VMs to visual exit queue:", vmsWithOutcomes);
-
-      // Add to robot animation queue (will process one by one)
+      // Add to exit queue (will process one by one - blink and robot animation synced)
       exitQueue.current.push(...removedVMs);
 
       // Start processing exit queue if not already (with small delay)

@@ -1,9 +1,9 @@
 /* Exit Queue Container - Fixed position overlay */
 .exit-queue-container {
   position: fixed;
-  top: 50%;
+  top: auto;
+  bottom: 250px;
   right: 20px;
-  transform: translateY(-50%);
   z-index: 9997;
   background: linear-gradient(135deg, rgba(20, 25, 40, 0.95), rgba(30, 35, 55, 0.95));
   border: 1px solid rgba(0, 230, 255, 0.3);
@@ -11,6 +11,7 @@
   padding: 12px 16px;
   min-width: 180px;
   max-width: 250px;
+  max-height: calc(100vh - 200px);
   backdrop-filter: blur(10px);
   box-shadow:
     0 0 20px rgba(0, 230, 255, 0.2),
@@ -21,11 +22,11 @@
 @keyframes exitQueueSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-50%) translateX(20px);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(0);
   }
 }
 
@@ -193,9 +194,12 @@
 /* Responsive */
 @media (max-width: 1440px) {
   .exit-queue-container {
+    bottom: 200px;
+    right: 15px;
     min-width: 160px;
     max-width: 220px;
     padding: 10px 14px;
+    max-height: calc(100vh - 280px);
   }
 
   .exit-queue-header {
@@ -209,29 +213,55 @@
 
 @media (max-width: 1024px) {
   .exit-queue-container {
-    top: auto;
-    bottom: 80px;
+    bottom: 180px;
     right: 10px;
-    transform: none;
     min-width: 150px;
     max-width: 200px;
+    max-height: calc(100vh - 260px);
+  }
+
+  .exit-queue-list {
+    max-height: 200px;
   }
 }
 
 @media (max-width: 768px) {
   .exit-queue-container {
-    bottom: 70px;
-    right: 5px;
+    bottom: 160px;
+    right: 8px;
     min-width: 140px;
     max-width: 180px;
     padding: 8px 10px;
+    max-height: calc(100vh - 220px);
   }
 
   .exit-queue-header {
     font-size: 12px;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+
+  .exit-queue-list {
+    max-height: 150px;
+    gap: 6px;
+  }
+
+  .exit-queue-item {
+    padding: 6px 10px;
   }
 
   .exit-vm-name {
     font-size: 10px;
+  }
+}
+
+@media (max-height: 700px) {
+  .exit-queue-container {
+    bottom: 140px;
+    max-height: calc(100vh - 200px);
+  }
+
+  .exit-queue-list {
+    max-height: 150px;
   }
 }
