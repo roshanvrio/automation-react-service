@@ -52,6 +52,9 @@ const RobotAnimator = () => {
   const lastAnimationIdRef = useRef(null);
   const lastExitAnimationIdRef = useRef(null);
 
+  // Flag to skip animations on initial mount (only animate after receiving websocket data)
+  const isInitialMountRef = useRef(true);
+
   // Queue system for robot animations (entry)
   const robotQueueRef = useRef([]);
   const isRobotAnimatingRef = useRef(false);
@@ -266,6 +269,11 @@ const RobotAnimator = () => {
 
   // Listen for entry animation changes
   useEffect(() => {
+    // Skip animations on initial mount - only animate after receiving websocket data
+    if (isInitialMountRef.current) {
+      return;
+    }
+
     if (!currentAnimation || animationPhase !== "fly") {
       return;
     }
@@ -290,6 +298,11 @@ const RobotAnimator = () => {
 
   // Listen for completion animation changes (when VM starts blinking)
   useEffect(() => {
+    // Skip animations on initial mount - only animate after receiving websocket data
+    if (isInitialMountRef.current) {
+      return;
+    }
+
     if (!completionAnimation) {
       return;
     }
@@ -311,6 +324,18 @@ const RobotAnimator = () => {
       processExitQueueRef.current();
     }
   }, [completionAnimation]);
+
+  // Mark initial mount as complete after first render cycle
+  // This allows animations to trigger only after receiving new websocket data
+  useEffect(() => {
+    // Use a small delay to ensure we skip any stale animation state on page load
+    const timer = setTimeout(() => {
+      isInitialMountRef.current = false;
+      console.log("Robot: Initial mount complete, now listening for websocket animations");
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {

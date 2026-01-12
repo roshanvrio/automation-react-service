@@ -12,6 +12,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     registerActiveCenter,
     registerActiveVmHex,
     queueAnimations,
+    addToExitQueue,
+    removeFromExitQueue,
     queueCompletionAnimation,
     queueExitAnimation,
     isVmCompleting,
@@ -31,6 +33,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   const isProcessingQueue = useRef(false);
   // Track if this is first data load
   const isFirstLoad = useRef(true);
+  // Track if we're in stabilization period (skip exit animations right after first load)
+  const isStabilizingRef = useRef(true);
   // Track all VMs we've seen (to prevent duplicates)
   const seenVmsRef = useRef(new Set());
   // Track VMs currently completing (to prevent duplicate animation triggers)
@@ -305,6 +309,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       // Clear completing state only after exit animation completes (1.8s)
       setTimeout(() => {
         completingVmsRef.current.delete(nextVm.machineName);
+        // Remove from visual exit queue (ExitQueue component)
+        removeFromExitQueue(nextVm.machineName);
         console.log(`✅ Fully completed exit for ${nextVm.machineName}`);
       }, 1800);
 
@@ -317,27 +323,91 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
         }, EXIT_ANIMATION_DELAY);
       }
     }, 2700); // 2.5s blink + 0.2s fade-out
-  }, [queueCompletionAnimation, queueExitAnimation, determineOutcome]);
+  }, [queueCompletionAnimation, queueExitAnimation, determineOutcome, removeFromExitQueue]);
 
-  // Detect new VMs and queue them
+  // Keep track of displayed VMs in a ref for exit detection (avoids dependency issues)
+  const displayedVmsRef = useRef([]);
+
+  // Update the ref whenever displayedVMs changes
   useEffect(() => {
-    // Handle first load case - set flag immediately regardless of data
-    if (isFirstLoad.current) {
-      isFirstLoad.current = false;
+    displayedVmsRef.current = displayedVMs;
+  }, [displayedVMs]);
 
+  // Detect new VMs and queue them - ONLY runs when activeVmUpdate changes
+  useEffect(() => {
+    // Handle first load case - ONLY set flag to false when we have actual data
+    if (isFirstLoad.current) {
       if (!Array.isArray(activeVmUpdate) || activeVmUpdate.length === 0) {
-        // First load with empty array - future VMs will animate in
-        console.log("First load with no VMs - future VMs will animate");
+        // First load with empty array - keep isFirstLoad true, wait for real data
+        console.log("First load with no VMs - waiting for websocket data");
         return;
       }
 
       // First load with VMs - display immediately without animation
       console.log("First load - displaying all VMs immediately:", activeVmUpdate.map(vm => vm.machineName));
+      isFirstLoad.current = false; // Only set to false AFTER we have data
       activeVmUpdate.forEach(vm => seenVmsRef.current.add(vm.machineName));
       setDisplayedVMs(activeVmUpdate);
+      // Update ref immediately so exit detection works
+      displayedVmsRef.current = activeVmUpdate;
+      // Allow exit animations after a short stabilization period
+      setTimeout(() => {
+        isStabilizingRef.current = false;
+        console.log("Stabilization complete - exit animations now enabled");
+      }, 500);
       return;
     }
 
+    // FIRST: Handle removed VMs - check BEFORE early return so exit works when activeVmUpdate is empty
+    const activeNames = Array.isArray(activeVmUpdate) ? activeVmUpdate.map(vm => vm.machineName) : [];
+    const currentDisplayedVMs = displayedVmsRef.current;
+
+    // During stabilization period, silently sync displayedVMs without animation
+    if (isStabilizingRef.current) {
+      const vmsToRemove = currentDisplayedVMs.filter(vm => !activeNames.includes(vm.machineName));
+      if (vmsToRemove.length > 0) {
+        console.log("Stabilization: silently removing VMs without animation:", vmsToRemove.map(vm => vm.machineName));
+        vmsToRemove.forEach(vm => seenVmsRef.current.delete(vm.machineName));
+        setDisplayedVMs(prev => prev.filter(vm => activeNames.includes(vm.machineName)));
+        displayedVmsRef.current = displayedVmsRef.current.filter(vm => activeNames.includes(vm.machineName));
+      }
+    }
+
+    const removedVMs = isStabilizingRef.current ? [] : currentDisplayedVMs.filter(vm =>
+      !activeNames.includes(vm.machineName) &&
+      !completingVmsRef.current.has(vm.machineName) &&
+      !exitQueue.current.some(queuedVm => queuedVm.machineName === vm.machineName)
+    );
+
+    if (removedVMs.length > 0) {
+      console.log("VMs removed - adding to exit queue:", removedVMs.map(vm => vm.machineName));
+
+      // Mark all as completing immediately to prevent duplicate triggers
+      removedVMs.forEach(vm => completingVmsRef.current.add(vm.machineName));
+
+      // Determine outcomes for ALL removed VMs and add to visual queue immediately
+      const latestCompletedData = completedTransactionsRef.current;
+      const vmsWithOutcomes = removedVMs.map(vm => ({
+        machineName: vm.machineName,
+        outcome: determineOutcome(vm, latestCompletedData)
+      }));
+
+      // Add ALL to visual exit queue immediately (shows in ExitQueue component)
+      addToExitQueue(vmsWithOutcomes);
+      console.log("📋 Added all VMs to visual exit queue:", vmsWithOutcomes);
+
+      // Add to robot animation queue (will process one by one)
+      exitQueue.current.push(...removedVMs);
+
+      // Start processing exit queue if not already (with small delay)
+      if (!isProcessingExitQueue.current) {
+        setTimeout(() => {
+          processExitQueue();
+        }, 100);
+      }
+    }
+
+    // Early return if no active VMs to process for entry
     if (!Array.isArray(activeVmUpdate) || activeVmUpdate.length === 0) {
       return;
     }
@@ -345,16 +415,18 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     // Find new VMs that we haven't seen before
     const newVMs = activeVmUpdate.filter(vm => !seenVmsRef.current.has(vm.machineName));
 
-    // Update existing VMs with new data (e.g., lastRunTime)
+    // Update existing VMs with new data (e.g., lastRunTime) - use functional update
     setDisplayedVMs(prev => {
-      return prev.map(displayedVm => {
+      const updated = prev.map(displayedVm => {
         const updatedVm = activeVmUpdate.find(vm => vm.machineName === displayedVm.machineName);
         if (updatedVm) {
-          // Return updated VM data if something changed
           return updatedVm;
         }
         return displayedVm;
       });
+      // Also update ref immediately
+      displayedVmsRef.current = updated;
+      return updated;
     });
 
     if (newVMs.length > 0) {
@@ -373,32 +445,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
         processQueue();
       }
     }
-
-    // Handle removed VMs - detect completions and queue for one-by-one exit animation
-    const activeNames = activeVmUpdate.map(vm => vm.machineName);
-    const removedVMs = displayedVMs.filter(vm =>
-      !activeNames.includes(vm.machineName) &&
-      !completingVmsRef.current.has(vm.machineName) && // Don't re-trigger if already completing
-      !exitQueue.current.some(queuedVm => queuedVm.machineName === vm.machineName) // Don't add if already in queue
-    );
-
-    if (removedVMs.length > 0) {
-      console.log("VMs removed - adding to exit queue:", removedVMs.map(vm => vm.machineName));
-
-      // Mark all as completing immediately to prevent duplicate triggers
-      removedVMs.forEach(vm => completingVmsRef.current.add(vm.machineName));
-
-      // Add to exit queue
-      exitQueue.current.push(...removedVMs);
-
-      // Start processing exit queue if not already (with small delay for completedTransactions to update)
-      if (!isProcessingExitQueue.current) {
-        setTimeout(() => {
-          processExitQueue();
-        }, 100); // Small delay to ensure completedTransactions is updated
-      }
-    }
-  }, [activeVmUpdate, displayedVMs, processQueue, processExitQueue]);
+    // IMPORTANT: Only depend on activeVmUpdate - NOT displayedVMs to avoid re-runs
+  }, [activeVmUpdate, processQueue, processExitQueue, determineOutcome, addToExitQueue]);
 
   return (
     <div className="dashboard-card center-height activevms-card">

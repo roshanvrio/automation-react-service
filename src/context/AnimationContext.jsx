@@ -297,10 +297,34 @@ export const AnimationProvider = ({ children }) => {
     });
   }, []);
 
-  // Queue completion animation for a VM (sets blink state AND triggers robot animation)
+  // Add VMs to the visual exit queue (for ExitQueue component display)
+  // This does NOT trigger robot animation - use queueCompletionAnimation for that
+  const addToExitQueue = useCallback((vmsWithOutcomes) => {
+    // vmsWithOutcomes is an array of { machineName, outcome }
+    console.log(`Adding ${vmsWithOutcomes.length} VMs to exit queue:`, vmsWithOutcomes.map(v => v.machineName));
+
+    setCompletingVms(prev => {
+      const newMap = new Map(prev);
+      vmsWithOutcomes.forEach(({ machineName, outcome }) => {
+        newMap.set(machineName, outcome);
+      });
+      return newMap;
+    });
+  }, []);
+
+  // Remove a VM from the visual exit queue
+  const removeFromExitQueue = useCallback((machineName) => {
+    setCompletingVms(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(machineName);
+      return newMap;
+    });
+  }, []);
+
+  // Queue completion animation for a VM (triggers robot animation for ONE VM)
   // Optional hexPosition parameter allows passing fresh position from component
   const queueCompletionAnimation = useCallback((machineName, outcome, hexPosition = null) => {
-    console.log(`Queueing completion animation for ${machineName} with outcome: ${outcome}`);
+    console.log(`Queueing robot animation for ${machineName} with outcome: ${outcome}`);
 
     // Use passed position, or fallback to cached position, or fallback to center
     const vmHexPos = hexPosition || activeVmHexPositionsRef.current[machineName];
@@ -317,6 +341,7 @@ export const AnimationProvider = ({ children }) => {
       id: Date.now()
     });
 
+    // Also ensure it's in completingVms (in case addToExitQueue wasn't called)
     setCompletingVms(prev => {
       const newMap = new Map(prev);
       newMap.set(machineName, outcome);
@@ -432,6 +457,8 @@ export const AnimationProvider = ({ children }) => {
     completedAnimations,
     clearCompletedAnimation,
     pendingAnimations,
+    addToExitQueue,
+    removeFromExitQueue,
     queueCompletionAnimation,
     queueExitAnimation,
     isVmCompleting,

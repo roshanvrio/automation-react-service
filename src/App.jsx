@@ -7,6 +7,7 @@ import ActiveVMs from "./components/ActiveVMs/ActiveVMs";
 import Entry from "./components/Entry/Entry";
 import AnimationOverlay from "./components/AnimationOverlay/AnimationOverlay";
 import RobotAnimator from "./components/RobotAnimator";
+import ExitQueue from "./components/ExitQueue";
 import { AnimationProvider } from "./context/AnimationContext";
 
 import "./App.css";
@@ -195,6 +196,8 @@ const AppContent = () => {
       <AnimationOverlay />
       {/* Robot mascot animation */}
       <RobotAnimator />
+      {/* Exit queue overlay showing VMs waiting to be processed */}
+      <ExitQueue />
 
       <div className="container-fluid">
 
