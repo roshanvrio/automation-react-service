@@ -455,7 +455,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   }, [activeVmUpdate, processQueue, processExitQueue, determineOutcome, addToExitQueue]);
 
   return (
-    <div className="dashboard-card center-height activevms-card">
+    <div className="dashboard-card-center center-height activevms-card">
       <div className="activevms-header">
         <span><i className="bi bi-display"></i> Active VMs <strong>{activeVmUpdate?.length || 0}</strong></span>
 

@@ -1,3 +1,11 @@
+.dashboard-card-center {
+  background: black url('../../assets/Grid.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+
 /* Card wrapper */
 .activevms-card {
   display: flex;
