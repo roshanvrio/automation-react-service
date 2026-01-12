@@ -72,101 +72,78 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
 
     const container = centerRef.current;
     const containerWidth = container.clientWidth - 20; // Account for padding
-    const containerHeight = container.clientHeight - 20;
     const vmCount = displayedVMs.length;
 
     // Hexagon aspect ratio (width:height = 1:0.85)
     const hexRatio = 0.85;
 
-    // Responsive card dimensions based on screen width
+    // Responsive card dimensions based on screen width - use smaller min sizes to fit more columns
     const screenWidth = window.innerWidth;
     let minCardWidth, maxCardWidth, gapSize;
 
     if (screenWidth >= 1920) {
-      minCardWidth = 120;
-      maxCardWidth = 200;
-      gapSize = 25;
-    } else if (screenWidth >= 1440) {
-      minCardWidth = 100;
-      maxCardWidth = 170;
+      minCardWidth = 100;  // Reduced from 120
+      maxCardWidth = 180;
       gapSize = 20;
-    } else if (screenWidth >= 1024) {
-      minCardWidth = 90;
-      maxCardWidth = 150;
+    } else if (screenWidth >= 1440) {
+      minCardWidth = 90;   // Reduced from 100
+      maxCardWidth = 160;
       gapSize = 18;
-    } else if (screenWidth >= 768) {
-      minCardWidth = 80;
-      maxCardWidth = 130;
+    } else if (screenWidth >= 1024) {
+      minCardWidth = 80;   // Reduced from 90
+      maxCardWidth = 140;
       gapSize = 15;
-    } else {
-      minCardWidth = 70;
+    } else if (screenWidth >= 768) {
+      minCardWidth = 70;   // Reduced from 80
       maxCardWidth = 120;
       gapSize = 12;
+    } else {
+      minCardWidth = 60;   // Reduced from 70
+      maxCardWidth = 100;
+      gapSize = 10;
     }
 
-    // Calculate max columns that can fit
+    // Calculate max columns that can fit with minimum card width
     const maxPossibleCols = Math.floor((containerWidth + gapSize) / (minCardWidth + gapSize));
 
-    // Calculate optimal columns to fill the space
-    let bestLayout = { cols: 1, cardWidth: maxCardWidth, rows: vmCount };
-    let bestScore = -1;
-
-    for (let cols = 1; cols <= Math.min(vmCount, maxPossibleCols, 8); cols++) {
-      const rows = Math.ceil(vmCount / cols);
-
-      // Calculate card width based on available width
-      const availableWidth = containerWidth - (gapSize * (cols - 1));
-      let cardWidth = Math.floor(availableWidth / cols);
-
-      // Clamp card width
-      cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
-
-      // Calculate card height
-      const cardHeight = cardWidth * hexRatio;
-
-      // Calculate total height needed
-      const totalHeight = (rows * cardHeight) + (gapSize * (rows - 1));
-
-      // Score based on how well it fills the space
-      // Prefer layouts that fit without scrolling, but allow scrolling for many VMs
-      const fitsWithoutScroll = totalHeight <= containerHeight;
-      const widthUtilization = (cols * cardWidth + (cols - 1) * gapSize) / containerWidth;
-
-      // Calculate score - prefer more columns when many VMs, prefer fitting when possible
-      let score = widthUtilization;
-      if (fitsWithoutScroll) {
-        const heightUtilization = totalHeight / containerHeight;
-        score = (widthUtilization * 0.5) + (heightUtilization * 0.5) + 1; // Bonus for fitting
-      } else if (cardWidth >= minCardWidth) {
-        // Still usable with scroll - slight penalty but acceptable
-        score = widthUtilization * 0.8;
-      }
-
-      if (score > bestScore && cardWidth >= minCardWidth) {
-        bestScore = score;
-        bestLayout = { cols, cardWidth, rows };
-      }
+    // Determine target columns based on VM count - prefer more columns to use horizontal space
+    let targetCols;
+    if (vmCount <= 4) {
+      targetCols = vmCount; // 1-4 VMs: show all in one row
+    } else if (vmCount <= 8) {
+      targetCols = 4; // 5-8 VMs: 4 per row
+    } else if (vmCount <= 15) {
+      targetCols = 5; // 9-15 VMs: 5 per row
+    } else if (vmCount <= 24) {
+      targetCols = 6; // 16-24 VMs: 6 per row
+    } else if (vmCount <= 35) {
+      targetCols = 7; // 25-35 VMs: 7 per row
+    } else {
+      targetCols = 8; // 36+ VMs: 8 per row
     }
 
-    // If no layout found, use minimum size with max columns for scrolling
-    if (bestScore < 0) {
-      const cols = Math.max(1, Math.min(maxPossibleCols, 4));
-      bestLayout = {
-        cols,
-        cardWidth: minCardWidth,
-        rows: Math.ceil(vmCount / cols)
-      };
-    }
+    // Clamp target columns to what's actually possible
+    const cols = Math.min(targetCols, maxPossibleCols, vmCount);
+    const rows = Math.ceil(vmCount / cols);
 
-    const cardHeight = Math.floor(bestLayout.cardWidth * hexRatio);
+    // Calculate card width to fill the available space
+    const availableWidth = containerWidth - (gapSize * (cols - 1));
+    let cardWidth = Math.floor(availableWidth / cols);
+
+    // Clamp card width between min and max
+    cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
+
+    const cardHeight = Math.floor(cardWidth * hexRatio);
+
+    console.log(`Grid layout: ${vmCount} VMs → ${cols} cols × ${rows} rows, card: ${cardWidth}px`);
 
     // Set CSS variables for the grid
     setGridStyle({
-      '--hex-cols': bestLayout.cols,
-      '--hex-card-width': `${bestLayout.cardWidth}px`,
+      '--hex-cols': cols,
+      '--hex-card-width': `${cardWidth}px`,
       '--hex-card-height': `${cardHeight}px`,
       '--hex-gap': `${gapSize}px`,
-      '--hex-font-scale': Math.max(0.6, Math.min(1, bestLayout.cardWidth / 150)),
+      '--hex-font-scale': Math.max(0.6, Math.min(1, cardWidth / 140)),
     });
   }, [displayedVMs.length]);
 
