@@ -78,22 +78,48 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     // Hexagon aspect ratio (width:height = 1:0.85)
     const hexRatio = 0.85;
 
-    // Minimum and maximum card dimensions
-    const minCardWidth = 80;
-    const maxCardWidth = 220;
-    const gapSize = 25;
+    // Responsive card dimensions based on screen width
+    const screenWidth = window.innerWidth;
+    let minCardWidth, maxCardWidth, gapSize;
+
+    if (screenWidth >= 1920) {
+      minCardWidth = 120;
+      maxCardWidth = 200;
+      gapSize = 25;
+    } else if (screenWidth >= 1440) {
+      minCardWidth = 100;
+      maxCardWidth = 170;
+      gapSize = 20;
+    } else if (screenWidth >= 1024) {
+      minCardWidth = 90;
+      maxCardWidth = 150;
+      gapSize = 18;
+    } else if (screenWidth >= 768) {
+      minCardWidth = 80;
+      maxCardWidth = 130;
+      gapSize = 15;
+    } else {
+      minCardWidth = 70;
+      maxCardWidth = 120;
+      gapSize = 12;
+    }
+
+    // Calculate max columns that can fit
+    const maxPossibleCols = Math.floor((containerWidth + gapSize) / (minCardWidth + gapSize));
 
     // Calculate optimal columns to fill the space
-    // Try different column counts and find the best fit
     let bestLayout = { cols: 1, cardWidth: maxCardWidth, rows: vmCount };
-    let bestScore = 0;
+    let bestScore = -1;
 
-    for (let cols = 1; cols <= Math.min(vmCount, 10); cols++) {
+    for (let cols = 1; cols <= Math.min(vmCount, maxPossibleCols, 8); cols++) {
       const rows = Math.ceil(vmCount / cols);
 
       // Calculate card width based on available width
       const availableWidth = containerWidth - (gapSize * (cols - 1));
       let cardWidth = Math.floor(availableWidth / cols);
+
+      // Clamp card width
+      cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
 
       // Calculate card height
       const cardHeight = cardWidth * hexRatio;
@@ -101,30 +127,34 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       // Calculate total height needed
       const totalHeight = (rows * cardHeight) + (gapSize * (rows - 1));
 
-      // Clamp card width
-      cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
+      // Score based on how well it fills the space
+      // Prefer layouts that fit without scrolling, but allow scrolling for many VMs
+      const fitsWithoutScroll = totalHeight <= containerHeight;
+      const widthUtilization = (cols * cardWidth + (cols - 1) * gapSize) / containerWidth;
 
-      // Score based on how well it fills the space without overflow
-      if (totalHeight <= containerHeight && cardWidth >= minCardWidth) {
-        // Prefer layouts that use more of the available space
-        const widthUtilization = (cols * cardWidth + (cols - 1) * gapSize) / containerWidth;
+      // Calculate score - prefer more columns when many VMs, prefer fitting when possible
+      let score = widthUtilization;
+      if (fitsWithoutScroll) {
         const heightUtilization = totalHeight / containerHeight;
-        const score = (widthUtilization * 0.4) + (heightUtilization * 0.6);
+        score = (widthUtilization * 0.5) + (heightUtilization * 0.5) + 1; // Bonus for fitting
+      } else if (cardWidth >= minCardWidth) {
+        // Still usable with scroll - slight penalty but acceptable
+        score = widthUtilization * 0.8;
+      }
 
-        if (score > bestScore) {
-          bestScore = score;
-          bestLayout = { cols, cardWidth, rows };
-        }
+      if (score > bestScore && cardWidth >= minCardWidth) {
+        bestScore = score;
+        bestLayout = { cols, cardWidth, rows };
       }
     }
 
-    // If no layout fits, use minimum size with scrolling
-    if (bestScore === 0) {
-      const cols = Math.floor((containerWidth + gapSize) / (minCardWidth + gapSize));
+    // If no layout found, use minimum size with max columns for scrolling
+    if (bestScore < 0) {
+      const cols = Math.max(1, Math.min(maxPossibleCols, 4));
       bestLayout = {
-        cols: Math.max(1, cols),
+        cols,
         cardWidth: minCardWidth,
-        rows: Math.ceil(vmCount / Math.max(1, cols))
+        rows: Math.ceil(vmCount / cols)
       };
     }
 
@@ -136,7 +166,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       '--hex-card-width': `${bestLayout.cardWidth}px`,
       '--hex-card-height': `${cardHeight}px`,
       '--hex-gap': `${gapSize}px`,
-      '--hex-font-scale': Math.max(0.5, Math.min(1, bestLayout.cardWidth / 150)),
+      '--hex-font-scale': Math.max(0.6, Math.min(1, bestLayout.cardWidth / 150)),
     });
   }, [displayedVMs.length]);
 

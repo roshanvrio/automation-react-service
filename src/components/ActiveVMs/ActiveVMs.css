@@ -69,6 +69,26 @@
   overflow-x: hidden;
   padding-right: clamp(4px, 0.4vmin, 8px);
   min-height: 0;
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling for activevms */
+.activevms-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activevms-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.activevms-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 230, 255, 0.4);
+  border-radius: 3px;
+}
+
+.activevms-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 230, 255, 0.6);
 }
 
 /* Grid - Responsive columns */
@@ -77,7 +97,7 @@
   grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 12vmin, 220px), 1fr));
   gap: clamp(20px, 2.5vmin, 40px);
   justify-items: center;
-  align-content: start;
+  align-content: center;
   min-height: 100%;
 }
 
