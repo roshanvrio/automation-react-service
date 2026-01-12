@@ -434,9 +434,9 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   return (
     <div className="dashboard-card-center center-height activevms-card">
       <div className="activevms-header">
-        <span><i className="bi bi-display"></i> Active VMs <strong>{activeVmUpdate?.length || 0}</strong></span>
+        <span style={{margin:'1rem'}}><i className="bi bi-display"></i> Active VMs <strong>{activeVmUpdate?.length || 0}</strong></span>
 
-        <div className="legend">
+        <div className="legend mt-2">
           <span className="rounded-white">Start Hour</span>
           <span className="rounded-blue">Current Hour</span>
           <span className="busy">Idle</span>
