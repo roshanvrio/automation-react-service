@@ -93,7 +93,7 @@ const Header = ({ metrics, highlightKeys = [] }) => {
                 </div>
                 <div className="metric-text">
                   <div className="metric-value">{metrics?.avgTime || 0} mins</div>
-                  <div className="metric-label">Avg. Utilisation time</div>
+                  <div className="metric-label">Avg. Execution time</div>
                 </div>
               </div>
             </div>

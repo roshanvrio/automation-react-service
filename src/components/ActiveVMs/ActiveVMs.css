@@ -142,7 +142,7 @@
 }
 
 .hex-small {
-  font-size: clamp(7px, 0.65vmin, 10px);
+  font-size: clamp(8px, 0.65vmin, 11px);
   color: #8ec8ff;
 }
 
@@ -304,7 +304,7 @@
   }
 
   .hex-small {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .hex-vm {
@@ -355,7 +355,7 @@
   }
 
   .hex-small {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .hex-vm {
@@ -405,7 +405,7 @@
   }
 
   .hex-small {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .hex-vm {
@@ -457,7 +457,7 @@
   }
 
   .hex-small {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .hex-vm {
@@ -518,7 +518,7 @@
   }
 
   .hex-small {
-    font-size: 7px;
+    font-size: 8px;
   }
 
   .hex-vm {
@@ -567,7 +567,7 @@
   }
 
   .hex-small {
-    font-size: 7px;
+    font-size: 8px;
   }
 
   .hex-vm {
@@ -629,7 +629,7 @@
   }
 
   .hex-small {
-    font-size: 6px;
+    font-size: 7px;
   }
 
   .hex-vm {
@@ -697,7 +697,7 @@
   }
 
   .hex-small {
-    font-size: 7px;
+    font-size: 8px;
   }
 
   .hex-vm {
@@ -754,7 +754,7 @@
   }
 
   .hex-small {
-    font-size: 6px;
+    font-size: 7px;
   }
 
   .hex-vm {
@@ -1155,7 +1155,7 @@
 }
 
 .hex-grid.hex-dynamic .hex-small {
-  font-size: calc(8px * var(--hex-font-scale));
+  font-size: calc(9px * var(--hex-font-scale));
 }
 
 .hex-grid.hex-dynamic .hex-vm {
