@@ -196,105 +196,106 @@
    RESPONSIVE BREAKPOINTS FOR TOP PERFORMING VM
    ======================================== */
 
-/* 4K / Ultra-wide (3440px+) */
+/* All high resolutions (1920px+) use same laptop-like sizes - no zooming */
+/* 4K / Ultra-wide (3440px+) - Same as HD+ */
 @media (min-width: 3440px) {
   .performer-display {
-    padding: 10px 0;
+    padding: 5px 0;
   }
 
   .performer-badge {
-    width: 180px;
-    height: 180px;
+    width: 120px;
+    height: 120px;
   }
 
   .star-icon {
-    font-size: 14px;
-  }
-
-  .star-icon-inner {
     font-size: 10px;
   }
 
+  .star-icon-inner {
+    font-size: 7px;
+  }
+
   .performer-content {
-    width: 75px;
-    height: 75px;
-    border-width: 3px;
+    width: 48px;
+    height: 48px;
+    border-width: 2px;
   }
 
   .performer-vm-id {
-    font-size: 19px;
+    font-size: 13px;
   }
 
   .performer-time {
-    font-size: 11px;
-    margin-top: 4px;
+    font-size: 8px;
+    margin-top: 2px;
   }
 }
 
-/* 2K / QHD (2560px - 3439px) */
+/* 2K / QHD (2560px - 3439px) - Same as HD+ */
 @media (min-width: 2560px) and (max-width: 3439px) {
   .performer-display {
-    padding: 8px 0;
+    padding: 5px 0;
   }
 
   .performer-badge {
-    width: 160px;
-    height: 160px;
+    width: 120px;
+    height: 120px;
   }
 
   .star-icon {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .star-icon-inner {
-    font-size: 9px;
+    font-size: 7px;
   }
 
   .performer-content {
-    width: 65px;
-    height: 65px;
+    width: 48px;
+    height: 48px;
   }
 
   .performer-vm-id {
-    font-size: 17px;
+    font-size: 13px;
   }
 
   .performer-time {
-    font-size: 10px;
-    margin-top: 3px;
+    font-size: 8px;
+    margin-top: 2px;
   }
 }
 
-/* Full HD (1920px - 2559px) */
+/* Full HD (1920px - 2559px) - Same as HD+ */
 @media (min-width: 1920px) and (max-width: 2559px) {
   .performer-display {
-    padding: 6px 0;
+    padding: 5px 0;
   }
 
   .performer-badge {
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
   }
 
   .star-icon {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .star-icon-inner {
-    font-size: 8px;
+    font-size: 7px;
   }
 
   .performer-content {
-    width: 55px;
-    height: 55px;
+    width: 48px;
+    height: 48px;
   }
 
   .performer-vm-id {
-    font-size: 15px;
+    font-size: 13px;
   }
 
   .performer-time {
-    font-size: 9px;
+    font-size: 8px;
     margin-top: 2px;
   }
 }

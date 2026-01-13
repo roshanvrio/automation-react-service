@@ -17,24 +17,25 @@
    ======================================== */
 
 :root {
-  /* Responsive font scaling */
+  /* Fixed font scaling - no zoom on higher resolutions */
   --base-font-size: 16px;
   --scale-factor: 1;
 }
 
-/* 4K / Ultra-wide (3440px+) - Primary target */
+/* All desktop resolutions use same scale - no zooming */
+/* 4K / Ultra-wide (3440px+) - Same scale as laptop */
 @media (min-width: 3440px) {
   :root {
-    --base-font-size: 20px;
-    --scale-factor: 1.25;
+    --base-font-size: 16px;
+    --scale-factor: 1;
   }
 }
 
-/* 2K / QHD (2560px - 3439px) */
+/* 2K / QHD (2560px - 3439px) - Same scale as laptop */
 @media (min-width: 2560px) and (max-width: 3439px) {
   :root {
-    --base-font-size: 18px;
-    --scale-factor: 1.15;
+    --base-font-size: 16px;
+    --scale-factor: 1;
   }
 }
 

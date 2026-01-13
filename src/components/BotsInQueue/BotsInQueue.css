@@ -318,95 +318,118 @@
    RESPONSIVE BREAKPOINTS FOR BOTS IN QUEUE
    ======================================== */
 
-/* 4K / Ultra-wide (3440px+) */
+/* All high resolutions (1920px+) use same laptop-like sizes - no zooming */
+/* 4K / Ultra-wide (3440px+) - Same as HD+ */
 @media (min-width: 3440px) {
   .dashboard-cards.card-scroll {
-    padding: 20px;
-    border-radius: 18px;
-  }
-
-  .bot-row {
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    border-radius: 14px;
-  }
-
-  .bot-left {
-    gap: 14px;
-  }
-
-  .bot-left i {
-    font-size: 18px;
-  }
-
-  .bot-name {
-    font-size: 15px;
-    max-width: 320px;
-  }
-
-  .queue-chip {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 8px;
-  }
-
-  .queue-icon {
-    width: 26px;
-    height: 26px;
-  }
-
-  .queue-count {
-    font-size: 20px;
-  }
-
-  .bot-row::after {
-    right: -8px;
-    width: 16px;
-    height: 16px;
-  }
-}
-
-/* 2K / QHD (2560px - 3439px) */
-@media (min-width: 2560px) and (max-width: 3439px) {
-  .dashboard-cards.card-scroll {
-    padding: 18px;
-    border-radius: 16px;
-  }
-
-  .bot-row {
-    padding: 10px 12px;
-    margin-bottom: 10px;
+    padding: 12px;
     border-radius: 12px;
   }
 
+  .bot-row {
+    padding: 7px 9px;
+    margin-bottom: 7px;
+    border-radius: 9px;
+  }
+
+  .bot-left {
+    gap: 8px;
+  }
+
+  .bot-left i {
+    font-size: 12px;
+  }
+
   .bot-name {
-    font-size: 14px;
-    max-width: 280px;
+    font-size: 11px;
+    max-width: 180px;
+  }
+
+  .queue-chip {
+    font-size: 9px;
+    padding: 2px 4px;
+    border-radius: 5px;
+  }
+
+  .queue-icon {
+    width: 18px;
+    height: 18px;
   }
 
   .queue-count {
-    font-size: 18px;
+    font-size: 14px;
+  }
+
+  .bot-row::after {
+    right: -4px;
+    width: 10px;
+    height: 10px;
   }
 }
 
-/* Full HD (1920px - 2559px) */
-@media (min-width: 1920px) and (max-width: 2559px) {
+/* 2K / QHD (2560px - 3439px) - Same as HD+ */
+@media (min-width: 2560px) and (max-width: 3439px) {
   .dashboard-cards.card-scroll {
-    padding: 14px;
+    padding: 12px;
+    border-radius: 12px;
   }
 
   .bot-row {
-    padding: 8px 10px;
-    margin-bottom: 8px;
+    padding: 7px 9px;
+    margin-bottom: 7px;
+    border-radius: 9px;
   }
 
   .bot-name {
-    font-size: 12px;
-    max-width: 210px;
+    font-size: 11px;
+    max-width: 180px;
+  }
+
+  .queue-chip {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+
+  .queue-icon {
+    width: 18px;
+    height: 18px;
   }
 
   .queue-count {
-    font-size: 15px;
+    font-size: 14px;
+  }
+}
+
+/* Full HD (1920px - 2559px) - Same as HD+ */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .dashboard-cards.card-scroll {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .bot-row {
+    padding: 7px 9px;
+    margin-bottom: 7px;
+    border-radius: 9px;
+  }
+
+  .bot-name {
+    font-size: 11px;
+    max-width: 180px;
+  }
+
+  .queue-chip {
+    font-size: 9px;
+    padding: 2px 4px;
+  }
+
+  .queue-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .queue-count {
+    font-size: 14px;
   }
 }
 

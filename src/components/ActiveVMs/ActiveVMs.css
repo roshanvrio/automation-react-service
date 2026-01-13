@@ -273,42 +273,43 @@
    RESPONSIVE BREAKPOINTS FOR ACTIVE VMS
    ======================================== */
 
-/* 4K / Ultra-wide (3440px+) */
+/* All high resolutions (1920px+) use same laptop-like sizes - no zooming */
+/* 4K / Ultra-wide (3440px+) - Same as HD+ */
 @media (min-width: 3440px) {
   .activevms-header {
-    font-size: 14px;
-    margin-bottom: 14px;
+    font-size: 12px;
+    margin-bottom: 10px;
   }
 
   .legend span {
-    font-size: 12px;
-    margin-left: 14px;
-    padding-left: 16px;
+    font-size: 10px;
+    margin-left: 10px;
+    padding-left: 12px;
   }
 
   .legend span::before {
-    width: 10px;
+    width: 6px;
     height: 2px;
   }
 
   .hex-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 35px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 26px;
   }
 
   .hex-wrapper {
-    width: 200px;
-    height: 170px;
+    width: 170px;
+    height: 145px;
   }
 
   .hex-card {
-    inset: 6px;
+    inset: 5px;
   }
 
   .hex-content {
     font-size: 10px;
-    gap: 4px;
-    padding: 8px;
+    gap: 3px;
+    padding: 6px;
   }
 
   .hex-small {
@@ -316,13 +317,13 @@
   }
 
   .hex-vm {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .hex-name {
     font-size: 9px;
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: 4px 8px;
+    border-radius: 3px;
   }
 
   .hex-time {
@@ -331,35 +332,37 @@
 
   .uipath {
     font-size: 7px;
-    padding: 2px 8px;
+    padding: 2px 6px;
   }
 }
 
-/* 2K / QHD (2560px - 3439px) */
+/* 2K / QHD (2560px - 3439px) - Same as HD+ */
 @media (min-width: 2560px) and (max-width: 3439px) {
   .activevms-header {
-    font-size: 13px;
-    margin-bottom: 12px;
+    font-size: 12px;
+    margin-bottom: 10px;
   }
 
   .legend span {
-    font-size: 11px;
-    margin-left: 12px;
+    font-size: 10px;
+    margin-left: 10px;
+    padding-left: 12px;
   }
 
   .hex-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 26px;
   }
 
   .hex-wrapper {
-    width: 180px;
-    height: 155px;
+    width: 170px;
+    height: 145px;
   }
 
   .hex-content {
     font-size: 10px;
-    gap: 4px;
+    gap: 3px;
+    padding: 6px;
   }
 
   .hex-small {
@@ -367,12 +370,13 @@
   }
 
   .hex-vm {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .hex-name {
     font-size: 9px;
-    padding: 4px 9px;
+    padding: 4px 8px;
+    border-radius: 3px;
   }
 
   .hex-time {
@@ -381,10 +385,11 @@
 
   .uipath {
     font-size: 7px;
+    padding: 2px 6px;
   }
 }
 
-/* Full HD (1920px - 2559px) */
+/* Full HD (1920px - 2559px) - Same as HD+ */
 @media (min-width: 1920px) and (max-width: 2559px) {
   .activevms-header {
     font-size: 12px;
@@ -394,11 +399,12 @@
   .legend span {
     font-size: 10px;
     margin-left: 10px;
+    padding-left: 12px;
   }
 
   .hex-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 26px;
   }
 
   .hex-wrapper {
@@ -407,13 +413,13 @@
   }
 
   .hex-content {
-    font-size: 9px;
+    font-size: 10px;
     gap: 3px;
     padding: 6px;
   }
 
   .hex-small {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .hex-vm {
@@ -421,16 +427,17 @@
   }
 
   .hex-name {
-    font-size: 8px;
+    font-size: 9px;
     padding: 4px 8px;
+    border-radius: 3px;
   }
 
   .hex-time {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .uipath {
-    font-size: 6px;
+    font-size: 7px;
     padding: 2px 6px;
   }
 }

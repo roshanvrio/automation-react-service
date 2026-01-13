@@ -198,99 +198,100 @@
    RESPONSIVE BREAKPOINTS FOR ENTRY
    ======================================== */
 
-/* 4K / Ultra-wide (3440px+) */
+/* All high resolutions (1920px+) use same laptop-like sizes - no zooming */
+/* 4K / Ultra-wide (3440px+) - Same as HD+ */
 @media (min-width: 3440px) {
   .entry-card {
-    padding: 10px;
+    padding: 5px;
   }
 
   .entry-title {
-    font-size: 12px;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    font-size: 8px;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
-    gap: 4px;
+    gap: 2px;
   }
 
   .entry-row-pair {
-    gap: 4px;
+    gap: 2px;
   }
 
   .entry-row {
-    gap: 8px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 11px;
+    gap: 4px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 8px;
   }
 
   .entry-row i {
-    font-size: 13px;
+    font-size: 10px;
   }
 }
 
-/* 2K / QHD (2560px - 3439px) */
+/* 2K / QHD (2560px - 3439px) - Same as HD+ */
 @media (min-width: 2560px) and (max-width: 3439px) {
   .entry-card {
-    padding: 8px;
+    padding: 5px;
   }
 
   .entry-title {
-    font-size: 10px;
-    letter-spacing: 0.8px;
-    margin-bottom: 6px;
+    font-size: 8px;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
-    gap: 3px;
+    gap: 2px;
   }
 
   .entry-row-pair {
-    gap: 3px;
+    gap: 2px;
   }
 
   .entry-row {
-    gap: 6px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 10px;
+    gap: 4px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 8px;
   }
 
   .entry-row i {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
-/* Full HD (1920px - 2559px) */
+/* Full HD (1920px - 2559px) - Same as HD+ */
 @media (min-width: 1920px) and (max-width: 2559px) {
   .entry-card {
-    padding: 6px;
+    padding: 5px;
   }
 
   .entry-title {
-    font-size: 9px;
-    letter-spacing: 0.7px;
-    margin-bottom: 5px;
+    font-size: 8px;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
-    gap: 3px;
+    gap: 2px;
   }
 
   .entry-row-pair {
-    gap: 3px;
+    gap: 2px;
   }
 
   .entry-row {
-    gap: 5px;
-    padding: 3px 6px;
+    gap: 4px;
+    padding: 2px 5px;
     border-radius: 3px;
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .entry-row i {
-    font-size: 11px;
+    font-size: 10px;
   }
 }
 

@@ -202,85 +202,88 @@
    RESPONSIVE BREAKPOINTS FOR HEADER
    ======================================== */
 
-/* 4K / Ultra-wide (3440px+) */
+/* All high resolutions (1920px+) use same laptop-like sizes - no zooming */
+/* 4K / Ultra-wide (3440px+) - Same as HD+ */
 @media (min-width: 3440px) {
   .header-card {
-    padding: 20px 26px;
+    padding: 12px 14px;
   }
 
   .header-metric {
-    gap: 16px;
-    padding: 18px 22px;
-    border-radius: 16px;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
   }
 
   .metric-icon {
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
-    border-radius: 14px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    border-radius: 8px;
   }
 
   .metric-value {
-    font-size: 28px;
+    font-size: 17px;
   }
 
   .metric-label {
-    font-size: 16px;
+    font-size: 12px;
   }
 }
 
-/* 2K / QHD (2560px - 3439px) */
+/* 2K / QHD (2560px - 3439px) - Same as HD+ */
 @media (min-width: 2560px) and (max-width: 3439px) {
   .header-card {
-    padding: 18px 22px;
+    padding: 12px 14px;
   }
 
   .header-metric {
-    gap: 14px;
-    padding: 16px 18px;
-    border-radius: 14px;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
   }
 
   .metric-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    border-radius: 8px;
   }
 
   .metric-value {
-    font-size: 24px;
+    font-size: 17px;
   }
 
   .metric-label {
-    font-size: 16px;
+    font-size: 12px;
   }
 }
 
-/* Full HD (1920px - 2559px) */
+/* Full HD (1920px - 2559px) - Same as HD+ */
 @media (min-width: 1920px) and (max-width: 2559px) {
   .header-card {
-    padding: 16px 18px;
+    padding: 12px 14px;
   }
 
   .header-metric {
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 14px;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
   }
 
   .metric-icon {
-    width: 42px;
-    height: 42px;
-    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    border-radius: 8px;
   }
 
   .metric-value {
-    font-size: 20px;
+    font-size: 17px;
   }
 
   .metric-label {
-    font-size: 16px;
+    font-size: 12px;
   }
 }
 

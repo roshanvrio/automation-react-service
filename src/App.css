@@ -29,11 +29,13 @@
 
 .app-root .container-fluid {
   padding: 8px;
-  max-width: 100%;
+  /* max-width: 1920px; */
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 /* Dashboard cards */
