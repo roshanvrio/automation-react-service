@@ -132,12 +132,12 @@
   gap: var(--gap-lg);
   min-height: 0;
   overflow: hidden;
-  padding-right: 2.5rem;
+  /* padding-right: 2.5rem; */
 }
 
-.header-card{
+/* .header-card {
   margin-right: 20px !important;
-}
+} */
 
 /* ========================================
    RESPONSIVE BREAKPOINTS
