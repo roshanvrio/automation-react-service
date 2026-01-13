@@ -12,6 +12,8 @@ import { AnimationProvider } from "./context/AnimationContext";
 
 import "./App.css";
 
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+
 // Inner component that uses animation context
 const AppContent = () => {
   // Displayed metrics - what Header shows
@@ -112,7 +114,7 @@ const AppContent = () => {
 
   useEffect(() => {
     const connectWebSocket = () => {
-      const ws = new WebSocket("ws://127.0.0.1:8000/ws/dashboard");
+      const ws = new WebSocket(SOCKET_URL);
 
       ws.onopen = () => {
         console.log("WebSocket connected");
