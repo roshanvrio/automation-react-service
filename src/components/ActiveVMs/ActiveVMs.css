@@ -276,68 +276,6 @@
 /* 4K / Ultra-wide (3440px+) */
 @media (min-width: 3440px) {
   .activevms-header {
-    font-size: 16px;
-    margin-bottom: 16px;
-  }
-
-  .legend span {
-    font-size: 14px;
-    margin-left: 16px;
-    padding-left: 18px;
-  }
-
-  .legend span::before {
-    width: 12px;
-    height: 3px;
-  }
-
-  .hex-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 45px;
-  }
-
-  .hex-wrapper {
-    width: 240px;
-    height: 205px;
-  }
-
-  .hex-card {
-    inset: 8px;
-  }
-
-  .hex-content {
-    font-size: 13px;
-    gap: 6px;
-    padding: 12px;
-  }
-
-  .hex-small {
-    font-size: 12px;
-  }
-
-  .hex-vm {
-    font-size: 18px;
-  }
-
-  .hex-name {
-    font-size: 12px;
-    padding: 7px 14px;
-    border-radius: 6px;
-  }
-
-  .hex-time {
-    font-size: 13px;
-  }
-
-  .uipath {
-    font-size: 10px;
-    padding: 4px 12px;
-  }
-}
-
-/* 2K / QHD (2560px - 3439px) */
-@media (min-width: 2560px) and (max-width: 3439px) {
-  .activevms-header {
     font-size: 14px;
     margin-bottom: 14px;
   }
@@ -345,47 +283,60 @@
   .legend span {
     font-size: 12px;
     margin-left: 14px;
+    padding-left: 16px;
+  }
+
+  .legend span::before {
+    width: 10px;
+    height: 2px;
   }
 
   .hex-grid {
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 38px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 35px;
   }
 
   .hex-wrapper {
-    width: 210px;
-    height: 180px;
+    width: 200px;
+    height: 170px;
+  }
+
+  .hex-card {
+    inset: 6px;
   }
 
   .hex-content {
-    font-size: 12px;
-    gap: 5px;
+    font-size: 10px;
+    gap: 4px;
+    padding: 8px;
   }
 
   .hex-small {
-    font-size: 11px;
+    font-size: 9px;
   }
 
   .hex-vm {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .hex-name {
-    font-size: 11px;
-    padding: 6px 12px;
+    font-size: 9px;
+    padding: 5px 10px;
+    border-radius: 4px;
   }
 
   .hex-time {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .uipath {
-    font-size: 9px;
+    font-size: 7px;
+    padding: 2px 8px;
   }
 }
 
-/* Full HD (1920px - 2559px) */
-@media (min-width: 1920px) and (max-width: 2559px) {
+/* 2K / QHD (2560px - 3439px) */
+@media (min-width: 2560px) and (max-width: 3439px) {
   .activevms-header {
     font-size: 13px;
     margin-bottom: 12px;
@@ -397,41 +348,90 @@
   }
 
   .hex-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 34px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 30px;
   }
 
   .hex-wrapper {
-    width: 200px;
-    height: 170px;
+    width: 180px;
+    height: 155px;
   }
 
   .hex-content {
-    font-size: 11px;
+    font-size: 10px;
     gap: 4px;
-    padding: 8px;
   }
 
   .hex-small {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .hex-vm {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .hex-name {
-    font-size: 10px;
-    padding: 5px 10px;
+    font-size: 9px;
+    padding: 4px 9px;
   }
 
   .hex-time {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .uipath {
+    font-size: 7px;
+  }
+}
+
+/* Full HD (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .activevms-header {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .legend span {
+    font-size: 10px;
+    margin-left: 10px;
+  }
+
+  .hex-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+
+  .hex-wrapper {
+    width: 170px;
+    height: 145px;
+  }
+
+  .hex-content {
+    font-size: 9px;
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .hex-small {
     font-size: 8px;
-    padding: 2px 8px;
+  }
+
+  .hex-vm {
+    font-size: 12px;
+  }
+
+  .hex-name {
+    font-size: 8px;
+    padding: 4px 8px;
+  }
+
+  .hex-time {
+    font-size: 9px;
+  }
+
+  .uipath {
+    font-size: 6px;
+    padding: 2px 6px;
   }
 }
 

@@ -8,12 +8,12 @@
   --accent-green: #2dff8f;
   --accent-red: #ff4d4f;
 
-  /* Responsive spacing - scales with both vw and vh */
-  --gap-lg: clamp(4px, 0.8vmin, 14px);
-  --gap-md: clamp(3px, 0.6vmin, 10px);
-  --gap-sm: clamp(2px, 0.4vmin, 6px);
-  --padding-card: clamp(6px, 0.8vmin, 16px);
-  --border-radius: clamp(6px, 0.8vmin, 14px);
+  /* Fixed spacing - consistent across all resolutions */
+  --gap-lg: 10px;
+  --gap-md: 8px;
+  --gap-sm: 4px;
+  --padding-card: 10px;
+  --border-radius: 10px;
 }
 
 .app-root {
@@ -28,7 +28,7 @@
 }
 
 .app-root .container-fluid {
-  padding: clamp(0.5rem, 0.6vmin, 0.8rem);
+  padding: 8px;
   max-width: 100%;
   height: 100%;
   display: flex;
@@ -53,7 +53,7 @@
 
 /* Card titles */
 .card-title {
-  font-size: clamp(9px, 1.2vmin, 15px);
+  font-size: 11px;
   font-weight: 600;
   color: #c7d2fe;
   letter-spacing: 0.5px;
@@ -87,7 +87,7 @@
 }
 
 .card-scroll::-webkit-scrollbar {
-  width: clamp(3px, 0.3vw, 5px);
+  width: 4px;
 }
 
 .card-scroll::-webkit-scrollbar-thumb {
@@ -108,6 +108,7 @@
   min-height: 0;
   margin-top: var(--gap-lg);
   overflow: hidden;
+  align-items: stretch;
 }
 
 /* Left column grid - BotsInQueue + VMUtilization stacked */
@@ -116,12 +117,14 @@
   grid-template-rows: 1fr auto;
   gap: var(--gap-lg);
   min-height: 0;
+  height: 100%;
   overflow: hidden;
 }
 
 /* Center column */
 .center-column {
   min-height: 0;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -131,6 +134,7 @@
   grid-template-rows: 1fr auto;
   gap: var(--gap-lg);
   min-height: 0;
+  height: 100%;
   overflow: hidden;
   /* padding-right: 2.5rem; */
 }
@@ -143,139 +147,13 @@
    RESPONSIVE BREAKPOINTS
    ======================================== */
 
-/* 4K / Ultra-wide (3440px+) - Primary target screen */
-@media (min-width: 3440px) {
-  .main-content-grid {
-    grid-template-columns: 3fr 7fr 2fr;
-    gap: 20px;
-    margin-top: 16px;
-  }
+/* Desktop and larger screens (1024px+) - Same layout, no zoom scaling */
+/* Uses the base styles defined above - no overrides needed */
 
-  .left-column-grid,
-  .right-column-grid {
-    gap: 16px;
-  }
-
-  .dashboard-card {
-    padding: 18px;
-    border-radius: 16px;
-  }
-
-  .card-title {
-    font-size: 15px;
-    margin-bottom: 14px;
-  }
-}
-
-/* 2K / QHD (2560px - 3439px) */
-@media (min-width: 2560px) and (max-width: 3439px) {
-  .main-content-grid {
-    grid-template-columns: 3fr 7fr 2fr;
-    gap: 16px;
-    margin-top: 14px;
-  }
-
-  .left-column-grid,
-  .right-column-grid {
-    gap: 14px;
-  }
-
-  .dashboard-card {
-    padding: 16px;
-    border-radius: 14px;
-  }
-
-  .card-title {
-    font-size: 14px;
-  }
-}
-
-/* Full HD (1920px - 2559px) */
-@media (min-width: 1920px) and (max-width: 2559px) {
-  .main-content-grid {
-    grid-template-columns: 3fr 7fr 2fr;
-    gap: 12px;
-    margin-top: 12px;
-  }
-
-  .left-column-grid,
-  .right-column-grid {
-    gap: 12px;
-  }
-
-  .dashboard-card {
-    padding: 14px;
-  }
-}
-
-/* HD+ (1440px - 1919px) */
-@media (min-width: 1440px) and (max-width: 1919px) {
-  .main-content-grid {
-    grid-template-columns: 2.5fr 7fr 2.5fr;
-    gap: 10px;
-    margin-top: 10px;
-  }
-
-  .left-column-grid,
-  .right-column-grid {
-    gap: 10px;
-  }
-
-  .dashboard-card {
-    padding: 12px;
-    border-radius: 12px;
-  }
-
-  .card-title {
-    font-size: 12px;
-    margin-bottom: 10px;
-  }
-}
-
-/* HD (1280px - 1439px) */
-@media (min-width: 1280px) and (max-width: 1439px) {
-  .main-content-grid {
-    grid-template-columns: 2fr 6.5fr 3.5fr;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  .left-column-grid,
-  .right-column-grid {
-    gap: 8px;
-  }
-
-  .dashboard-card {
-    padding: 10px;
-    border-radius: 10px;
-  }
-
-  .card-title {
-    font-size: 11px;
-    margin-bottom: 8px;
-  }
-}
-
-/* Tablet Landscape (1024px - 1279px) */
+/* Tablet Landscape (1024px - 1279px) - Slight column adjustment */
 @media (min-width: 1024px) and (max-width: 1279px) {
   .main-content-grid {
-    grid-template-columns: 0.8fr 1.7fr 1fr;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  .left-column-grid,
-  .right-column-grid {
-    gap: 8px;
-  }
-
-  .dashboard-card {
-    padding: 8px;
-    border-radius: 10px;
-  }
-
-  .card-title {
-    font-size: 10px;
+    grid-template-columns: 1fr 2fr 1fr;
   }
 }
 
