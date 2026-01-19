@@ -37,7 +37,7 @@ const VMUtilization = ({ vmUtilizationUpdate }) => {
               }}
             >
               <div className="vm-id">{vm.vmName}</div>
-              <div className="vm-time">{vm.utilizationMinutes}</div>
+              <div className="vm-time">{(minutes / 60).toFixed(1)}hrs</div>
             </div>
           );
         })}
