@@ -482,8 +482,15 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
                     <div className="hex-small">{vm.triggerIndication === "Email" ? "✉" : "🕐"} {vm.triggerIndication}</div>
                     <div className="hex-vm">🖥 {vm.machineName}</div>
                     <div className="hex-name">{vm.processName}</div>
-                    <div className="hex-time">
+                    {/* <div className="hex-time">
                       Last Run Time <strong>{vm.lastRunTime}</strong>
+                    </div> */}
+
+                    {/* Format "Hour(s)" to "Hr(s)" for brevity */}
+                    <div className="hex-time">
+                      Last Run Time{" "}
+                      <strong>{vm.lastRunTime?.replace(/(\d+(?:\.\d+)?)\s*Hour(s)?/gi,(_, v) => `${v} ${Number(v) === 1 ? "hr" : "hrs"}`)}
+                      </strong>
                     </div>
                     {/* <span className="uipath">{vm.rpaTool}</span> */}
                     {vm.rpaTool === "UiPath" && (
