@@ -126,7 +126,6 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
 
     const cardHeight = Math.floor(bestLayout.cardWidth * hexRatio);
 
-    // Set CSS variables for the grid
     setGridStyle({
       '--hex-cols': bestLayout.cols,
       '--hex-card-width': `${bestLayout.cardWidth}px`,
