@@ -1,6 +1,13 @@
 import "./TopPerformingVM.css";
 
 const TopPerformingVM = ({ topPerformer }) => {
+  if (!topPerformer) return null;
+
+  const hours = typeof topPerformer.utilizationMinutes === 'number'
+    ? topPerformer.utilizationMinutes / 60
+    : null;
+  if (hours === null || hours < 0) return null;
+
   return (
     <div className="dashboard-card small-card-height">
       <div className="card-title">Top Performing VM</div>
@@ -38,8 +45,8 @@ const TopPerformingVM = ({ topPerformer }) => {
           </div>
           {/* Center circle with VM info */}
           <div className="performer-content">
-            <span className="performer-vm-id">{topPerformer?.vmName || "N/A"}</span>
-            <span className="performer-time">{topPerformer?.utilizationMinutes ? (topPerformer.utilizationMinutes / 60).toFixed(1) : 0} hrs</span>
+            <span className="performer-vm-id">{topPerformer.vmName}</span>
+            <span className="performer-time">{hours.toFixed(1)} hrs</span>
           </div>
         </div>
       </div>

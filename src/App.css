@@ -81,9 +81,9 @@
   min-height: 0;
 }
 
-/* Scrollbar styling */
 .card-scroll {
   overflow-y: auto;
+  overflow-x: hidden; 
 }
 
 .card-scroll::-webkit-scrollbar {
@@ -93,6 +93,15 @@
 .card-scroll::-webkit-scrollbar-thumb {
   background: rgba(0, 255, 200, 0.3);
   border-radius: 10px;
+}
+
+.card-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 200, 0.3) transparent;
 }
 
 /* ========================================

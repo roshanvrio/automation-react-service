@@ -209,7 +209,7 @@ const Entry = ({ idleVmUpdate }) => {
 
       <div className="entry-title">IN-ACTIVE</div>
 
-      <div className="entry-list">
+      <div className="entry-list card-scroll">
         {vmPairs.map((pair, pairIndex) => (
           <div className="entry-row-pair" key={pairIndex}>
             {pair.map((vm, vmIndex) => renderVmRow(vm, pairIndex * 2 + vmIndex))}

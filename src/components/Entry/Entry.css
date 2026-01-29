@@ -23,7 +23,9 @@
   flex-direction: column;
   gap: clamp(2px, 0.15vmin, 4px);
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: clamp(4px, 0.4vmin, 8px);
   min-height: 0;
 }
 

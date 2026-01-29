@@ -79,59 +79,65 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     const maxCardWidth = 220;
     const gapSize = 25;
 
-    // Calculate optimal columns to fill the space
-    // Try different column counts and find the best fit
-    let bestLayout = { cols: 1, cardWidth: maxCardWidth, rows: vmCount };
-    let bestScore = 0;
+    // Target behavior: prefer a 7x5 layout when possible (<= 35 items) without scroll.
+    // For more than 35 items, keep 7 columns but allow rows to grow (scroll will appear).
+    let cols = Math.min(7, vmCount);
 
-    for (let cols = 1; cols <= Math.min(vmCount, 10); cols++) {
-      const rows = Math.ceil(vmCount / cols);
+    const maxColsByMinWidth = Math.max(1, Math.floor((containerWidth + gapSize) / (minCardWidth + gapSize)));
+    if (cols > maxColsByMinWidth) cols = maxColsByMinWidth;
 
-      // Calculate card width based on available width
-      const availableWidth = containerWidth - (gapSize * (cols - 1));
-      let cardWidth = Math.floor(availableWidth / cols);
+    let availableWidth = containerWidth - (gapSize * (cols - 1));
+    let cardWidth = Math.floor(availableWidth / cols);
+    cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
 
-      // Calculate card height
-      const cardHeight = cardWidth * hexRatio;
+    let rows = Math.ceil(vmCount / cols);
+    let cardHeight = Math.floor(cardWidth * hexRatio);
+    let totalHeight = (rows * cardHeight) + (gapSize * (rows - 1));
 
-      // Calculate total height needed
-      const totalHeight = (rows * cardHeight) + (gapSize * (rows - 1));
-
-      // Clamp card width
-      cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
-
-      // Score based on how well it fills the space without overflow
-      if (totalHeight <= containerHeight && cardWidth >= minCardWidth) {
-        // Prefer layouts that use more of the available space
-        const widthUtilization = (cols * cardWidth + (cols - 1) * gapSize) / containerWidth;
-        const heightUtilization = totalHeight / containerHeight;
-        const score = (widthUtilization * 0.4) + (heightUtilization * 0.6);
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestLayout = { cols, cardWidth, rows };
+    // If vmCount <= 35 we must try to fit within container height (no scroll) up to 5 rows.
+    if (vmCount <= 35) {
+      // If content is too tall, reduce cardWidth (and height) to try to fit
+      if (totalHeight > containerHeight) {
+        const availableHeightPerRow = Math.floor((containerHeight - (gapSize * (rows - 1))) / rows);
+        const adjustedCardWidth = Math.max(minCardWidth, Math.floor(availableHeightPerRow / hexRatio));
+        cardWidth = Math.max(minCardWidth, Math.min(cardWidth, adjustedCardWidth));
+        cardHeight = Math.floor(cardWidth * hexRatio);
+        totalHeight = (rows * cardHeight) + (gapSize * (rows - 1));
+        // If still too tall, reduce columns to allow larger width per column (fallback)
+        if (totalHeight > containerHeight) {
+          // Try decreasing cols to find a better fit
+          for (let c = cols - 1; c >= 1; c--) {
+            const availW = containerWidth - (gapSize * (c - 1));
+            const w = Math.floor(availW / c);
+            const wClamped = Math.max(minCardWidth, Math.min(maxCardWidth, w));
+            const h = Math.floor(wClamped * hexRatio);
+            const r = Math.ceil(vmCount / c);
+            const tH = (r * h) + (gapSize * (r - 1));
+            if (tH <= containerHeight) {
+              cols = c;
+              cardWidth = wClamped;
+              rows = r;
+              cardHeight = h;
+              totalHeight = tH;
+              break;
+            }
+          }
         }
       }
+    } else {
+      // For >35 items prefer consistent column count (7 or fewer depending on width)
+      // If the computed cardWidth is very small, clamp to min and allow scrolling.
+      cardWidth = Math.max(minCardWidth, Math.min(maxCardWidth, cardWidth));
+      cardHeight = Math.floor(cardWidth * hexRatio);
+      rows = Math.ceil(vmCount / cols);
     }
-
-    // If no layout fits, use minimum size with scrolling
-    if (bestScore === 0) {
-      const cols = Math.floor((containerWidth + gapSize) / (minCardWidth + gapSize));
-      bestLayout = {
-        cols: Math.max(1, cols),
-        cardWidth: minCardWidth,
-        rows: Math.ceil(vmCount / Math.max(1, cols))
-      };
-    }
-
-    const cardHeight = Math.floor(bestLayout.cardWidth * hexRatio);
 
     setGridStyle({
-      '--hex-cols': bestLayout.cols,
-      '--hex-card-width': `${bestLayout.cardWidth}px`,
+      '--hex-cols': cols,
+      '--hex-card-width': `${cardWidth}px`,
       '--hex-card-height': `${cardHeight}px`,
       '--hex-gap': `${gapSize}px`,
-      '--hex-font-scale': Math.max(0.5, Math.min(1, bestLayout.cardWidth / 150)),
+      '--hex-font-scale': Math.max(0.5, Math.min(1, cardWidth / 150)),
     });
   }, [displayedVMs.length]);
 
