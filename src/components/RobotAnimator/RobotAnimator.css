@@ -1,0 +1,253 @@
+/* Robot container - fixed position overlay */
+.robot-container {
+  position: fixed;
+  z-index: 9998;
+  width: clamp(70px, 10vmin, 140px);
+  height: clamp(70px, 10vmin, 140px);
+  left: var(--robot-x);
+  top: var(--robot-y);
+  transform: translate(-50%, -50%);
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.robot-lottie-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 15px rgba(0, 230, 255, 0.5));
+}
+
+.robot-lottie {
+  width: 100%;
+  height: 100%;
+}
+
+/* Flip robot horizontally */
+.robot-container.robot-flipped .robot-lottie-wrapper {
+  transform: scaleX(-1);
+}
+
+/* IDLE STATE */
+.robot-container.robot-idle {
+  animation: robotFloat 3s ease-in-out infinite;
+}
+
+@keyframes robotFloat {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-12px); }
+}
+
+/* MOVING STATE */
+.robot-container.robot-moving {
+  animation: robotBounce 0.25s ease-in-out infinite;
+}
+
+@keyframes robotBounce {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-3deg); }
+  50% { transform: translate(-50%, -50%) translateY(-8px) rotate(3deg); }
+}
+
+/* PICKING STATE */
+.robot-container.robot-picking {
+  animation: robotPick 0.25s ease-out;
+}
+
+@keyframes robotPick {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* CELEBRATING STATE */
+.robot-container.robot-celebrating {
+  animation: robotCelebrate 0.3s ease-out 3;
+}
+
+@keyframes robotCelebrate {
+  0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  25% { transform: translate(-50%, -50%) scale(1.15) rotate(-8deg); }
+  75% { transform: translate(-50%, -50%) scale(1.15) rotate(8deg); }
+}
+
+/* CHECKING OUTCOME STATE */
+.robot-container.robot-checking {
+  animation: robotCheck 0.4s ease-in-out 2;
+}
+
+@keyframes robotCheck {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1) translateY(-5px); }
+}
+
+/* ERROR REACTION STATE */
+.robot-container.robot-error {
+  animation: robotError 0.15s ease-in-out 4;
+}
+
+@keyframes robotError {
+  0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+  25% { transform: translate(-50%, -50%) translateX(-8px); }
+  75% { transform: translate(-50%, -50%) translateX(8px); }
+}
+
+/* EXCEPTION REACTION STATE */
+.robot-container.robot-exception {
+  animation: robotException 0.2s ease-in-out 3;
+}
+
+@keyframes robotException {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  25% { transform: translate(-50%, -50%) rotate(-10deg) scale(0.95); }
+  75% { transform: translate(-50%, -50%) rotate(10deg) scale(0.95); }
+}
+
+/* OUTCOME-BASED GLOW EFFECTS */
+.robot-container.outcome-success .robot-lottie-wrapper {
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.8))
+          drop-shadow(0 0 40px rgba(0, 200, 100, 0.5));
+}
+
+.robot-container.outcome-error .robot-lottie-wrapper {
+  filter: drop-shadow(0 0 20px rgba(255, 80, 80, 0.8))
+          drop-shadow(0 0 40px rgba(255, 50, 50, 0.5));
+}
+
+.robot-container.outcome-exception .robot-lottie-wrapper {
+  filter: drop-shadow(0 0 20px rgba(180, 100, 255, 0.8))
+          drop-shadow(0 0 40px rgba(150, 50, 255, 0.5));
+}
+
+/* VM BADGE COLORS BASED ON OUTCOME */
+.robot-carrying.vm-badge.vm-success {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.95), rgba(0, 200, 100, 0.95));
+  border: 2px solid rgba(0, 255, 136, 1);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+}
+
+.robot-carrying.vm-badge.vm-error {
+  background: linear-gradient(135deg, rgba(255, 80, 80, 0.95), rgba(220, 50, 50, 0.95));
+  border: 2px solid rgba(255, 80, 80, 1);
+  box-shadow: 0 0 15px rgba(255, 80, 80, 0.8);
+}
+
+.robot-carrying.vm-badge.vm-exception {
+  background: linear-gradient(135deg, rgba(180, 100, 255, 0.95), rgba(150, 50, 255, 0.95));
+  border: 2px solid rgba(180, 100, 255, 1);
+  box-shadow: 0 0 15px rgba(180, 100, 255, 0.8);
+}
+
+/* CARRIED ITEMS */
+.robot-carried-items {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 1;
+}
+
+.robot-carrying {
+  width: clamp(20px, 3vmin, 32px);
+  height: clamp(20px, 3vmin, 32px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(11px, 1.5vmin, 18px);
+  animation: carryPop 0.3s ease-out, carryGlow 0.6s ease-in-out infinite alternate;
+  color: #fff;
+}
+
+.robot-carrying.process-badge {
+  background: linear-gradient(135deg, rgba(0, 230, 255, 0.95), rgba(0, 150, 255, 0.95));
+  border: 2px solid rgba(0, 230, 255, 1);
+  box-shadow: 0 0 15px rgba(0, 230, 255, 0.8);
+}
+
+.robot-carrying.vm-badge {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.95), rgba(0, 200, 100, 0.95));
+  border: 2px solid rgba(0, 255, 136, 1);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+}
+
+@keyframes carryPop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes carryGlow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.4); }
+}
+
+/* MOVEMENT TRAIL */
+.robot-trail {
+  position: absolute;
+  top: 50%;
+  width: clamp(40px, 5vmin, 80px);
+  height: clamp(5px, 0.7vmin, 10px);
+  border-radius: 5px;
+  opacity: 0.8;
+  filter: blur(4px);
+  animation: trailPulse 0.25s ease-in-out infinite;
+}
+
+.robot-trail.trail-left {
+  right: 90%;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, rgba(0, 230, 255, 0.9));
+}
+
+.robot-trail.trail-right {
+  left: 90%;
+  transform: translateY(-50%);
+  background: linear-gradient(-90deg, transparent, rgba(0, 230, 255, 0.9));
+}
+
+@keyframes trailPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+}
+
+/* GLOW EFFECTS */
+.robot-container.robot-moving .robot-lottie-wrapper,
+.robot-container.robot-picking .robot-lottie-wrapper {
+  filter: drop-shadow(0 0 20px rgba(0, 230, 255, 0.7))
+          drop-shadow(0 0 40px rgba(0, 150, 255, 0.5));
+}
+
+.robot-container.robot-celebrating .robot-lottie-wrapper {
+  filter: drop-shadow(0 0 25px rgba(0, 255, 136, 0.8))
+          drop-shadow(0 0 50px rgba(0, 200, 100, 0.6));
+}
+
+/* RESPONSIVE */
+@media (min-width: 2560px) {
+  .robot-container { width: 160px; height: 160px; }
+  .robot-carrying { width: 36px; height: 36px; font-size: 20px; }
+  .robot-trail { width: 90px; height: 12px; }
+}
+
+@media (max-width: 1440px) {
+  .robot-container { width: 90px; height: 90px; }
+  .robot-carrying { width: 24px; height: 24px; font-size: 14px; }
+  .robot-trail { width: 50px; height: 6px; }
+}
+
+@media (max-width: 1024px) {
+  .robot-container { width: 75px; height: 75px; }
+  .robot-carrying { width: 20px; height: 20px; font-size: 12px; }
+  .robot-trail { width: 40px; height: 5px; }
+}
+
+@media (max-width: 768px) {
+  .robot-container { width: 65px; height: 65px; }
+  .robot-carrying { width: 18px; height: 18px; font-size: 10px; }
+  .robot-trail { width: 35px; height: 4px; }
+}
