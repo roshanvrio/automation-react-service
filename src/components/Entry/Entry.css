@@ -40,10 +40,13 @@
   display: flex;
   align-items: center;
   gap: clamp(0.5px, 0.1vmin, 2px);
-  padding: clamp(0.5px, 0.08vmin, 1px) clamp(2px, 0.2vmin, 4px);
+  padding: clamp(0.5px, 0.06vmin, 0.8px) clamp(1.5px, 0.15vmin, 3px);
+  /*padding: clamp(0.5px, 0.08vmin, 1px) clamp(2px, 0.2vmin, 4px);*/
   background: linear-gradient(90deg, #0e3a44, #0b2730);
-  border-radius: clamp(2px, 0.2vmin, 4px);
-  font-size: clamp(6px, 0.6vmin, 10px);
+  /*border-radius: clamp(2px, 0.2vmin, 4px);*/
+  border-radius: clamp(1.5px, 0.15vmin, 3px);
+  /*font-size: clamp(6px, 0.6vmin, 10px);*/
+  font-size: clamp(5px, 0.5vmin, 8px);
   font-weight: 600;
   color: #e6faff;
   box-shadow: inset 0 0 6px rgba(0, 255, 200, 0.2);
@@ -51,7 +54,8 @@
 
 /* ICON */
 .entry-row i {
-  font-size: clamp(7px, 0.65vmin, 11px);
+  /* font-size: clamp(7px, 0.65vmin, 11px); */
+  font-size: clamp(5px, 0.5vmin, 8px);
   color: #36f0ff;
   flex-shrink: 0;
 }
