@@ -10,7 +10,7 @@
 /* TITLE */
 .entry-title {
   text-align: center;
-  font-size: clamp(7px, 0.7vmin, 12px);
+  font-size: clamp(10px, 0.7vmin, 12px);
   letter-spacing: clamp(0.3px, 0.08vmin, 1px);
   margin-bottom: clamp(0.5px, 0.08vmin, 1.5px);
   color: #7faab5;
