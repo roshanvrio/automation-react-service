@@ -119,6 +119,7 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
       <div className="bots-list card-scroll">
         {botList.map((bot, i) => {
           const icon = bot.triggerIndication === "Email" ? "bi-envelope" : "bi-clock";
+          // const icon = bot.triggerIndication && bot.triggerIndication === "Email" ? "bi-envelope" : "bi-clock";
           const key = `${bot.processName}-${i}`;
           const change = changes[key];
 
