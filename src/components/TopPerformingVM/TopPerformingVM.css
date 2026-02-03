@@ -118,7 +118,7 @@
 }
 
 .performer-vm-id {
-  font-size: clamp(10px, 0.9vmin, 17px);
+  font-size: clamp(9px, 0.9vmin, 16px);
   font-weight: 700;
   color: #00ff88;
   font-family: 'Courier New', monospace;
@@ -127,7 +127,7 @@
 }
 
 .performer-time {
-  font-size: clamp(6px, 0.5vmin, 10px);
+  font-size: clamp(5px, 0.5vmin, 9px);
   color: #34d399;
   margin-top: clamp(1px, 0.15vmin, 3px);
   line-height: 1;
@@ -196,102 +196,101 @@
    RESPONSIVE BREAKPOINTS FOR TOP PERFORMING VM
    ======================================== */
 
-/* All high resolutions (1920px+) use same laptop-like sizes - no zooming */
-/* 4K / Ultra-wide (3440px+) - Same as HD+ */
+/* 4K / Ultra-wide (3440px+) */
 @media (min-width: 3440px) {
   .performer-display {
-    padding: 5px 0;
+    padding: 10px 0;
   }
 
   .performer-badge {
-    width: 120px;
-    height: 120px;
+    width: 180px;
+    height: 180px;
   }
 
   .star-icon {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .star-icon-inner {
-    font-size: 7px;
+    font-size: 10px;
   }
 
   .performer-content {
-    width: 48px;
-    height: 48px;
-    border-width: 2px;
+    width: 75px;
+    height: 75px;
+    border-width: 3px;
   }
 
   .performer-vm-id {
-    font-size: 13px;
+    font-size: 18px;
   }
 
   .performer-time {
-    font-size: 8px;
-    margin-top: 2px;
+    font-size: 10px;
+    margin-top: 4px;
   }
 }
 
-/* 2K / QHD (2560px - 3439px) - Same as HD+ */
+/* 2K / QHD (2560px - 3439px) */
 @media (min-width: 2560px) and (max-width: 3439px) {
   .performer-display {
-    padding: 5px 0;
+    padding: 8px 0;
   }
 
   .performer-badge {
-    width: 120px;
-    height: 120px;
+    width: 160px;
+    height: 160px;
   }
 
   .star-icon {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .star-icon-inner {
-    font-size: 7px;
+    font-size: 9px;
   }
 
   .performer-content {
-    width: 48px;
-    height: 48px;
+    width: 65px;
+    height: 65px;
   }
 
   .performer-vm-id {
-    font-size: 13px;
+    font-size: 16px;
   }
 
   .performer-time {
-    font-size: 8px;
-    margin-top: 2px;
+    font-size: 9px;
+    margin-top: 3px;
   }
 }
 
-/* Full HD (1920px - 2559px) - Same as HD+ */
+/* Full HD (1920px - 2559px) */
 @media (min-width: 1920px) and (max-width: 2559px) {
   .performer-display {
-    padding: 5px 0;
+    padding: 6px 0;
   }
 
   .performer-badge {
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
   }
 
   .star-icon {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .star-icon-inner {
-    font-size: 7px;
+    font-size: 8px;
   }
 
   .performer-content {
-    width: 48px;
-    height: 48px;
+    width: 55px;
+    height: 55px;
   }
 
   .performer-vm-id {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .performer-time {
@@ -325,11 +324,11 @@
   }
 
   .performer-vm-id {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .performer-time {
-    font-size: 8px;
+    font-size: 7px;
     margin-top: 2px;
   }
 }
@@ -359,11 +358,11 @@
   }
 
   .performer-vm-id {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .performer-time {
-    font-size: 7px;
+    font-size: 6px;
     margin-top: 1px;
   }
 }
@@ -389,11 +388,11 @@
   }
 
   .performer-vm-id {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .performer-time {
-    font-size: 7px;
+    font-size: 6px;
   }
 }
 
@@ -422,11 +421,11 @@
   }
 
   .performer-vm-id {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .performer-time {
-    font-size: 6px;
+    font-size: 5px;
   }
 }
 
@@ -455,11 +454,11 @@
   }
 
   .performer-vm-id {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .performer-time {
-    font-size: 8px;
+    font-size: 7px;
     margin-top: 2px;
   }
 }
@@ -489,10 +488,10 @@
   }
 
   .performer-vm-id {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .performer-time {
-    font-size: 7px;
+    font-size: 6px;
   }
 }
