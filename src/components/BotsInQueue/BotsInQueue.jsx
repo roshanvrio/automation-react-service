@@ -115,7 +115,10 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
 
   return (
     <div className="dashboard-cards card-scroll">
-      <div className="card-title text-center">Bots in Queue</div>
+      {/* <div className="card-title text-center">Bots in Queue</div> */}
+      <div className="card-title text-center">Bots in Queue - {botList.length}
+      </div>
+
 
       <div className="bots-list">
         {botList.map((bot, i) => {

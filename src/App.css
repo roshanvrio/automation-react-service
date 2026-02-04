@@ -86,6 +86,7 @@
 /* Scrollbar styling */
 .card-scroll {
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .card-scroll::-webkit-scrollbar {
@@ -96,6 +97,22 @@
   background: rgba(0, 255, 200, 0.3);
   border-radius: 10px;
 }
+
+.bots-list {
+  flex: 1;
+  min-height: 0;
+}
+
+.bots-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bots-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 200, 0.3);
+  border-radius: 10px;
+}
+
+
 
 /* ========================================
    MAIN GRID SYSTEM - RESPONSIVE
@@ -116,7 +133,8 @@
 /* Left column grid - BotsInQueue + VMUtilization stacked */
 .left-column-grid {
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* grid-template-rows: 1fr auto; */
+  grid-template-rows: 1fr 0.35fr;
   gap: var(--gap-lg);
   min-height: 0;
   height: 100%;
@@ -133,7 +151,8 @@
 /* Right column grid - Entry on top, TopPerforming below */
 .right-column-grid {
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* grid-template-rows: 1fr auto; */
+  grid-template-rows: 1fr 0.35fr;
   gap: var(--gap-lg);
   min-height: 0;
   height: 100%;
@@ -172,10 +191,10 @@
     flex: none;
   }
 
-  .left-column-grid {
+  /* .left-column-grid {
     grid-column: 1;
     grid-row: 1;
-  }
+  } */
 
   .center-column {
     grid-column: 2;
@@ -183,10 +202,10 @@
     min-height: 400px;
   }
 
-  .right-column-grid {
+ .right-column-grid {
     grid-column: 1;
     grid-row: 2;
-  }
+  } 
 
   .left-column-grid,
   .right-column-grid {
