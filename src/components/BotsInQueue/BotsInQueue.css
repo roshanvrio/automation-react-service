@@ -20,6 +20,27 @@
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
+  padding-right: clamp(4px, 0.4vmin, 8px);
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar styling for bots list */
+.bots-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bots-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.bots-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 230, 255, 0.4);
+  border-radius: 3px;
+}
+
+.bots-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 230, 255, 0.6);
 }
 
 /* ROW */

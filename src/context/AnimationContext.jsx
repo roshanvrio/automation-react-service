@@ -90,12 +90,15 @@ export const AnimationProvider = ({ children }) => {
   const registerActiveVmHex = useCallback((machineName, element) => {
     if (element && machineName) {
       const rect = element.getBoundingClientRect();
-      activeVmHexPositionsRef.current[machineName] = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-        width: rect.width,
-        height: rect.height
-      };
+      // Only cache if element has valid dimensions (not 0,0)
+      if (rect.width > 0 && rect.height > 0 && (rect.left > 0 || rect.top > 0)) {
+        activeVmHexPositionsRef.current[machineName] = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+          width: rect.width,
+          height: rect.height
+        };
+      }
     }
   }, []);
 
@@ -384,9 +387,34 @@ export const AnimationProvider = ({ children }) => {
   const queueCompletionAnimation = useCallback((machineName, outcome, hexPosition = null) => {
     console.log(`Queueing robot animation for ${machineName} with outcome: ${outcome}`);
 
-    // Use passed position, or fallback to cached position, or fallback to center
-    const vmHexPos = hexPosition || activeVmHexPositionsRef.current[machineName];
+    // Use passed position, or fallback to cached position
+    let vmHexPos = hexPosition || activeVmHexPositionsRef.current[machineName];
     const entryPos = getFallbackVmPosition();
+
+    // Validate the position - if it's invalid (0,0 or too small), use center of ActiveVMs area
+    const isValidPosition = vmHexPos && vmHexPos.x > 50 && vmHexPos.y > 50;
+    if (!isValidPosition) {
+      // Fallback to center of ActiveVMs area (roughly center of screen)
+      const centerElement = activeCenterRef.current;
+      if (centerElement) {
+        const rect = centerElement.getBoundingClientRect();
+        vmHexPos = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+          width: rect.width,
+          height: rect.height
+        };
+      } else {
+        // Ultimate fallback - center of viewport
+        vmHexPos = {
+          x: window.innerWidth * 0.5,
+          y: window.innerHeight * 0.5,
+          width: 100,
+          height: 100
+        };
+      }
+      console.log(`⚠️ Invalid hex position for ${machineName}, using fallback:`, vmHexPos);
+    }
 
     console.log(`VM hex position for ${machineName}:`, vmHexPos, hexPosition ? '(fresh)' : '(cached)');
 
@@ -394,7 +422,7 @@ export const AnimationProvider = ({ children }) => {
     setCompletionAnimation({
       machineName,
       outcome,
-      vmPosition: vmHexPos || getElementPosition(activeCenterRef.current), // fallback to center
+      vmPosition: vmHexPos,
       entryPosition: entryPos,
       id: Date.now()
     });

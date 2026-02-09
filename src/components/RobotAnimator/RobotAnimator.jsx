@@ -185,7 +185,12 @@ const RobotAnimator = () => {
     const exitAnim = exitQueueRef.current.shift();
 
     // vmPosition is the actual hexagon position (not center)
-    const vmHexPos = exitAnim.vmPosition || { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+    // Validate position - if invalid (too close to 0,0), use center fallback
+    let vmHexPos = exitAnim.vmPosition;
+    if (!vmHexPos || vmHexPos.x < 50 || vmHexPos.y < 50) {
+      vmHexPos = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+      console.log("Robot: Using fallback center position due to invalid vmPosition");
+    }
     const entryPos = exitAnim.entryPosition || { x: window.innerWidth * 0.85, y: window.innerHeight * 0.45 };
     const outcome = exitAnim.outcome || 'unknown';
 

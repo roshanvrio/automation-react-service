@@ -98,19 +98,6 @@
   border-radius: 10px;
 }
 
-.bots-list {
-  flex: 1;
-  min-height: 0;
-}
-
-.bots-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.bots-list::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 200, 0.3);
-  border-radius: 10px;
-}
 
 
 

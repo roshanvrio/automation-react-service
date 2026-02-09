@@ -204,7 +204,7 @@ const Entry = ({ idleVmUpdate }) => {
           animationData={workAnimation}
           loop={true}
           className="entry-icon"
-          style={{ width: 20, height: 20 }}
+          style={{ width: 14, height: 14 }}
         />
         <span>{vmName}</span>
       </div>

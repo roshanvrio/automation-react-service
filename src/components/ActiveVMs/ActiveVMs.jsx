@@ -289,13 +289,18 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     const hexElement = hexRefsMap.current[nextVm.machineName];
     if (hexElement) {
       const rect = hexElement.getBoundingClientRect();
-      freshHexPosition = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-        width: rect.width,
-        height: rect.height
-      };
-      console.log(`📍 Fresh hex position for ${nextVm.machineName}:`, freshHexPosition);
+      // Only use position if element has valid dimensions and position
+      if (rect.width > 0 && rect.height > 0 && (rect.left > 50 || rect.top > 50)) {
+        freshHexPosition = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+          width: rect.width,
+          height: rect.height
+        };
+        console.log(`📍 Fresh hex position for ${nextVm.machineName}:`, freshHexPosition);
+      } else {
+        console.log(`⚠️ Hex element for ${nextVm.machineName} has invalid rect:`, rect);
+      }
     } else {
       console.log(`⚠️ No hex element found for ${nextVm.machineName}`);
     }
