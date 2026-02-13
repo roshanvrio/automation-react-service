@@ -116,7 +116,7 @@ const BotsInQueue = ({ queuePriorityUpdate }) => {
   return (
     <div className="dashboard-cards card-scroll">
       {/* <div className="card-title text-center">Bots in Queue</div> */}
-      <div className="card-title text-center">Bots in Queue - {botList.length}
+      <div className="card-title text-center">Process in Queue - {botList.length}
       </div>
 
 
