@@ -49,6 +49,11 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   // Exit animation delay between items (ms)
   const EXIT_ANIMATION_DELAY = 800;
 
+  // Track VMs blinking due to in-place status change (still in active list)
+  const [statusBlinkVms, setStatusBlinkVms] = useState(new Map());
+  // Track previous caseStatus for each VM to detect changes
+  const prevCaseStatusRef = useRef(new Map());
+
   // Create a map of VM transactions for timeline display
   const vmTransactionsMap = useMemo(() => {
     const map = new Map();
@@ -224,41 +229,64 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     }, 2800); // Wait for fly animation to complete (matching AnimationContext timing)
   }, [queueAnimations, onVmProcessed, pendingVmCountRef]);
 
-  // Determine transaction outcome by matching transactionId
+  // Determine transaction outcome by matching transactionId, with caseStatus/processStatus fallback
   const determineOutcome = useCallback((vm, completedTransactionsData) => {
     const txId = String(vm.transactionId); // Convert to string for comparison
     console.log(`🔍 determineOutcome for VM: ${vm.machineName}, txId: ${txId}, type: ${typeof vm.transactionId}`);
 
-    if (!completedTransactionsData) {
-      console.log(`❌ No completedTransactionsData available`);
-      return 'unknown';
+    // First try completedTransactions lookup by transactionId
+    if (completedTransactionsData && vm.transactionId) {
+      // Check successful list by transactionId (convert both to string for comparison)
+      if (completedTransactionsData.successful?.some(t => String(t.transactionId) === txId)) {
+        console.log(`✅ Found txId ${txId} in successful`);
+        return 'success';
+      }
+
+      // Check error list by transactionId
+      if (completedTransactionsData.error?.some(t => String(t.transactionId) === txId)) {
+        console.log(`❗ Found txId ${txId} in error`);
+        return 'error';
+      }
+
+      // Check exception list by transactionId
+      if (completedTransactionsData.exception?.some(t => String(t.transactionId) === txId)) {
+        console.log(`⚠️ Found txId ${txId} in exception`);
+        return 'exception';
+      }
     }
 
-    if (!vm.transactionId) {
-      console.log(`❌ No transactionId on VM`);
-      return 'unknown';
+    // Fallback: check VM's own caseStatus field
+    if (vm.caseStatus) {
+      const status = vm.caseStatus.toUpperCase();
+      if (status === 'ERROR') {
+        console.log(`❗ Fallback: caseStatus is ERROR for ${vm.machineName}`);
+        return 'error';
+      }
+      if (status === 'EXCEPTION') {
+        console.log(`⚠️ Fallback: caseStatus is EXCEPTION for ${vm.machineName}`);
+        return 'exception';
+      }
+      if (status === 'SUCCESS' || status === 'SUCCESSFUL') {
+        console.log(`✅ Fallback: caseStatus is SUCCESS for ${vm.machineName}`);
+        return 'success';
+      }
     }
 
-    // Check successful list by transactionId (convert both to string for comparison)
-    if (completedTransactionsData.successful?.some(t => String(t.transactionId) === txId)) {
-      console.log(`✅ Found txId ${txId} in successful`);
-      return 'success';
+    // Fallback: check VM's processStatus field
+    if (vm.processStatus) {
+      const pStatus = vm.processStatus.toLowerCase();
+      if (pStatus === 'failed' || pStatus === 'faulted') {
+        console.log(`❗ Fallback: processStatus is ${vm.processStatus} for ${vm.machineName}`);
+        return 'error';
+      }
+      if (pStatus === 'completed' || pStatus === 'successful') {
+        console.log(`✅ Fallback: processStatus is ${vm.processStatus} for ${vm.machineName}`);
+        return 'success';
+      }
     }
 
-    // Check error list by transactionId
-    if (completedTransactionsData.error?.some(t => String(t.transactionId) === txId)) {
-      console.log(`❗ Found txId ${txId} in error`);
-      return 'error';
-    }
-
-    // Check exception list by transactionId
-    if (completedTransactionsData.exception?.some(t => String(t.transactionId) === txId)) {
-      console.log(`⚠️ Found txId ${txId} in exception`);
-      return 'exception';
-    }
-
-    console.log(`❓ txId ${txId} not found. Available successful txIds:`,
-      completedTransactionsData.successful?.map(t => t.transactionId).slice(0, 5));
+    console.log(`❓ txId ${txId} not found and no status fallback. Available successful txIds:`,
+      completedTransactionsData?.successful?.map(t => t.transactionId).slice(0, 5));
     return 'unknown';
   }, []);
 
@@ -360,7 +388,13 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       // First load with VMs - display immediately without animation
       console.log("First load - displaying all VMs immediately:", activeVmUpdate.map(vm => vm.machineName));
       isFirstLoad.current = false; // Only set to false AFTER we have data
-      activeVmUpdate.forEach(vm => seenVmsRef.current.add(vm.machineName));
+      activeVmUpdate.forEach(vm => {
+        seenVmsRef.current.add(vm.machineName);
+        // Initialize previous caseStatus so future changes can be detected
+        if (vm.caseStatus) {
+          prevCaseStatusRef.current.set(vm.machineName, vm.caseStatus.toUpperCase());
+        }
+      });
       setDisplayedVMs(activeVmUpdate);
       // Update ref immediately so exit detection works
       displayedVmsRef.current = activeVmUpdate;
@@ -417,6 +451,40 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       return updated;
     });
 
+    // Detect in-place caseStatus changes (VM still active but status changed to error/exception/success)
+    activeVmUpdate.forEach(vm => {
+      const prevStatus = prevCaseStatusRef.current.get(vm.machineName);
+      const currentCaseStatus = vm.caseStatus?.toUpperCase();
+
+      if (currentCaseStatus && currentCaseStatus !== prevStatus) {
+        const isTerminal = ['SUCCESS', 'ERROR', 'EXCEPTION'].includes(currentCaseStatus);
+        // Only trigger blink if this is a NEW status change (not initial load)
+        if (isTerminal && prevStatus !== undefined && !completingVmsRef.current.has(vm.machineName)) {
+          const outcome = currentCaseStatus === 'ERROR' ? 'error'
+            : currentCaseStatus === 'EXCEPTION' ? 'exception'
+            : 'success';
+          console.log(`🔔 Status change detected for ${vm.machineName}: ${prevStatus} → ${currentCaseStatus} (${outcome})`);
+
+          setStatusBlinkVms(prev => {
+            const newMap = new Map(prev);
+            newMap.set(vm.machineName, outcome);
+            return newMap;
+          });
+
+          // Remove blink class after animation completes (2.5s)
+          setTimeout(() => {
+            setStatusBlinkVms(prev => {
+              const newMap = new Map(prev);
+              newMap.delete(vm.machineName);
+              return newMap;
+            });
+          }, 2500);
+        }
+      }
+
+      prevCaseStatusRef.current.set(vm.machineName, currentCaseStatus);
+    });
+
     if (newVMs.length > 0) {
       console.log("New VMs detected - adding to queue:", newVMs.map(vm => vm.machineName));
       // Mark as seen immediately to prevent duplicates
@@ -461,6 +529,9 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
             let blinkClass = '';
             if (isCompleting) {
               blinkClass = `blink-${completionOutcome}`; // blink-success, blink-error, blink-exception
+            } else if (statusBlinkVms.has(vm.machineName)) {
+              // In-place status change blink (VM still active, no fade-out)
+              blinkClass = `status-blink-${statusBlinkVms.get(vm.machineName)}`;
             }
 
             // Get transactions for this VM's timeline

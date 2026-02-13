@@ -1135,6 +1135,31 @@
   animation: blink-bg-unknown 2.5s ease-in-out forwards;
 }
 
+/* In-place status blink - VM still active, reuses blink keyframes but NO fade-out */
+.hex-wrapper.status-blink-success .hex-timeline {
+  animation: blink-border-success 2.5s ease-in-out;
+}
+
+.hex-wrapper.status-blink-success .hex-card {
+  animation: blink-bg-success 2.5s ease-in-out;
+}
+
+.hex-wrapper.status-blink-error .hex-timeline {
+  animation: blink-border-error 2.5s ease-in-out;
+}
+
+.hex-wrapper.status-blink-error .hex-card {
+  animation: blink-bg-error 2.5s ease-in-out;
+}
+
+.hex-wrapper.status-blink-exception .hex-timeline {
+  animation: blink-border-exception 2.5s ease-in-out;
+}
+
+.hex-wrapper.status-blink-exception .hex-card {
+  animation: blink-bg-exception 2.5s ease-in-out;
+}
+
 /* ========================================
    DYNAMIC GRID SIZING WITH CSS VARIABLES
    ======================================== */
