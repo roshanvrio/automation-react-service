@@ -32,6 +32,18 @@ const AppContent = () => {
     errors: 0,
     avgTime: 0
   });
+
+  const highlightTimerRef = useRef(null);
+  const triggerHighlight = useCallback((keys) => {
+  setHighlightKeys([]);                           // remove classes
+  requestAnimationFrame(() => {
+    setHighlightKeys(keys);                       // re-add → animation restarts
+    clearTimeout(highlightTimerRef.current);       // cancel any prior timer
+    highlightTimerRef.current = setTimeout(() => {
+      setHighlightKeys([]);                       // auto-stop after 3s
+    }, 3000);
+  });
+  }, []);
   // Keys currently being highlighted
   const [highlightKeys, setHighlightKeys] = useState([]);
   // Track if first metrics load
@@ -61,22 +73,18 @@ const AppContent = () => {
       const metricKeys = ['totalInQueue', 'successful', 'exceptions', 'errors', 'avgTime'];
 
       metricKeys.forEach(key => {
-        const current = prev[key] || 0;
-        const targetVal = target[key] || 0;
-        if (current !== targetVal) {
+        if ((prev[key] || 0) !== (target[key] || 0)) {
           keysToHighlight.push(key);
         }
       });
 
-      // Trigger highlight animation (0.4s × 8 blinks = 3.2s)
       if (keysToHighlight.length > 0) {
-        setHighlightKeys(keysToHighlight);
-        setTimeout(() => setHighlightKeys([]), 3200);
+        queueMicrotask(() => triggerHighlight(keysToHighlight));
       }
 
       return { ...target };
     });
-  }, []);
+  }, [triggerHighlight]);
 
   // Called when a VM animation completes - update metrics one step
   const onVmProcessed = useCallback(() => {
@@ -104,8 +112,11 @@ const AppContent = () => {
 
       // Trigger highlight animation (0.4s × 8 blinks = 3.2s)
       if (keysToHighlight.length > 0) {
-        setHighlightKeys(keysToHighlight);
-        setTimeout(() => setHighlightKeys([]), 3200);
+         queueMicrotask(() => {
+            setHighlightKeys(keysToHighlight);
+            clearTimeout(highlightTimerRef.current);
+            highlightTimerRef.current = setTimeout(() => setHighlightKeys([]), 3000);
+          });
       }
 
       return newMetrics;
@@ -204,10 +215,7 @@ const AppContent = () => {
       <div className="container-fluid">
 
         {/*Header */}
-        <div className="row gx-3 header-card">
-          <Header metrics={displayedMetrics} highlightKeys={highlightKeys} />
-
-        </div>
+        <Header metrics={displayedMetrics} highlightKeys={highlightKeys} />
 
 
         {/*Main content */}

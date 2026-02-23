@@ -1,5 +1,5 @@
 .entry-card {
-  padding: clamp(2px, 0.3vmin, 6px);
+  padding: clamp(6px, 0.8vmin, 16px);
   overflow: hidden;
   min-height: 0;
   flex: 1;
@@ -10,10 +10,11 @@
 /* TITLE */
 .entry-title {
   text-align: center;
-  font-size: clamp(6px, 0.6vmin, 10px);
-  letter-spacing: clamp(0.3px, 0.08vmin, 1px);
-  margin-bottom: clamp(1px, 0.15vmin, 3px);
-  color: #7faab5;
+  font-size: 11px !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--gap-sm);
+  color: #c7d2fe;
   flex-shrink: 0;
 }
 
@@ -21,33 +22,49 @@
 .entry-list {
   display: flex;
   flex-direction: column;
-  gap: clamp(1px, 0.1vmin, 2px);
+  gap: 6px !important;
+  margin-top: clamp(4px, 0.5vmin, 8px);
   flex: 1;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
+}
+
+.entry-list::-webkit-scrollbar {
+  width: 3px;
+}
+
+.entry-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.entry-list:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 200, 0.3);
 }
 
 /* ROW PAIR */
 .entry-row-pair {
   display: flex;
-  gap: clamp(1px, 0.1vmin, 2px);
+  gap: 6px !important;
   flex-shrink: 0;
 }
 
 /* ROW */
 .entry-row {
-  flex: 0 0 calc(50% - clamp(1px, 0.05vmin, 1px));
+  flex: 0 0 calc(50% - clamp(1px, 0.08vmin, 2px));
   display: flex;
   align-items: center;
-  gap: clamp(1px, 0.15vmin, 3px);
-  padding: clamp(1px, 0.1vmin, 2px) clamp(2px, 0.2vmin, 4px);
+  gap: 4px !important;
+  padding: 4px 8px !important;
   background: linear-gradient(90deg, #0e3a44, #0b2730);
   border-radius: clamp(2px, 0.2vmin, 4px);
-  font-size: clamp(5px, 0.5vmin, 9px);
+  font-size: 9px !important;
   font-weight: 600;
   color: #e6faff;
   box-shadow: inset 0 0 6px rgba(0, 255, 200, 0.2);
 }
+
 
 /* ICON */
 .entry-row i {
@@ -70,7 +87,7 @@
 
 /* HIGHLIGHT ANIMATION for cross-component animation */
 .entry-row.vm-highlighted {
-  animation: vmHighlight 0.6s ease-out forwards;
+  animation: vmHighlight 2s ease-out forwards;
   position: relative;
   z-index: 100;
 }
@@ -82,7 +99,7 @@
   border-radius: 8px;
   background: linear-gradient(90deg, #00ff88, #00e6ff, #00ff88);
   background-size: 200% 100%;
-  animation: vmBorderGlow 0.5s linear infinite, vmBorderAppear 0.6s ease-out forwards;
+  animation: vmBorderGlow 1.6s linear infinite, vmBorderAppear 2s ease-out forwards;
   z-index: -1;
 }
 
@@ -136,7 +153,7 @@
 
 /* Landing Ghost VM - placeholder during exit animation (VM returning to Entry) */
 .entry-row.vm-landing {
-  animation: vmLandingPulse 0.6s ease-in-out infinite;
+  animation: vmLandingPulse 2s ease-in-out infinite;
   border: 1px dashed rgba(0, 230, 255, 0.6);
   position: relative;
 }
@@ -147,7 +164,7 @@
   inset: -2px;
   border-radius: 6px;
   border: 2px solid rgba(0, 230, 255, 0.4);
-  animation: vmLandingRing 0.8s ease-out infinite;
+  animation: vmLandingRing 2.4s ease-out infinite;
 }
 
 @keyframes vmLandingPulse {
@@ -176,7 +193,7 @@
 
 /* Removal animation - blink before removing */
 .entry-row.vm-removing {
-  animation: vmRemovalBlink 0.3s ease-in-out 5;
+  animation: vmRemovalBlink 0.8s ease-in-out 5;
 }
 
 @keyframes vmRemovalBlink {
@@ -202,13 +219,13 @@
 /* 4K / Ultra-wide (3440px+) - Same as HD+ */
 @media (min-width: 3440px) {
   .entry-card {
-    padding: 3px;
+    padding: 12px;
   }
 
   .entry-title {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 0.6px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
@@ -234,13 +251,13 @@
 /* 2K / QHD (2560px - 3439px) - Same as HD+ */
 @media (min-width: 2560px) and (max-width: 3439px) {
   .entry-card {
-    padding: 3px;
+    padding: 12px;
   }
 
   .entry-title {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 0.6px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
@@ -266,13 +283,13 @@
 /* Full HD (1920px - 2559px) - Same as HD+ */
 @media (min-width: 1920px) and (max-width: 2559px) {
   .entry-card {
-    padding: 3px;
+    padding: 12px;
   }
 
   .entry-title {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 0.6px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
@@ -298,13 +315,13 @@
 /* HD+ (1440px - 1919px) */
 @media (min-width: 1440px) and (max-width: 1919px) {
   .entry-card {
-    padding: 3px;
+    padding: 12px;
   }
 
   .entry-title {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 0.6px;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
@@ -330,13 +347,13 @@
 /* HD (1280px - 1439px) */
 @media (min-width: 1280px) and (max-width: 1439px) {
   .entry-card {
-    padding: 2px;
+    padding: 10px;
   }
 
   .entry-title {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 0.5px;
-    margin-bottom: 1px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
@@ -362,12 +379,12 @@
 /* Tablet Landscape (1024px - 1279px) */
 @media (min-width: 1024px) and (max-width: 1279px) {
   .entry-card {
-    padding: 2px;
+    padding: 10px;
   }
 
   .entry-title {
-    font-size: 6px;
-    margin-bottom: 1px;
+    font-size: 11px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
@@ -392,13 +409,13 @@
 /* Tablet Portrait (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .entry-card {
-    padding: 2px;
+    padding: 10px;
   }
 
   .entry-title {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 0.5px;
-    margin-bottom: 1px;
+    margin-bottom: 4px;
   }
 
   .entry-list {
@@ -424,13 +441,13 @@
 /* Mobile (< 768px) */
 @media (max-width: 767px) {
   .entry-card {
-    padding: 4px;
+    padding: 10px;
   }
 
   .entry-title {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 0.6px;
-    margin-bottom: 2px;
+    margin-bottom: 8px;
   }
 
   .entry-list {
@@ -456,13 +473,13 @@
 /* Extra small mobile (< 480px) */
 @media (max-width: 479px) {
   .entry-card {
-    padding: 3px;
+    padding: 8px;
   }
 
   .entry-title {
-    font-size: 6px;
+    font-size: 10px;
     letter-spacing: 0.5px;
-    margin-bottom: 1px;
+    margin-bottom: 4px;
   }
 
   .entry-list {

@@ -105,9 +105,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: clamp(36px, 3.6vmin, 65px);
-  height: clamp(36px, 3.6vmin, 65px);
-  background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, rgba(10, 14, 39, 0.9) 100%);
+  width: clamp(55px, 5.5vmin, 95px);
+  height: clamp(55px, 5.5vmin, 95px);
+  background: black;
   border: 2px dashed #00ff88;
   border-radius: 50%;
   box-shadow:

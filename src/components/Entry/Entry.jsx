@@ -214,7 +214,7 @@ const Entry = ({ idleVmUpdate }) => {
   return (
     <div className="dashboard-card entry-card">
 
-      <div className="entry-title">IN-ACTIVE</div>
+      <div className="entry-title">In-Active - {displayedVMs.length}</div>
 
       <div className="entry-list">
         {vmPairs.map((pair, pairIndex) => (

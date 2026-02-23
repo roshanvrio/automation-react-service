@@ -16,7 +16,7 @@
   box-shadow:
     0 0 20px rgba(0, 230, 255, 0.2),
     0 4px 20px rgba(0, 0, 0, 0.4);
-  animation: exitQueueSlideIn 0.3s ease-out;
+  animation: exitQueueSlideIn 1s ease-out;
 }
 
 @keyframes exitQueueSlideIn {
@@ -74,7 +74,7 @@
   border-radius: 8px;
   position: relative;
   overflow: hidden;
-  animation: exitItemPop 0.3s ease-out backwards;
+  animation: exitItemPop 1s ease-out backwards;
 }
 
 @keyframes exitItemPop {
@@ -150,7 +150,7 @@
   bottom: 0;
   border-radius: 8px;
   pointer-events: none;
-  animation: exitPulse 1.5s ease-in-out infinite;
+  animation: exitPulse 4.0s ease-in-out infinite;
 }
 
 .exit-queue-item.outcome-success .exit-queue-pulse {

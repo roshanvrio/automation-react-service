@@ -27,8 +27,23 @@
 /* VM GRID - Base styles */
 .vm-grid {
   display: grid;
-  grid-template-rows: repeat(3, 1fr);
-  overflow: hidden;
+  grid-template-columns: repeat(auto-fill, minmax(calc((100% - 48px) / 9), 1fr)) !important;
+  gap: 4px !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.vm-grid::-webkit-scrollbar {
+  width: 3px;
+}
+
+.vm-grid::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.vm-grid:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 200, 0.3);
 }
 
 /* DEFAULT SIZE - For 12 or fewer VMs */
@@ -43,11 +58,11 @@
 }
 
 .vm-grid-default .vm-id {
-  font-size: clamp(9px, 0.75vmin, 13px);
+  font-size: clamp(5px, 0.6vmin, 7px);
 }
 
 .vm-grid-default .vm-time {
-  font-size: clamp(7px, 0.6vmin, 11px);
+  font-size: clamp(5px, 0.6vmin, 8px);
 }
 
 /* MEDIUM SIZE - For 13-18 VMs */
@@ -90,18 +105,21 @@
 
 /* VM CELL - Common styles */
 .vm-cell {
-  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  border-radius: 2px !important;
+  padding: 4px !important;
+  min-height: 0;
 }
 
 /* TEXT - Common styles */
 .vm-id {
   font-weight: 600;
+  font-size: clamp(6px, 0.7vmin, 10px);
   color: inherit;
-  line-height: 1;
+  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -109,8 +127,9 @@
 }
 
 .vm-time {
+  font-size: clamp(5px, 0.55vmin, 8px);
   color: inherit;
-  line-height: 1;
+  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

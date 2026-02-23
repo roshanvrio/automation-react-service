@@ -4,6 +4,7 @@ import HexTimeline from "./HexTimeline";
 import "./ActiveVMs.css";
 import uiPath from "../../assets/uiPath.png";
 import AutomationAnywhere from "../../assets/AutomationAnywhere_circleLogo.png";
+import vmIcon from "../../assets/Icon.png";
 
 const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions, vmCompletedTransactions = [] }) => {
   const centerRef = useRef(null);
@@ -17,7 +18,9 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     queueCompletionAnimation,
     queueExitAnimation,
     isVmCompleting,
-    getVmCompletionOutcome
+    getVmCompletionOutcome,
+    robotArrivedAtCenter,
+    robotPickedUpVm
   } = useAnimation();
 
   // Displayed VMs - what's actually rendered on screen
@@ -49,6 +52,9 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   // Exit animation delay between items (ms)
   const EXIT_ANIMATION_DELAY = 800;
 
+  // Track hexes waiting to be revealed (hidden until robot arrives at Active box)
+  const [pendingHexReveal, setPendingHexReveal] = useState(new Set());
+
   // Track VMs blinking due to in-place status change (still in active list)
   const [statusBlinkVms, setStatusBlinkVms] = useState(new Map());
   // Track previous caseStatus for each VM to detect changes
@@ -72,12 +78,13 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   }, [vmCompletedTransactions]);
 
   // Calculate optimal grid layout based on container size and VM count
+  const visibleVmCount = displayedVMs.length - pendingHexReveal.size;
   const calculateGridLayout = useCallback(() => {
-    if (!centerRef.current || displayedVMs.length === 0) return;
+    if (!centerRef.current || visibleVmCount <= 0) return;
 
     const container = centerRef.current;
     const containerWidth = container.clientWidth - 20; // Account for padding
-    const vmCount = displayedVMs.length;
+    const vmCount = visibleVmCount; // Only count visible hexes (exclude hex-hidden)
 
     // Hexagon aspect ratio (width:height = 1:0.85)
     const hexRatio = 0.85;
@@ -150,7 +157,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       '--hex-gap': `${gapSize}px`,
       '--hex-font-scale': Math.max(0.6, Math.min(1, cardWidth / 140)),
     });
-  }, [displayedVMs.length]);
+  }, [visibleVmCount]);
 
   // Recalculate layout when VM count changes or window resizes
   useEffect(() => {
@@ -168,7 +175,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   useEffect(() => {
     const timer = setTimeout(calculateGridLayout, 100);
     return () => clearTimeout(timer);
-  }, [displayedVMs.length, calculateGridLayout]);
+  }, [visibleVmCount, calculateGridLayout]);
 
   // Keep ref updated with latest completedTransactions
   useEffect(() => {
@@ -181,6 +188,44 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       registerActiveCenter(centerRef.current);
     }
   }, [registerActiveCenter]);
+
+  // Reveal hex 50ms after robot physically arrives at Active box
+  useEffect(() => {
+    if (!robotArrivedAtCenter) return;
+    const { machineName } = robotArrivedAtCenter;
+
+    // Only reveal if this VM is pending reveal
+    if (!pendingHexReveal.has(machineName)) return;
+
+    console.log(`[HEX] Robot arrived at center for ${machineName}, scheduling hex reveal in 50ms`);
+
+    const timer = setTimeout(() => {
+      console.log(`[HEX] Hex VISIBLE for ${machineName} — 50ms after robot arrival at:`, Date.now());
+      setPendingHexReveal(prev => {
+        const next = new Set(prev);
+        next.delete(machineName);
+        return next;
+      });
+      // Trigger popup animation now that hex is visible
+      setLatestAddedVm(machineName);
+      setTimeout(() => setLatestAddedVm(null), 2400);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [robotArrivedAtCenter, pendingHexReveal]);
+
+  // Remove hex when robot picks up the completed VM (at 4800ms PICKING_COMPLETED_VM)
+  useEffect(() => {
+    if (!robotPickedUpVm) return;
+    const { machineName } = robotPickedUpVm;
+
+    console.log(`🗑️ Robot picked up ${machineName} at 4800ms - removing hex from display`);
+    // Clean up completing state (removes blink class) right as hex disappears
+    completingVmsRef.current.delete(machineName);
+    removeFromExitQueue(machineName);
+    seenVmsRef.current.delete(machineName);
+    setDisplayedVMs(prev => prev.filter(vm => vm.machineName !== machineName));
+  }, [robotPickedUpVm, removeFromExitQueue]);
 
   // Process the pending queue one by one
   const processQueue = useCallback(() => {
@@ -204,19 +249,17 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     queueAnimations([nextVm]);
 
     // Add to displayed VMs after a small delay (let animation start)
+    // Hex stays hidden via pendingHexReveal until robot physically arrives at Active box
     setTimeout(() => {
       setDisplayedVMs(prev => [...prev, nextVm]);
-      setLatestAddedVm(nextVm.machineName);
+      // Mark hex as hidden - will be revealed when robot arrives + 50ms
+      setPendingHexReveal(prev => new Set([...prev, nextVm.machineName]));
+      console.log(`[HEX] Added ${nextVm.machineName} to displayedVMs (hidden, awaiting robot arrival)`);
 
       // Notify parent that a VM was processed - update metrics
       if (onVmProcessed) {
         onVmProcessed();
       }
-
-      // Clear the latest added flag after animation completes
-      setTimeout(() => {
-        setLatestAddedVm(null);
-      }, 500);
 
       isProcessingQueue.current = false;
 
@@ -337,24 +380,18 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     queueCompletionAnimation(nextVm.machineName, outcome, freshHexPosition);
     console.log(`✨ Robot animation queued for ${nextVm.machineName}`);
 
-    // Wait for robot to reach VM and pick it up, then remove hexagon
-    // Robot animation: 0ms move → 400ms arrive → 600ms react → 1200ms pick up
-    // Remove hexagon when robot picks it up (1200ms)
+    // Trigger exit animation (flying VM icon) after robot picks up the VM
+    // Hex removal is now handled by robotPickedUpVm signal at 4800ms (PICKING_COMPLETED_VM)
     setTimeout(() => {
-      console.log(`🗑️ Robot picked up ${nextVm.machineName} - removing from display`);
-      seenVmsRef.current.delete(nextVm.machineName);
-      setDisplayedVMs(prev => prev.filter(vm => vm.machineName !== nextVm.machineName));
-
-      // Trigger exit animation (flying VM icon) when robot starts returning
       queueExitAnimation(nextVm, outcome);
-    }, 1200);
+    }, 4800);
 
     // Robot continues: 1400ms return → 1900ms place → 2200ms idle
-    // Wait for full robot animation to complete before processing next VM
+    // Allow next exit queue item to start processing after robot finishes
+    // NOTE: Do NOT remove from completingVms/exitQueue here — keep blink class
+    // until hex is removed by robotPickedUpVm signal
     setTimeout(() => {
-      console.log(`✅ Robot animation complete for ${nextVm.machineName}`);
-      completingVmsRef.current.delete(nextVm.machineName);
-      removeFromExitQueue(nextVm.machineName);
+      console.log(`✅ Robot animation moving on for ${nextVm.machineName}`);
 
       isProcessingExitQueue.current = false;
 
@@ -507,7 +544,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   return (
     <div className="dashboard-card-center center-height activevms-card">
       <div className="activevms-header">
-        <span style={{margin:'1rem'}}><i className="bi bi-display"></i> Active VMs <strong>{activeVmUpdate?.length || 0}</strong></span>
+        <span className="card-title mb-0" style={{display:'inline-flex', alignItems:'center'}}><i className="bi bi-display" style={{marginRight:'0.4rem'}}></i> Active VMs <span style={{fontSize:'1.2rem', fontWeight:600, color:'#2dff8f', marginLeft:'0.5rem'}}>{activeVmUpdate?.length || 0}</span></span>
 
         <div className="legend mt-2">
           <span className="rounded-white">Start Hour</span>
@@ -529,17 +566,21 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
             let blinkClass = '';
             if (isCompleting) {
               blinkClass = `blink-${completionOutcome}`; // blink-success, blink-error, blink-exception
+              console.log(`🔴 [BLINK DEBUG] ${vm.machineName}: isCompleting=true, outcome=${completionOutcome}, blinkClass=${blinkClass}`);
             } else if (statusBlinkVms.has(vm.machineName)) {
               // In-place status change blink (VM still active, no fade-out)
               blinkClass = `status-blink-${statusBlinkVms.get(vm.machineName)}`;
             }
+
+            // Check if hex is hidden (waiting for robot to arrive)
+            const isHexHidden = pendingHexReveal.has(vm.machineName);
 
             // Get transactions for this VM's timeline
             const vmTransactions = vmTransactionsMap.get(vm.machineName) || [];
 
             return (
               <div
-                className={`hex-wrapper ${isNewlyAdded ? 'hex-popup-animate' : ''} ${blinkClass}`}
+                className={`hex-wrapper ${isNewlyAdded ? 'hex-popup-animate' : ''} ${blinkClass} ${isHexHidden ? 'hex-hidden' : ''}`}
                 key={vm.machineName || i}
                 ref={(el) => {
                   if (el) {
@@ -555,8 +596,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
                 />
                 <div className="hex-card">
                   <div className="hex-content">
-                    <div className="hex-small">{vm.triggerIndication === "Email" ? "✉" : "🕐"} {vm.triggerIndication}</div>
-                    <div className="hex-vm">🖥 {vm.machineName}</div>
+                    <div className="hex-small">{vm.triggerIndication === "Email" ? "✉" : "⏱︎"} {vm.triggerIndication}</div>
+                    <div className="hex-vm"><img src={vmIcon} alt="VM" className="vm-icon" /> {vm.machineName}</div>
                     <div className="hex-name">{vm.processName}</div>
                     {/* <div className="hex-time">
                       Last Run Time <strong>{vm.lastRunTime}</strong>

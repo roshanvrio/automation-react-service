@@ -1,6 +1,44 @@
+.header-section {
+  background: linear-gradient(180deg, #0a1220, #060d17);
+  border-radius: var(--border-radius);
+  padding: var(--padding-card);
+  border: 1px solid rgba(0, 255, 200, 0.12);
+  box-shadow:
+    inset 0 0 12px rgba(0, 255, 200, 0.05),
+    0 0 12px rgba(0, 255, 200, 0.08);
+  flex-shrink: 0;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  position: relative;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--gap-sm);
+  justify-content: center;
+}
+
+.header-title .mindsprint-logo {
+  height: 18px;
+  width: auto;
+  position: absolute;
+  left: 0;
+}
+
 .header-card {
   padding: clamp(6px, 1vmin, 18px) clamp(8px, 1.2vmin, 22px);
   flex-shrink: 0;
+}
+
+/* Metrics Grid - 5 equal columns */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--gap-lg);
+  align-items: center;
 }
 
 /* Metric Card */
@@ -8,7 +46,7 @@
   display: flex;
   align-items: center;
   gap: clamp(4px, 0.8vmin, 12px);
-  padding: clamp(6px, 1vmin, 16px) clamp(8px, 1.2vmin, 18px);
+  padding: clamp(14px, 1.8vmin, 26px) clamp(16px, 2vmin, 30px);
   border-radius: clamp(6px, 0.8vmin, 14px);
   background: linear-gradient(180deg, #101a2e, #0b1220);
   border: 1px solid rgba(0, 255, 200, 0.15);
@@ -16,17 +54,21 @@
   box-shadow:
     inset 0 0 10px rgba(0, 255, 200, 0.05),
     0 0 12px rgba(0, 255, 200, 0.08);
+  transition: border-color 0.6s ease-out, box-shadow 0.6s ease-out;
 }
+
+/* .header-metric.metric-highlight-cyan {
+  animation: highlight-cyan 2s ease-in-out infinite;}*/
 
 /* Icon container */
 .metric-icon {
-  width: clamp(24px, 3.5vmin, 50px);
-  height: clamp(24px, 3.5vmin, 50px);
-  border-radius: clamp(4px, 0.6vmin, 10px);
+  width: clamp(32px, 4.5vmin, 60px);
+  height: clamp(32px, 4.5vmin, 60px);
+  border-radius: clamp(6px, 0.8vmin, 12px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(10px, 1.5vmin, 20px);
+  font-size: clamp(14px, 2vmin, 26px);
   flex-shrink: 0;
 }
 
@@ -37,12 +79,12 @@
 }
 
 .metric-value {
-  font-size: clamp(12px, 1.8vmin, 24px);
+  font-size: clamp(24px, 3vmin, 42px);
   font-weight: 700;
 }
 
 .metric-label {
-  font-size: clamp(7px, 1vmin, 16px);
+  font-size: clamp(10px, 1vmin, 16px);
   color: #9fb3c8;
   white-space: nowrap;
   overflow: hidden;
@@ -100,101 +142,130 @@
 
 /* Cyan/Blue glow for Total in Queue */
 .header-metric.metric-highlight-cyan {
-  animation: highlight-cyan 0.4s ease-in-out 8;
+  animation: highlight-cyan 0.75s ease-in-out 4;
+  will-change: box-shadow, border-color;
 }
 
 @keyframes highlight-cyan {
 
-  0%,
-  100% {
+  0%, 100% {
     box-shadow:
       inset 0 0 10px rgba(0, 255, 200, 0.05),
       0 0 12px rgba(0, 255, 200, 0.08);
     border-color: rgba(0, 255, 200, 0.15);
-    transform: scale(1);
+    /* transform: scale(1); */
   }
 
   50% {
     box-shadow:
-      inset 0 0 20px rgba(0, 246, 255, 0.5),
-      0 0 30px rgba(0, 246, 255, 0.6);
-    border-color: rgba(0, 246, 255, 0.8);
-    transform: scale(1.03);
+      inset 0 0 20px rgba(0, 246, 255, 0.2),
+      0 0 18px rgba(0, 246, 255, 0.25);
+    border-color: rgba(0, 246, 255, 0.45);
+    /* transform: scale(1.03); */
   }
 }
 
 /* Green glow for Success */
 .header-metric.metric-highlight-green {
-  animation: highlight-green 0.4s ease-in-out 8;
+  animation: highlight-green 0.75s ease-in-out 4;
+  will-change: box-shadow, border-color;
+
 }
 
 @keyframes highlight-green {
 
-  0%,
-  100% {
+  0%, 100% {
     box-shadow:
       inset 0 0 10px rgba(0, 255, 200, 0.05),
       0 0 12px rgba(0, 255, 200, 0.08);
     border-color: rgba(0, 255, 200, 0.15);
-    transform: scale(1);
+    /* transform: scale(1); */
   }
 
   50% {
     box-shadow:
-      inset 0 0 20px rgba(45, 255, 143, 0.5),
-      0 0 30px rgba(45, 255, 143, 0.6);
-    border-color: rgba(45, 255, 143, 0.8);
-    transform: scale(1.03);
+      inset 0 0 20px rgba(45, 255, 143, 0.2),
+      0 0 30px rgba(45, 255, 143, 0.25);
+    border-color: rgba(45, 255, 143, 0.45);
+    /* transform: scale(1.03); */
   }
 }
 
 /* Red glow for Error */
 .header-metric.metric-highlight-red {
-  animation: highlight-red 0.4s ease-in-out 8;
+  animation: highlight-red 0.75s ease-in-out 4;
+  will-change: box-shadow, border-color;
 }
 
 @keyframes highlight-red {
 
-  0%,
-  100% {
+  0%, 100% {
     box-shadow:
       inset 0 0 10px rgba(0, 255, 200, 0.05),
       0 0 12px rgba(0, 255, 200, 0.08);
     border-color: rgba(0, 255, 200, 0.15);
-    transform: scale(1);
+    /* transform: scale(1); */
   }
 
   50% {
     box-shadow:
-      inset 0 0 20px rgba(255, 77, 79, 0.5),
-      0 0 30px rgba(255, 77, 79, 0.6);
-    border-color: rgba(255, 77, 79, 0.8);
-    transform: scale(1.03);
+      inset 0 0 20px rgba(255, 77, 79, 0.2),
+      0 0 30px rgba(255, 77, 79, 0.25);
+    border-color: rgba(255, 77, 79, 0.45);
+    /* transform: scale(1.03); */
   }
 }
 
 /* Purple/Violet glow for Exception */
 .header-metric.metric-highlight-purple {
-  animation: highlight-purple 0.4s ease-in-out 8;
+  animation: highlight-purple 0.75s ease-in-out 4;
+  will-change: box-shadow, border-color;
 }
 
 @keyframes highlight-purple {
 
-  0%,
-  100% {
+  0%, 100% {
     box-shadow:
       inset 0 0 10px rgba(0, 255, 200, 0.05),
       0 0 12px rgba(0, 255, 200, 0.08);
     border-color: rgba(0, 255, 200, 0.15);
-    transform: scale(1);
+    /* transform: scale(1); */
   }
 
   50% {
     box-shadow:
-      inset 0 0 20px rgba(183, 92, 255, 0.5),
-      0 0 30px rgba(183, 92, 255, 0.6);
-    border-color: rgba(183, 92, 255, 0.8);
+      inset 0 0 20px rgba(183, 92, 255, 0.2),
+      0 0 30px rgba(183, 92, 255, 0.25);
+    border-color: rgba(183, 92, 255, 0.45);
+    /* transform: scale(1.03); */
+  }
+}
+
+/* ── Sharp continuous error alert blink ── */
+.header-metric.metric-error-alert {
+  animation: error-alert-blink 0.9s ease-in-out infinite !important;
+  will-change: box-shadow, border-color, transform;
+}
+
+@keyframes error-alert-blink {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 10px rgba(255, 56, 59, 0.3),
+      0 0 12px rgba(255, 35, 39, 0.4),
+      0 0 28px rgba(255, 35, 39, 0.25),
+      0 0 56px rgba(255, 20, 20, 0.12);
+    border-color: rgba(255, 50, 50, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 14px rgba(255, 56, 59, 0.5),
+      0 0 20px rgba(255, 35, 39, 0.6),
+      0 0 42px rgba(255, 35, 39, 0.35),
+      0 0 72px rgba(255, 20, 20, 0.18);
+    border-color: rgba(255, 50, 50, 0.9);
     transform: scale(1.03);
+
   }
 }
 
@@ -210,19 +281,19 @@
 
   .header-metric {
     gap: 16px;
-    padding: 18px 22px;
+    padding: 22px 28px;
     border-radius: 16px;
   }
 
   .metric-icon {
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
     border-radius: 14px;
   }
 
   .metric-value {
-    font-size: 28px;
+    font-size: 42px;
   }
 
   .metric-label {
@@ -238,22 +309,22 @@
 
   .header-metric {
     gap: 14px;
-    padding: 16px 18px;
+    padding: 20px 24px;
     border-radius: 14px;
   }
 
   .metric-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-  }
-
-  .metric-value {
+    width: 56px;
+    height: 56px;
     font-size: 24px;
   }
 
+  .metric-value {
+    font-size: 36px;
+  }
+
   .metric-label {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 
@@ -265,22 +336,22 @@
 
   .header-metric {
     gap: 12px;
-    padding: 14px 16px;
+    padding: 18px 22px;
     border-radius: 14px;
   }
 
   .metric-icon {
-    width: 42px;
-    height: 42px;
-    font-size: 18px;
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
   }
 
   .metric-value {
-    font-size: 20px;
+    font-size: 30px;
   }
 
   .metric-label {
-    font-size: 16px;
+    font-size: 13px;
   }
 }
 
@@ -292,23 +363,23 @@
 
   .header-metric {
     gap: 10px;
-    padding: 10px 12px;
+    padding: 14px 18px;
     border-radius: 12px;
   }
 
   .metric-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
     border-radius: 8px;
   }
 
   .metric-value {
-    font-size: 17px;
+    font-size: 26px;
   }
 
   .metric-label {
-    font-size: 16px;
+    font-size: 12px;
   }
 }
 
@@ -320,23 +391,23 @@
 
   .header-metric {
     gap: 8px;
-    padding: 8px 10px;
+    padding: 12px 16px;
     border-radius: 10px;
   }
 
   .metric-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
     border-radius: 8px;
   }
 
   .metric-value {
-    font-size: 15px;
+    font-size: 22px;
   }
 
   .metric-label {
-    font-size: 16px;
+    font-size: 11px;
   }
 }
 
@@ -348,23 +419,23 @@
 
   .header-metric {
     gap: 8px;
-    padding: 8px 10px;
+    padding: 12px 14px;
     border-radius: 10px;
   }
 
   .metric-icon {
-    width: 30px;
-    height: 30px;
-    font-size: 13px;
-    border-radius: 6px;
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+    border-radius: 8px;
   }
 
   .metric-value {
-    font-size: 14px;
+    font-size: 20px;
   }
 
   .metric-label {
-    font-size: 16px;
+    font-size: 10px;
   }
 }
 
@@ -376,16 +447,16 @@
 
   .header-metric {
     gap: 6px;
-    padding: 8px;
+    padding: 10px;
     border-radius: 8px;
     flex-direction: column;
     text-align: center;
   }
 
   .metric-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
     border-radius: 8px;
   }
 
@@ -394,11 +465,11 @@
   }
 
   .metric-value {
-    font-size: 14px;
+    font-size: 18px;
   }
 
   .metric-label {
-    font-size: 10px;
+    font-size: 9px;
   }
 }
 
@@ -410,20 +481,20 @@
 
   .header-metric {
     gap: 8px;
-    padding: 10px;
+    padding: 12px;
     border-radius: 10px;
     flex-direction: row;
   }
 
   .metric-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
+    width: 42px;
+    height: 42px;
+    font-size: 19px;
     border-radius: 8px;
   }
 
   .metric-value {
-    font-size: 16px;
+    font-size: 20px;
   }
 
   .metric-label {
@@ -439,19 +510,19 @@
 
   .header-metric {
     gap: 6px;
-    padding: 8px;
+    padding: 10px;
     border-radius: 8px;
   }
 
   .metric-icon {
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
     border-radius: 6px;
   }
 
   .metric-value {
-    font-size: 14px;
+    font-size: 18px;
   }
 
   .metric-label {
