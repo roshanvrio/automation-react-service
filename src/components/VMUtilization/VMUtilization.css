@@ -24,38 +24,117 @@
   background: linear-gradient(to right, rgb(230, 255, 250), rgb(6, 78, 70));
 }
 
-/* VM GRID */
+/* VM GRID - Base styles */
 .vm-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(28px, 2.5vmin, 45px), 1fr));
-  grid-template-rows: repeat(3, 1fr);
-  gap: clamp(4px, 0.4vmin, 8px);
-  overflow: hidden;
+  grid-template-columns: repeat(auto-fill, minmax(calc((100% - 48px) / 9), 1fr)) !important;
+  gap: 4px !important;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* VM CELL */
+.vm-grid::-webkit-scrollbar {
+  width: 3px;
+}
+
+.vm-grid::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.vm-grid:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 200, 0.3);
+}
+
+/* DEFAULT SIZE - For 12 or fewer VMs */
+.vm-grid-default {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(32px, 3vmin, 50px), 1fr));
+  gap: clamp(5px, 0.5vmin, 10px);
+}
+
+.vm-grid-default .vm-cell {
+  border-radius: clamp(2px, 0.2vmin, 4px);
+  padding: clamp(2px, 0.2vmin, 4px);
+}
+
+.vm-grid-default .vm-id {
+  font-size: clamp(8px, 0.9vmin, 12px);
+}
+
+.vm-grid-default .vm-time {
+  font-size: clamp(7px, 0.8vmin, 10px);
+}
+
+/* MEDIUM SIZE - For 13-18 VMs */
+.vm-grid-medium {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(26px, 2.3vmin, 40px), 1fr));
+  gap: clamp(4px, 0.4vmin, 7px);
+}
+
+.vm-grid-medium .vm-cell {
+  border-radius: clamp(2px, 0.18vmin, 3px);
+  padding: clamp(1px, 0.15vmin, 3px);
+}
+
+.vm-grid-medium .vm-id {
+  font-size: clamp(7px, 0.6vmin, 10px);
+}
+
+.vm-grid-medium .vm-time {
+  font-size: clamp(6px, 0.5vmin, 8px);
+}
+
+/* COMPACT SIZE - For 19+ VMs */
+.vm-grid-compact {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(22px, 2vmin, 35px), 1fr));
+  gap: clamp(3px, 0.3vmin, 6px);
+}
+
+.vm-grid-compact .vm-cell {
+  border-radius: clamp(1px, 0.15vmin, 3px);
+  padding: clamp(1px, 0.1vmin, 2px);
+}
+
+.vm-grid-compact .vm-id {
+   font-size: clamp(7px, 0.75vmin, 11px);
+}
+
+.vm-grid-compact .vm-time {
+  font-size: clamp(6px, 0.65vmin, 9px);
+}
+
+/* VM CELL - Common styles */
 .vm-cell {
-  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: clamp(2px, 0.2vmin, 4px);
-  padding: clamp(1px, 0.15vmin, 3px);
+  border-radius: 2px !important;
+  padding: 4px !important;
+  min-height: 0;
+  overflow: hidden;
 }
 
-/* TEXT */
+/* TEXT - Common styles */
 .vm-id {
-  font-size: clamp(8px, 0.65vmin, 12px);
   font-weight: 600;
+  font-size: clamp(8px, 0.9vmin, 12px);
   color: inherit;
-  line-height: 1;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .vm-time {
-  font-size: clamp(6px, 0.5vmin, 10px);
+  font-size: clamp(7px, 0.75vmin, 10px);
   color: inherit;
-  line-height: 1;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .small-card-heights {
@@ -67,168 +146,138 @@
    RESPONSIVE BREAKPOINTS FOR VM UTILIZATION
    ======================================== */
 
-/* All high resolutions (1920px+) use same laptop-like sizes - no zooming */
-/* 4K / Ultra-wide (3440px+) - Same as HD+ */
-@media (min-width: 3440px) {
+/* Tablet Portrait and below (< 1024px) - Enable scrolling */
+@media (max-width: 1023px) {
   .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
-    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* Smooth scrolling on touch devices */
+    -webkit-overflow-scrolling: touch;
+    /* Hide scrollbar but keep functionality */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(136, 146, 176, 0.3) transparent;
   }
 
-  .vm-cell {
-    border-radius: 3px;
-    padding: 2px;
+  /* Webkit scrollbar styling */
+  .vm-grid::-webkit-scrollbar {
+    height: 4px;
   }
 
-  .vm-id {
-    font-size: 10px;
+  .vm-grid::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  .vm-time {
-    font-size: 8px;
-  }
-}
-
-/* 2K / QHD (2560px - 3439px) - Same as HD+ */
-@media (min-width: 2560px) and (max-width: 3439px) {
-  .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
-    gap: 6px;
+  .vm-grid::-webkit-scrollbar-thumb {
+    background-color: rgba(136, 146, 176, 0.3);
+    border-radius: 2px;
   }
 
-  .vm-cell {
-    border-radius: 3px;
-    padding: 2px;
-  }
-
-  .vm-id {
-    font-size: 10px;
-  }
-
-  .vm-time {
-    font-size: 8px;
-  }
-}
-
-/* Full HD (1920px - 2559px) - Same as HD+ */
-@media (min-width: 1920px) and (max-width: 2559px) {
-  .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
-    gap: 6px;
-  }
-
-  .vm-cell {
-    border-radius: 3px;
-    padding: 2px;
-  }
-
-  .vm-id {
-    font-size: 10px;
-  }
-
-  .vm-time {
-    font-size: 8px;
-  }
-}
-
-/* HD+ (1440px - 1919px) */
-@media (min-width: 1440px) and (max-width: 1919px) {
-  .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
-    gap: 6px;
-  }
-
-  .vm-id {
-    font-size: 10px;
-  }
-
-  .vm-time {
-    font-size: 8px;
-  }
-}
-
-/* HD (1280px - 1439px) */
-@media (min-width: 1280px) and (max-width: 1439px) {
-  .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+  /* DEFAULT SIZE adjustments - fixed columns for scrolling */
+  .vm-grid-default {
+    grid-template-columns: repeat(auto-fit, minmax(36px, 36px));
     gap: 5px;
   }
 
-  .vm-id {
-    font-size: 9px;
+  .vm-grid-default .vm-id {
+    font-size: 10px;
   }
 
-  .vm-time {
-    font-size: 7px;
-  }
-}
-
-/* Tablet Landscape (1024px - 1279px) */
-@media (min-width: 1024px) and (max-width: 1279px) {
-  .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(28px, 1fr));
-    gap: 4px;
-  }
-
-  .vm-id {
-    font-size: 9px;
-  }
-
-  .vm-time {
-    font-size: 7px;
-  }
-}
-
-/* Tablet Portrait (768px - 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(26px, 1fr));
-    gap: 4px;
-  }
-
-  .vm-id {
+  .vm-grid-default .vm-time {
     font-size: 8px;
   }
 
-  .vm-time {
-    font-size: 6px;
+  /* MEDIUM SIZE adjustments - fixed columns for scrolling */
+  .vm-grid-medium {
+    grid-template-columns: repeat(auto-fit, minmax(32px, 32px));
+    gap: 4px;
+  }
+
+  .vm-grid-medium .vm-id {
+    font-size: 9px;
+  }
+
+  .vm-grid-medium .vm-time {
+    font-size: 7px;
+  }
+
+  /* COMPACT SIZE adjustments - fixed columns for scrolling */
+  .vm-grid-compact {
+    grid-template-columns: repeat(auto-fit, minmax(28px, 28px));
+    gap: 3px;
+  }
+
+  .vm-grid-compact .vm-id {
+    font-size: clamp(6.5px, 0.65vmin, 10px);
+  }
+
+  .vm-grid-compact .vm-time {
+    font-size: clamp(6px, 0.6vmin, 8px);
   }
 }
 
-/* Mobile (< 768px) */
+/* Mobile (< 768px) - Enable horizontal scrolling */
 @media (max-width: 767px) {
   .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(32px, 1fr));
-    gap: 5px;
+    grid-template-rows: repeat(3, 1fr);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .vm-cell {
+  /* DEFAULT SIZE - fixed width cells for scrolling */
+  .vm-grid-default {
+    grid-template-columns: repeat(auto-fit, minmax(40px, 40px));
+    gap: 6px;
+  }
+
+  .vm-grid-default .vm-cell {
     border-radius: 3px;
-    padding: 2px;
+    padding: 3px;
   }
 
-  .vm-id {
-    font-size: 10px;
+  .vm-grid-default .vm-id {
+    font-size: 11px;
   }
 
-  .vm-time {
-    font-size: 8px;
-  }
-}
-
-/* Extra small mobile (< 480px) */
-@media (max-width: 479px) {
-  .vm-grid {
-    grid-template-columns: repeat(auto-fill, minmax(28px, 1fr));
-    gap: 4px;
-  }
-
-  .vm-id {
+  .vm-grid-default .vm-time {
     font-size: 9px;
   }
 
-  .vm-time {
+  /* MEDIUM SIZE - fixed width cells for scrolling */
+  .vm-grid-medium {
+    grid-template-columns: repeat(auto-fit, minmax(34px, 34px));
+    gap: 5px;
+  }
+
+  .vm-grid-medium .vm-cell {
+    border-radius: 2px;
+    padding: 2px;
+  }
+
+  .vm-grid-medium .vm-id {
+    font-size: 10px;
+  }
+
+  .vm-grid-medium .vm-time {
+    font-size: 8px;
+  }
+
+  /* COMPACT SIZE - fixed width cells for scrolling */
+  .vm-grid-compact {
+    grid-template-columns: repeat(auto-fit, minmax(30px, 30px));
+    gap: 4px;
+  }
+
+  .vm-grid-compact .vm-cell {
+    border-radius: 2px;
+    padding: 2px;
+  }
+
+  .vm-grid-compact .vm-id {
+    font-size: 9px;
+  }
+
+  .vm-grid-compact .vm-time {
     font-size: 7px;
   }
 }

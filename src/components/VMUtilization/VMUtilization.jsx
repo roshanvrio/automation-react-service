@@ -12,6 +12,14 @@ const VMUtilization = ({ vmUtilizationUpdate }) => {
     return `rgb(${Math.round(230 - 224 * t)}, ${Math.round(255 - 177 * t)}, ${Math.round(250 - 180 * t)})`;
   };
 
+  // Determine grid size class based on VM count
+  const getGridSizeClass = () => {
+    const vmCount = vms.length;
+    if (vmCount <= 12) return "vm-grid-default";
+    if (vmCount <= 18) return "vm-grid-medium";
+    return "vm-grid-compact";
+  };
+
   return (
     <div className="dashboard-card small-card-heights">
       <div className="vm-header">
@@ -22,7 +30,7 @@ const VMUtilization = ({ vmUtilizationUpdate }) => {
           <span className="legend-label">More</span>
         </div>
       </div>
-      <div className="vm-grid">
+      <div className={`vm-grid ${getGridSizeClass()}`}>
         {vms.map((vm, index) => {
           const minutes = vm.utilizationMinutes || 0;
           const t = minutes === 0 ? 0 : Math.log(1 + minutes) / Math.log(1 + maxMinutes);

@@ -4,6 +4,7 @@ import HexTimeline from "./HexTimeline";
 import "./ActiveVMs.css";
 import uiPath from "../../assets/uiPath.png";
 import AutomationAnywhere from "../../assets/AutomationAnywhere_circleLogo.png";
+import vmIcon from "../../assets/Icon.png";
 
 const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completedTransactions, vmCompletedTransactions = [] }) => {
   const centerRef = useRef(null);
@@ -434,7 +435,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   return (
     <div className="dashboard-card-center center-height activevms-card">
       <div className="activevms-header">
-        <span style={{margin:'1rem'}}><i className="bi bi-display"></i> Active VMs <strong>{activeVmUpdate?.length || 0}</strong></span>
+        <span className="card-title mb-0" style={{display:'inline-flex', alignItems:'center'}}><i className="bi bi-display" style={{marginRight:'0.4rem'}}></i> Active VMs <span style={{fontSize:'1.2rem', fontWeight:600, color:'#2dff8f', marginLeft:'0.5rem', transform:'translateY(-2px)'}}>{activeVmUpdate?.length || 0}</span></span>
 
         <div className="legend mt-2">
           <span className="rounded-white">Start Hour</span>
@@ -479,8 +480,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
                 />
                 <div className="hex-card">
                   <div className="hex-content">
-                    <div className="hex-small">{vm.triggerIndication === "Email" ? "✉" : "🕐"} {vm.triggerIndication}</div>
-                    <div className="hex-vm">🖥 {vm.machineName}</div>
+                    <div className="hex-small">{vm.triggerIndication === "Email" ? "✉" : "⏱︎"} {vm.triggerIndication}</div>
+                    <div className="hex-vm"><img src={vmIcon} alt="VM" className="vm-icon" /> {vm.machineName}</div>
                     <div className="hex-name">{vm.processName}</div>
                     {/* <div className="hex-time">
                       Last Run Time <strong>{vm.lastRunTime}</strong>

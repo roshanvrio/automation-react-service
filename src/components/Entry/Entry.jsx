@@ -204,7 +204,7 @@ const Entry = ({ idleVmUpdate }) => {
           animationData={workAnimation}
           loop={true}
           className="entry-icon"
-          style={{ width: 20, height: 20 }}
+          style={{ width: 14, height: 14 }}
         />
         <span>{vmName}</span>
       </div>
@@ -214,7 +214,7 @@ const Entry = ({ idleVmUpdate }) => {
   return (
     <div className="dashboard-card entry-card">
 
-      <div className="entry-title">IN-ACTIVE</div>
+      <div className="entry-title">In-Active - {displayedVMs.length}</div>
 
       <div className="entry-list">
         {vmPairs.map((pair, pairIndex) => (
