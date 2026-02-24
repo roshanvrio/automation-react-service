@@ -7,8 +7,8 @@
   left: var(--robot-x);
   top: var(--robot-y);
   transform: translate(-50%, -50%);
-  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              top 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 
@@ -43,7 +43,7 @@
 
 /* MOVING STATE */
 .robot-container.robot-moving {
-  animation: robotBounce 0.25s ease-in-out infinite;
+  animation: robotBounce 0.45s ease-in-out infinite;
 }
 
 @keyframes robotBounce {
@@ -53,7 +53,7 @@
 
 /* PICKING STATE */
 .robot-container.robot-picking {
-  animation: robotPick 0.25s ease-out;
+  animation: robotPick 0.5s ease-out;
 }
 
 @keyframes robotPick {
@@ -64,7 +64,7 @@
 
 /* CELEBRATING STATE */
 .robot-container.robot-celebrating {
-  animation: robotCelebrate 0.3s ease-out 3;
+  animation: robotCelebrate 0.5s ease-out 3;
 }
 
 @keyframes robotCelebrate {
@@ -75,7 +75,7 @@
 
 /* CHECKING OUTCOME STATE */
 .robot-container.robot-checking {
-  animation: robotCheck 0.4s ease-in-out 2;
+  animation: robotCheck 0.6s ease-in-out 2;
 }
 
 @keyframes robotCheck {
@@ -85,7 +85,7 @@
 
 /* ERROR REACTION STATE */
 .robot-container.robot-error {
-  animation: robotError 0.15s ease-in-out 4;
+  animation: robotError 0.3s ease-in-out 4;
 }
 
 @keyframes robotError {
@@ -96,7 +96,7 @@
 
 /* EXCEPTION REACTION STATE */
 .robot-container.robot-exception {
-  animation: robotException 0.2s ease-in-out 3;
+  animation: robotException 0.4s ease-in-out 3;
 }
 
 @keyframes robotException {
@@ -159,7 +159,7 @@
   align-items: center;
   justify-content: center;
   font-size: clamp(11px, 1.5vmin, 18px);
-  animation: carryPop 0.3s ease-out, carryGlow 0.6s ease-in-out infinite alternate;
+  animation: carryPop 0.5s ease-out, carryGlow 1s ease-in-out infinite alternate;
   color: #fff;
 }
 
@@ -195,7 +195,7 @@
   border-radius: 5px;
   opacity: 0.8;
   filter: blur(4px);
-  animation: trailPulse 0.25s ease-in-out infinite;
+  animation: trailPulse 0.45s ease-in-out infinite;
 }
 
 .robot-trail.trail-left {

@@ -70,7 +70,7 @@
 
 /* HIGHLIGHT ANIMATION for cross-component animation */
 .entry-row.vm-highlighted {
-  animation: vmHighlight 0.6s ease-out forwards;
+  animation: vmHighlight 1.2s ease-out forwards;
   position: relative;
   z-index: 100;
 }
@@ -82,7 +82,7 @@
   border-radius: 8px;
   background: linear-gradient(90deg, #00ff88, #00e6ff, #00ff88);
   background-size: 200% 100%;
-  animation: vmBorderGlow 0.5s linear infinite, vmBorderAppear 0.6s ease-out forwards;
+  animation: vmBorderGlow 0.8s linear infinite, vmBorderAppear 1.2s ease-out forwards;
   z-index: -1;
 }
 
@@ -136,7 +136,7 @@
 
 /* Landing Ghost VM - placeholder during exit animation (VM returning to Entry) */
 .entry-row.vm-landing {
-  animation: vmLandingPulse 0.6s ease-in-out infinite;
+  animation: vmLandingPulse 1s ease-in-out infinite;
   border: 1px dashed rgba(0, 230, 255, 0.6);
   position: relative;
 }
@@ -147,7 +147,7 @@
   inset: -2px;
   border-radius: 6px;
   border: 2px solid rgba(0, 230, 255, 0.4);
-  animation: vmLandingRing 0.8s ease-out infinite;
+  animation: vmLandingRing 1.2s ease-out infinite;
 }
 
 @keyframes vmLandingPulse {
@@ -176,7 +176,7 @@
 
 /* Removal animation - blink before removing */
 .entry-row.vm-removing {
-  animation: vmRemovalBlink 0.3s ease-in-out 5;
+  animation: vmRemovalBlink 0.4s ease-in-out 5;
 }
 
 @keyframes vmRemovalBlink {

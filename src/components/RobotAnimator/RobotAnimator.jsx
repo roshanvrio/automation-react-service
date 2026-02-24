@@ -110,39 +110,39 @@ const RobotAnimator = () => {
     setRobotPosition({ x: botPos.x, y: botPos.y, isPercent: false });
     setIsFlipped(false);
 
-    // [300ms] Arrive at process, pick it up
+    // [800ms] Arrive at process, pick it up
     addTimeout(() => {
       setRobotState(ROBOT_STATES.PICKING_PROCESS);
       setCarryingItems({ process: animation.processName, vm: null });
-    }, 300);
+    }, 800);
 
-    // [500ms] Start moving to the actual VM position (right - Entry)
+    // [1300ms] Start moving to the actual VM position (right - Entry)
     addTimeout(() => {
       setRobotState(ROBOT_STATES.MOVING_TO_ENTRY);
       setRobotPosition({ x: vmPos.x, y: vmPos.y, isPercent: false });
       setIsFlipped(true);
-    }, 500);
+    }, 1300);
 
-    // [1000ms] Arrive at VM, pick it up
+    // [2100ms] Arrive at VM, pick it up
     addTimeout(() => {
       setRobotState(ROBOT_STATES.PICKING_VM);
       setCarryingItems({ process: animation.processName, vm: animation.machineName });
-    }, 1000);
+    }, 2100);
 
-    // [1200ms] Start delivering to center (ActiveVMs area)
+    // [2600ms] Start delivering to center (ActiveVMs area)
     addTimeout(() => {
       setRobotState(ROBOT_STATES.DELIVERING_TO_CENTER);
       setRobotPosition({ x: centerPos.x, y: centerPos.y, isPercent: false });
       setIsFlipped(false);
-    }, 1200);
+    }, 2600);
 
-    // [1800ms] Arrive at center, celebrate
+    // [3400ms] Arrive at center, celebrate
     addTimeout(() => {
       setRobotState(ROBOT_STATES.CELEBRATING);
       setCarryingItems({ process: null, vm: null });
-    }, 1800);
+    }, 3400);
 
-    // [2200ms] Return to idle and process next in queue
+    // [4200ms] Return to idle and process next in queue
     addTimeout(() => {
       setRobotState(ROBOT_STATES.IDLE);
       setUsePixelPosition(false);
@@ -158,15 +158,15 @@ const RobotAnimator = () => {
           if (processExitQueueRef.current) {
             processExitQueueRef.current();
           }
-        }, 300);
+        }, 500);
       } else if (robotQueueRef.current.length > 0) {
         setTimeout(() => {
           if (processRobotQueueRef.current) {
             processRobotQueueRef.current();
           }
-        }, 300);
+        }, 500);
       }
-    }, 2200);
+    }, 4200);
   }, [addTimeout]);
 
   // Process the next exit animation (completion animation - goes to VM hexagon)
@@ -200,12 +200,12 @@ const RobotAnimator = () => {
     setRobotPosition({ x: vmHexPos.x, y: vmHexPos.y, isPercent: false });
     setIsFlipped(false);
 
-    // [400ms] Arrive at center, check the outcome
+    // [800ms] Arrive at center, check the outcome
     addTimeout(() => {
       setRobotState(ROBOT_STATES.CHECKING_OUTCOME);
-    }, 400);
+    }, 800);
 
-    // [600ms] React based on outcome
+    // [1200ms] React based on outcome
     addTimeout(() => {
       if (outcome === 'success') {
         setRobotState(ROBOT_STATES.REACTING_SUCCESS);
@@ -214,28 +214,28 @@ const RobotAnimator = () => {
       } else {
         setRobotState(ROBOT_STATES.REACTING_EXCEPTION);
       }
-    }, 600);
+    }, 1200);
 
-    // [1200ms] Pick up the completed VM
+    // [2200ms] Pick up the completed VM
     addTimeout(() => {
       setRobotState(ROBOT_STATES.PICKING_COMPLETED_VM);
       setCarryingItems({ process: null, vm: exitAnim.machineName });
-    }, 1200);
+    }, 2200);
 
-    // [1400ms] Start returning to Entry (right side)
+    // [2600ms] Start returning to Entry (right side)
     addTimeout(() => {
       setRobotState(ROBOT_STATES.RETURNING_TO_ENTRY);
       setRobotPosition({ x: entryPos.x, y: entryPos.y, isPercent: false });
       setIsFlipped(true);
-    }, 1400);
+    }, 2600);
 
-    // [1900ms] Arrive at Entry, place the VM
+    // [3600ms] Arrive at Entry, place the VM
     addTimeout(() => {
       setRobotState(ROBOT_STATES.PLACING_VM);
       setCarryingItems({ process: null, vm: null });
-    }, 1900);
+    }, 3600);
 
-    // [2200ms] Return to idle
+    // [4200ms] Return to idle
     addTimeout(() => {
       setRobotState(ROBOT_STATES.IDLE);
       setUsePixelPosition(false);
@@ -252,15 +252,15 @@ const RobotAnimator = () => {
           if (processExitQueueRef.current) {
             processExitQueueRef.current();
           }
-        }, 300);
+        }, 500);
       } else if (robotQueueRef.current.length > 0) {
         setTimeout(() => {
           if (processRobotQueueRef.current) {
             processRobotQueueRef.current();
           }
-        }, 300);
+        }, 500);
       }
-    }, 2200);
+    }, 4200);
   }, [addTimeout]);
 
   // Keep the refs updated with the latest functions

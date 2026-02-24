@@ -22,9 +22,9 @@ const Entry = ({ idleVmUpdate }) => {
   // Track if this is first data load
   const isFirstLoad = useRef(true);
   // Delay for blink animation before removal (ms)
-  const REMOVAL_BLINK_DURATION = 1500;
+  const REMOVAL_BLINK_DURATION = 2000;
   // Delay between removals (ms)
-  const REMOVAL_DELAY = 500;
+  const REMOVAL_DELAY = 800;
 
   // Get VM name from various data formats
   const getVmName = useCallback((vm) => {

@@ -40,14 +40,14 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   // Keep latest completedTransactions in ref for immediate access
   const completedTransactionsRef = useRef(completedTransactions);
   // Animation delay between items (ms)
-  const ANIMATION_DELAY = 800;
+  const ANIMATION_DELAY = 1500;
 
   // Exit queue - VMs waiting to be removed one by one
   const exitQueue = useRef([]);
   // Flag to track if we're processing the exit queue
   const isProcessingExitQueue = useRef(false);
   // Exit animation delay between items (ms)
-  const EXIT_ANIMATION_DELAY = 800;
+  const EXIT_ANIMATION_DELAY = 1500;
 
   // Create a map of VM transactions for timeline display
   const vmTransactionsMap = useMemo(() => {
@@ -221,7 +221,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
           processQueue();
         }, ANIMATION_DELAY);
       }
-    }, 2800); // Wait for fly animation to complete (matching AnimationContext timing)
+    }, 5500); // Wait for fly animation to complete (matching AnimationContext timing)
   }, [queueAnimations, onVmProcessed, pendingVmCountRef]);
 
   // Determine transaction outcome by matching transactionId
@@ -305,8 +305,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     console.log(`✨ Robot animation queued for ${nextVm.machineName}`);
 
     // Wait for robot to reach VM and pick it up, then remove hexagon
-    // Robot animation: 0ms move → 400ms arrive → 600ms react → 1200ms pick up
-    // Remove hexagon when robot picks it up (1200ms)
+    // Robot animation: 0ms move → 800ms arrive → 1200ms react → 2200ms pick up
+    // Remove hexagon when robot picks it up (2200ms)
     setTimeout(() => {
       console.log(`🗑️ Robot picked up ${nextVm.machineName} - removing from display`);
       seenVmsRef.current.delete(nextVm.machineName);
@@ -314,9 +314,9 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
 
       // Trigger exit animation (flying VM icon) when robot starts returning
       queueExitAnimation(nextVm, outcome);
-    }, 1200);
+    }, 2200);
 
-    // Robot continues: 1400ms return → 1900ms place → 2200ms idle
+    // Robot continues: 2600ms return → 3600ms place → 4200ms idle
     // Wait for full robot animation to complete before processing next VM
     setTimeout(() => {
       console.log(`✅ Robot animation complete for ${nextVm.machineName}`);
@@ -331,7 +331,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
           processExitQueue();
         }, EXIT_ANIMATION_DELAY);
       }
-    }, 2500); // Wait for full robot exit animation (2200ms + buffer)
+    }, 4500); // Wait for full robot exit animation (4200ms + buffer)
   }, [queueCompletionAnimation, queueExitAnimation, determineOutcome, addToExitQueue, removeFromExitQueue]);
 
   // Keep track of displayed VMs in a ref for exit detection (avoids dependency issues)

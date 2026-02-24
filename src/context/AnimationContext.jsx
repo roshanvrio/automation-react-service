@@ -207,7 +207,7 @@ export const AnimationProvider = ({ children }) => {
       setHighlightedBot(nextAnimation.processName);
       setHighlightedVm(nextAnimation.machineName);
 
-      // PHASE 2: After 600ms, start flying animation
+      // PHASE 2: After 1200ms, start flying animation
       setTimeout(() => {
         setAnimationPhase("fly");
         // Set current animation with positions for flying
@@ -218,7 +218,7 @@ export const AnimationProvider = ({ children }) => {
           centerPosition: centerPos,
           id: Date.now()
         });
-      }, 600);
+      }, 1200);
 
       // PHASE 3: After flying completes, show the VM and process next
       setTimeout(() => {
@@ -237,8 +237,8 @@ export const AnimationProvider = ({ children }) => {
         // Process next in queue after a short delay
         setTimeout(() => {
           processNextAnimation();
-        }, 300);
-      }, 2800); // 600ms highlight + 2200ms fly
+        }, 500);
+      }, 5500); // 1200ms highlight + 4300ms fly/robot
 
       return rest;
     });
@@ -452,7 +452,7 @@ export const AnimationProvider = ({ children }) => {
       id: Date.now()
     });
 
-    // Clear exit animation after it completes (1.8s fly animation)
+    // Clear exit animation after it completes (3s fly animation)
     setTimeout(() => {
       setExitAnimation(null);
       setLandingGhostVm(null);
@@ -463,7 +463,7 @@ export const AnimationProvider = ({ children }) => {
         newMap.delete(machineName);
         return newMap;
       });
-    }, 1800);
+    }, 3000);
   }, []);
 
   // Check if VM is currently completing (for applying blink class)

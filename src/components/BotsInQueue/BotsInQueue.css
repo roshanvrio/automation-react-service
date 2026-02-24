@@ -251,7 +251,7 @@
 
 /* HIGHLIGHT ANIMATION for cross-component animation */
 .bot-row.bot-highlighted {
-  animation: botHighlight 0.6s ease-out forwards;
+  animation: botHighlight 1.2s ease-out forwards;
   position: relative;
   z-index: 100;
 }
@@ -263,7 +263,7 @@
   border-radius: 12px;
   background: linear-gradient(90deg, #00e6ff, #00ff88, #00e6ff);
   background-size: 200% 100%;
-  animation: borderGlow 0.5s linear infinite, borderAppear 0.6s ease-out forwards;
+  animation: borderGlow 0.8s linear infinite, borderAppear 1.2s ease-out forwards;
   z-index: -1;
 }
 
