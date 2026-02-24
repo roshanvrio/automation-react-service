@@ -58,11 +58,11 @@
 }
 
 .vm-grid-default .vm-id {
-  font-size: clamp(5px, 0.6vmin, 7px);
+  font-size: clamp(8px, 0.9vmin, 12px);
 }
 
 .vm-grid-default .vm-time {
-  font-size: clamp(5px, 0.6vmin, 8px);
+  font-size: clamp(7px, 0.8vmin, 10px);
 }
 
 /* MEDIUM SIZE - For 13-18 VMs */
@@ -96,11 +96,11 @@
 }
 
 .vm-grid-compact .vm-id {
-  font-size: clamp(6px, 0.5vmin, 9px);
+   font-size: clamp(7px, 0.75vmin, 11px);
 }
 
 .vm-grid-compact .vm-time {
-  font-size: clamp(5px, 0.4vmin, 7px);
+  font-size: clamp(6px, 0.65vmin, 9px);
 }
 
 /* VM CELL - Common styles */
@@ -112,12 +112,13 @@
   border-radius: 2px !important;
   padding: 4px !important;
   min-height: 0;
+  overflow: hidden;
 }
 
 /* TEXT - Common styles */
 .vm-id {
   font-weight: 600;
-  font-size: clamp(6px, 0.7vmin, 10px);
+  font-size: clamp(8px, 0.9vmin, 12px);
   color: inherit;
   line-height: 1.1;
   white-space: nowrap;
@@ -127,7 +128,7 @@
 }
 
 .vm-time {
-  font-size: clamp(5px, 0.55vmin, 8px);
+  font-size: clamp(7px, 0.75vmin, 10px);
   color: inherit;
   line-height: 1.1;
   white-space: nowrap;
@@ -206,11 +207,11 @@
   }
 
   .vm-grid-compact .vm-id {
-    font-size: 8px;
+    font-size: clamp(6.5px, 0.65vmin, 10px);
   }
 
   .vm-grid-compact .vm-time {
-    font-size: 6px;
+    font-size: clamp(6px, 0.6vmin, 8px);
   }
 }
 
