@@ -204,10 +204,7 @@ const AppContent = () => {
       <div className="container-fluid">
 
         {/*Header */}
-        <div className="row gx-3 header-card">
-          <Header metrics={displayedMetrics} highlightKeys={highlightKeys} />
-
-        </div>
+        <Header metrics={displayedMetrics} highlightKeys={highlightKeys} />
 
 
         {/*Main content */}
