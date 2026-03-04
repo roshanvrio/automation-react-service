@@ -177,7 +177,7 @@ const AppContent = () => {
 
       ws.onclose = () => {
         console.log("WebSocket disconnected. Reconnecting in 3 seconds...");
-        setTimeout(connectWebSocket, 3000);
+        setTimeout(connectWebSocket, 10000);
       };
 
       wsRef.current = ws;
