@@ -122,28 +122,46 @@ const HexTimeline = ({ transactions = [], machineName }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Process transactions - get completion dot positions
-  const completionDots = useMemo(() => {
-    if (!transactions || transactions.length === 0) return [];
+  // Process transactions - get segments (lines) and completion dot positions
+  const { segments, completionDots } = useMemo(() => {
+    if (!transactions || transactions.length === 0) return { segments: [], completionDots: [] };
 
-    return transactions
-      .map(tx => {
-        const endHours = parseTime(tx.endTime);
-        if (endHours === null) return null;
+    const segs = [];
+    const dots = [];
 
-        let type = 'success';
-        if (tx.caseStatus === 'ERROR') type = 'error';
-        else if (tx.caseStatus === 'EXCEPTION') type = 'exception';
+    transactions.forEach(tx => {
+      const startHours = parseTime(tx.startTime);
+      const endHours = parseTime(tx.endTime);
 
+      let type = 'success';
+      if (tx.caseStatus === 'ERROR') type = 'error';
+      else if (tx.caseStatus === 'EXCEPTION') type = 'exception';
+
+      // Add segment line if both start and end times are available
+      if (startHours !== null && endHours !== null) {
+        const points = generateSegmentPoints(startHours, endHours);
+        if (points.length >= 2) {
+          segs.push({
+            type,
+            points: points.join(' '),
+            processName: tx.processName
+          });
+        }
+      }
+
+      // Add dot at end time
+      if (endHours !== null) {
         const pos = hoursToPoint(endHours);
-        return {
+        dots.push({
           type,
           x: pos.x,
           y: pos.y,
           processName: tx.processName
-        };
-      })
-      .filter(Boolean);
+        });
+      }
+    });
+
+    return { segments: segs, completionDots: dots };
   }, [transactions]);
 
   const currentPos = useMemo(() => hoursToPoint(currentTime), [currentTime]);
@@ -200,6 +218,21 @@ const HexTimeline = ({ transactions = [], machineName }) => {
         strokeDasharray="4,3"
         className="timeline-base"
       />
+
+      {/* Transaction segments - colored lines along hexagon border */}
+      {segments.map((seg, idx) => (
+        <polyline
+          key={`${machineName}-seg-${idx}`}
+          points={seg.points}
+          fill="none"
+          stroke={seg.type === 'success' ? '#4caf50' : seg.type === 'error' ? '#f44336' : '#ab47bc'}
+          strokeWidth="3"
+          strokeLinecap="round"
+          className={`timeline-segment timeline-segment-${seg.type}`}
+        >
+          <title>{seg.processName} ({seg.type.toUpperCase()})</title>
+        </polyline>
+      ))}
 
       {/* Tracer light - moving glow along the hexagon edge */}
       <circle r="2" className="timeline-tracer">

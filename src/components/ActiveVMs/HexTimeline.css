@@ -18,6 +18,23 @@
 }
 
 
+/* Transaction segments - colored lines along hexagon border */
+.timeline-segment {
+  opacity: 0.9;
+}
+
+.timeline-segment-success {
+  filter: drop-shadow(0 0 3px #4caf50);
+}
+
+.timeline-segment-error {
+  filter: drop-shadow(0 0 3px #f44336);
+}
+
+.timeline-segment-exception {
+  filter: drop-shadow(0 0 3px #ab47bc);
+}
+
 .timeline-success-fill {
   fill: #4caf50;
   filter: drop-shadow(0 0 3px #4caf50);
