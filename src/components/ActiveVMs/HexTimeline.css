@@ -17,35 +17,6 @@
   stroke-width: 1.5;
 }
 
-/* Transaction segments */
-.timeline-segment {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* SUCCESS - Green with glow */
-.timeline-success {
-  stroke: #4caf50;
-  filter: drop-shadow(0 0 4px #4caf50) drop-shadow(0 0 8px rgba(76, 175, 80, 0.6));
-}
-
-/* ERROR - Red with glow */
-.timeline-error {
-  stroke: #f44336;
-  filter: drop-shadow(0 0 4px #f44336) drop-shadow(0 0 8px rgba(244, 67, 54, 0.6));
-}
-
-/* EXCEPTION - Red with glow (same as error) */
-.timeline-exception {
-  stroke: #f44336;
-  filter: drop-shadow(0 0 4px #f44336) drop-shadow(0 0 8px rgba(244, 67, 54, 0.6));
-}
-
-/* Start point markers for segments */
-.segment-start {
-  stroke: #fff;
-  stroke-width: 1;
-}
 
 .timeline-success-fill {
   fill: #4caf50;
@@ -58,8 +29,8 @@
 }
 
 .timeline-exception-fill {
-  fill: #f44336;
-  filter: drop-shadow(0 0 3px #f44336);
+  fill: #ab47bc;
+  filter: drop-shadow(0 0 3px #ab47bc);
 }
 
 /* Tracer light - moving along hexagon edge to show direction (yellow = ongoing) */

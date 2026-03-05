@@ -122,23 +122,24 @@ const HexTimeline = ({ transactions = [], machineName }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Process transactions
-  const segments = useMemo(() => {
+  // Process transactions - get completion dot positions
+  const completionDots = useMemo(() => {
     if (!transactions || transactions.length === 0) return [];
 
     return transactions
       .map(tx => {
-        const startHours = parseTime(tx.startTime);
         const endHours = parseTime(tx.endTime);
-        if (startHours === null || endHours === null) return null;
+        if (endHours === null) return null;
 
         let type = 'success';
         if (tx.caseStatus === 'ERROR') type = 'error';
         else if (tx.caseStatus === 'EXCEPTION') type = 'exception';
 
+        const pos = hoursToPoint(endHours);
         return {
           type,
-          points: generateSegmentPoints(startHours, endHours),
+          x: pos.x,
+          y: pos.y,
           processName: tx.processName
         };
       })
@@ -219,19 +220,17 @@ const HexTimeline = ({ transactions = [], machineName }) => {
       {/* 00:00 Start marker at top-left (midnight) */}
       <circle cx={HEX_POINTS[0][0]} cy={HEX_POINTS[0][1]} r="3" className="start-dot" />
 
-      {/* Transaction segments */}
-      {segments.map((seg, idx) => (
-        <polyline
-          key={`${machineName}-seg-${idx}`}
-          points={seg.points.join(' ')}
-          fill="none"
-          className={`timeline-segment timeline-${seg.type}`}
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {/* Transaction completion dots */}
+      {completionDots.map((dot, idx) => (
+        <circle
+          key={`${machineName}-dot-${idx}`}
+          cx={dot.x}
+          cy={dot.y}
+          r="2.5"
+          className={`timeline-${dot.type}-fill`}
         >
-          <title>{seg.processName} ({seg.type.toUpperCase()})</title>
-        </polyline>
+          <title>{dot.processName} ({dot.type.toUpperCase()})</title>
+        </circle>
       ))}
 
       {/* Ripple effect - expanding ring to show direction */}
