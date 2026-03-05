@@ -50,6 +50,13 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
   // Exit animation delay between items (ms)
   const EXIT_ANIMATION_DELAY = 1500;
 
+  // Normalize machine name by stripping .BOT suffix to match activeVmUpdate names
+  const normalizeMachineName = useCallback((name) => {
+    if (!name) return name;
+    const botIndex = name.indexOf('.BOT');
+    return botIndex > 0 ? name.substring(0, botIndex) : name;
+  }, []);
+
   // Create a map of VM transactions for timeline display
   const vmTransactionsMap = useMemo(() => {
     const map = new Map();
@@ -57,15 +64,16 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       console.log('📊 vmCompletedTransactions received:', vmCompletedTransactions);
       vmCompletedTransactions.forEach(vmData => {
         if (vmData.machineName && Array.isArray(vmData.transactions)) {
+          const normalizedName = normalizeMachineName(vmData.machineName);
           // Merge transactions if VM already exists in map
-          const existing = map.get(vmData.machineName) || [];
-          map.set(vmData.machineName, [...existing, ...vmData.transactions]);
+          const existing = map.get(normalizedName) || [];
+          map.set(normalizedName, [...existing, ...vmData.transactions]);
         }
       });
       console.log('📊 vmTransactionsMap:', [...map.entries()]);
     }
     return map;
-  }, [vmCompletedTransactions]);
+  }, [vmCompletedTransactions, normalizeMachineName]);
 
   // Calculate optimal grid layout based on container size and VM count
   const calculateGridLayout = useCallback(() => {
