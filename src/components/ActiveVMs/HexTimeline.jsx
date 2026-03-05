@@ -98,10 +98,11 @@ const generateSegmentPoints = (startHours, endHours) => {
   return points;
 };
 
-// Get current time as decimal hours
+// Get current time as decimal hours in Singapore timezone (server time)
 const getCurrentHours = () => {
   const now = new Date();
-  return now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  const sgTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }));
+  return sgTime.getHours() + sgTime.getMinutes() / 60 + sgTime.getSeconds() / 3600;
 };
 
 const HexTimeline = ({ transactions = [], machineName }) => {
