@@ -56,12 +56,37 @@ const hoursToPoint = (hours) => {
   return { x: HEX_POINTS[0][0], y: HEX_POINTS[0][1] };
 };
 
-// Parse time string to decimal hours
+// Parse time string to decimal hours in viewer's local timezone
+// Server sends Singapore time (UTC+8), so we convert to local
 const parseTime = (timeStr) => {
   if (!timeStr) return null;
-  const match = timeStr.match(/(\d{1,2}):(\d{2}):?(\d{2})?/);
-  if (!match) return null;
-  return parseInt(match[1]) + parseInt(match[2]) / 60 + parseInt(match[3] || 0) / 3600;
+
+  // Try full datetime format first: "2026-03-05 04:34:30"
+  const dtMatch = timeStr.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2}):?(\d{2})?/);
+  if (dtMatch) {
+    // Build a Date treating the timestamp as Singapore time (UTC+8)
+    const isoStr = `${dtMatch[1]}-${dtMatch[2]}-${dtMatch[3]}T${dtMatch[4].padStart(2, '0')}:${dtMatch[5]}:${dtMatch[6] || '00'}+08:00`;
+    const d = new Date(isoStr);
+    if (!isNaN(d)) {
+      return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+    }
+  }
+
+  // Fallback: time-only format "HH:mm:ss" — treat as Singapore time
+  const tMatch = timeStr.match(/(\d{1,2}):(\d{2}):?(\d{2})?/);
+  if (!tMatch) return null;
+  const sgHours = parseInt(tMatch[1]) + parseInt(tMatch[2]) / 60 + parseInt(tMatch[3] || 0) / 3600;
+  // Convert from SGT (UTC+8) to local: use today's date with SGT offset
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const isoStr = `${yyyy}-${mm}-${dd}T${tMatch[1].padStart(2, '0')}:${tMatch[2]}:${tMatch[3] || '00'}+08:00`;
+  const d = new Date(isoStr);
+  if (!isNaN(d)) {
+    return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+  }
+  return sgHours;
 };
 
 // Generate points for a time segment
@@ -98,11 +123,10 @@ const generateSegmentPoints = (startHours, endHours) => {
   return points;
 };
 
-// Get current time as decimal hours in Singapore timezone (server time)
+// Get current time as decimal hours in viewer's local timezone
 const getCurrentHours = () => {
   const now = new Date();
-  const sgTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }));
-  return sgTime.getHours() + sgTime.getMinutes() / 60 + sgTime.getSeconds() / 3600;
+  return now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
 };
 
 const HexTimeline = ({ transactions = [], machineName }) => {
