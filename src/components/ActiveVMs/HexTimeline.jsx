@@ -269,8 +269,8 @@ const HexTimeline = ({ transactions = [], machineName }) => {
           points={seg.points}
           fill="none"
           stroke={seg.type === 'success' ? '#4caf50' : seg.type === 'error' ? '#f44336' : '#ab47bc'}
-          strokeWidth="3"
-          strokeLinecap="round"
+          strokeWidth="1.5"
+          strokeLinecap="butt"
           className={`timeline-segment timeline-segment-${seg.type}`}
         >
           <title>{seg.processName} ({seg.type.toUpperCase()})</title>
