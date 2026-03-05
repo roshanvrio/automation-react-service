@@ -56,37 +56,39 @@ const hoursToPoint = (hours) => {
   return { x: HEX_POINTS[0][0], y: HEX_POINTS[0][1] };
 };
 
-// Parse time string to decimal hours in viewer's local timezone
-// Server sends Singapore time (UTC+8), so we convert to local
-const parseTime = (timeStr) => {
+// Parse time string to a local Date object
+// Server sends Singapore time (UTC+8), so we convert to viewer's local timezone
+const parseDateTime = (timeStr) => {
   if (!timeStr) return null;
 
-  // Try full datetime format first: "2026-03-05 04:34:30"
+  // Try full datetime format: "2026-03-05 04:34:30"
   const dtMatch = timeStr.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2}):?(\d{2})?/);
   if (dtMatch) {
-    // Build a Date treating the timestamp as Singapore time (UTC+8)
     const isoStr = `${dtMatch[1]}-${dtMatch[2]}-${dtMatch[3]}T${dtMatch[4].padStart(2, '0')}:${dtMatch[5]}:${dtMatch[6] || '00'}+08:00`;
     const d = new Date(isoStr);
-    if (!isNaN(d)) {
-      return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
-    }
+    if (!isNaN(d)) return d;
   }
 
-  // Fallback: time-only format "HH:mm:ss" — treat as Singapore time
+  // Fallback: time-only format "HH:mm:ss" — treat as Singapore time today
   const tMatch = timeStr.match(/(\d{1,2}):(\d{2}):?(\d{2})?/);
   if (!tMatch) return null;
-  const sgHours = parseInt(tMatch[1]) + parseInt(tMatch[2]) / 60 + parseInt(tMatch[3] || 0) / 3600;
-  // Convert from SGT (UTC+8) to local: use today's date with SGT offset
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const dd = String(today.getDate()).padStart(2, '0');
   const isoStr = `${yyyy}-${mm}-${dd}T${tMatch[1].padStart(2, '0')}:${tMatch[2]}:${tMatch[3] || '00'}+08:00`;
   const d = new Date(isoStr);
-  if (!isNaN(d)) {
-    return d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
-  }
-  return sgHours;
+  if (!isNaN(d)) return d;
+  return null;
+};
+
+// Extract decimal hours from a Date object
+const dateToHours = (d) => d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+
+// Get start of today (midnight) in local timezone
+const getLocalTodayStart = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 };
 
 // Generate points for a time segment
@@ -148,35 +150,51 @@ const HexTimeline = ({ transactions = [], machineName }) => {
   }, []);
 
   // Process transactions - get segments (lines) and completion dot positions
+  // Only show today's portion, clamped to current time
   const { segments, completionDots } = useMemo(() => {
     if (!transactions || transactions.length === 0) return { segments: [], completionDots: [] };
 
     const segs = [];
     const dots = [];
+    const todayStart = getLocalTodayStart();
+    const now = new Date();
 
     transactions.forEach(tx => {
-      const startHours = parseTime(tx.startTime);
-      const endHours = parseTime(tx.endTime);
+      const startDate = parseDateTime(tx.startTime);
+      const endDate = parseDateTime(tx.endTime);
+      if (!startDate || !endDate) return;
 
       let type = 'success';
       if (tx.caseStatus === 'ERROR') type = 'error';
       else if (tx.caseStatus === 'EXCEPTION') type = 'exception';
 
-      // Add segment line if both start and end times are available
-      if (startHours !== null && endHours !== null) {
-        const points = generateSegmentPoints(startHours, endHours);
-        if (points.length >= 2) {
-          segs.push({
-            type,
-            points: points.join(' '),
-            processName: tx.processName
-          });
-        }
+      // Skip transactions that ended before today
+      if (endDate < todayStart) return;
+
+      // Clamp start to today's midnight if it started before today
+      const clampedStart = startDate < todayStart ? todayStart : startDate;
+      // Clamp end to current time so segments don't exceed "now"
+      const clampedEnd = endDate > now ? now : endDate;
+
+      // Skip if clamped range is invalid
+      if (clampedStart >= clampedEnd) return;
+
+      const startHours = dateToHours(clampedStart);
+      const endHours = dateToHours(clampedEnd);
+
+      // Add segment line
+      const points = generateSegmentPoints(startHours, endHours);
+      if (points.length >= 2) {
+        segs.push({
+          type,
+          points: points.join(' '),
+          processName: tx.processName
+        });
       }
 
-      // Add dot at end time
-      if (endHours !== null) {
-        const pos = hoursToPoint(endHours);
+      // Add dot at end time (only if the actual end time is today and not clamped to now)
+      if (endDate <= now && endDate >= todayStart) {
+        const pos = hoursToPoint(dateToHours(endDate));
         dots.push({
           type,
           x: pos.x,
@@ -187,7 +205,7 @@ const HexTimeline = ({ transactions = [], machineName }) => {
     });
 
     return { segments: segs, completionDots: dots };
-  }, [transactions]);
+  }, [transactions, currentTime]);
 
   const currentPos = useMemo(() => hoursToPoint(currentTime), [currentTime]);
   const hexPath = HEX_POINTS.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]},${p[1]}`).join(' ') + ' Z';
