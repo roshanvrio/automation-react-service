@@ -31,9 +31,9 @@ const scaleHexPoints = (points, scale) =>
 
 // Three concentric rings: outer (success), middle (error), inner (exception)
 const RING_SCALES = {
-  success: 1.06,
-  error: 1.0,
-  exception: 0.94,
+  success: 1.07,
+  error: 0.97,
+  exception: 0.87,
 };
 
 const RING_HEX_POINTS = {

@@ -91,25 +91,25 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     let minCardWidth, maxCardWidth, gapSize;
 
     if (screenWidth >= 1920) {
-      minCardWidth = 100;  // Reduced from 120
+      minCardWidth = 100;
       maxCardWidth = 180;
-      gapSize = 20;
+      gapSize = 34;
     } else if (screenWidth >= 1440) {
-      minCardWidth = 90;   // Reduced from 100
+      minCardWidth = 90;
       maxCardWidth = 160;
-      gapSize = 18;
+      gapSize = 30;
     } else if (screenWidth >= 1024) {
-      minCardWidth = 80;   // Reduced from 90
+      minCardWidth = 80;
       maxCardWidth = 140;
-      gapSize = 15;
+      gapSize = 26;
     } else if (screenWidth >= 768) {
-      minCardWidth = 70;   // Reduced from 80
+      minCardWidth = 70;
       maxCardWidth = 120;
-      gapSize = 12;
+      gapSize = 22;
     } else {
-      minCardWidth = 60;   // Reduced from 70
+      minCardWidth = 60;
       maxCardWidth = 100;
-      gapSize = 10;
+      gapSize = 18;
     }
 
     // Calculate max columns that can fit with minimum card width

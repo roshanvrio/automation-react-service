@@ -107,7 +107,7 @@
 .hex-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 12vmin, 220px), 1fr));
-  gap: clamp(20px, 2.5vmin, 40px);
+  gap: clamp(30px, 3vmin, 50px);
   justify-items: center;
   align-content: center;
   min-height: 100%;
@@ -314,7 +314,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(6, 1fr);
-    gap: 26px;
+    gap: 36px;
   }
 
   .hex-wrapper {
@@ -371,7 +371,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(6, 1fr);
-    gap: 26px;
+    gap: 36px;
   }
 
   .hex-wrapper {
@@ -424,7 +424,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(6, 1fr);
-    gap: 26px;
+    gap: 36px;
   }
 
   .hex-wrapper {
@@ -477,7 +477,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 26px;
+    gap: 34px;
   }
 
   .hex-wrapper {
@@ -534,7 +534,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 30px;
   }
 
   .hex-wrapper {
@@ -587,7 +587,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    gap: 28px;
   }
 
   .hex-wrapper {
@@ -645,7 +645,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 26px;
   }
 
   .hex-wrapper {
@@ -713,7 +713,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 15px;
+    gap: 24px;
   }
 
   .hex-wrapper {
@@ -770,7 +770,7 @@
 
   .hex-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 20px;
   }
 
   .hex-wrapper {
@@ -1162,7 +1162,7 @@
   --hex-cols: 3;
   --hex-card-width: 150px;
   --hex-card-height: 128px;
-  --hex-gap: 15px;
+  --hex-gap: 26px;
   --hex-font-scale: 1;
 
   display: grid;
