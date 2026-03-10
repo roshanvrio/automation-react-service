@@ -2,18 +2,18 @@ import { useEffect, useState, useMemo } from "react";
 import "./HexTimeline.css";
 
 /**
- * HexTimeline - 24-hour timeline around hexagon
+ * HexTimeline - 24-hour timeline around hexagon (Concentric Rings)
  * Each side = 4 hours (6 sides = 24 hours)
- * Green = SUCCESS, Red = ERROR, Orange = EXCEPTION
+ * Outer ring = SUCCESS (green), Middle ring = ERROR (red), Inner ring = EXCEPTION (purple)
  * Pulsing glowing dot = current time (with ripple effect every ~12s)
  */
 
 const SVG_WIDTH = 100;
 const SVG_HEIGHT = 100;
+const HEX_CENTER = { x: 50, y: 50 };
 
-// Hexagon vertices matching clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)
-// Scaled to viewBox 0-100
-const HEX_POINTS = [
+// Base hexagon vertices matching clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%)
+const BASE_HEX_POINTS = [
   [20, 0],    // 0: top-left (0 hours)
   [80, 0],    // 1: top-right (4 hours)
   [100, 50],  // 2: right (8 hours)
@@ -22,30 +22,66 @@ const HEX_POINTS = [
   [0, 50],    // 5: left (20 hours)
 ];
 
-// Calculate side lengths
+// Scale hex points from center to create concentric rings
+const scaleHexPoints = (points, scale) =>
+  points.map(([x, y]) => [
+    HEX_CENTER.x + (x - HEX_CENTER.x) * scale,
+    HEX_CENTER.y + (y - HEX_CENTER.y) * scale,
+  ]);
+
+// Three concentric rings: outer (success), middle (error), inner (exception)
+const RING_SCALES = {
+  success: 1.06,
+  error: 1.0,
+  exception: 0.94,
+};
+
+const RING_HEX_POINTS = {
+  success: scaleHexPoints(BASE_HEX_POINTS, RING_SCALES.success),
+  error: scaleHexPoints(BASE_HEX_POINTS, RING_SCALES.error),
+  exception: scaleHexPoints(BASE_HEX_POINTS, RING_SCALES.exception),
+};
+
+// Calculate side lengths and perimeter for a set of hex points
 const calcDistance = (p1, p2) => Math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2);
 
-const SIDE_LENGTHS = [];
-let TOTAL_PERIMETER = 0;
-for (let i = 0; i < 6; i++) {
-  const len = calcDistance(HEX_POINTS[i], HEX_POINTS[(i + 1) % 6]);
-  SIDE_LENGTHS.push(len);
-  TOTAL_PERIMETER += len;
-}
+const calcPerimeterData = (hexPoints) => {
+  const sideLengths = [];
+  let totalPerimeter = 0;
+  for (let i = 0; i < 6; i++) {
+    const len = calcDistance(hexPoints[i], hexPoints[(i + 1) % 6]);
+    sideLengths.push(len);
+    totalPerimeter += len;
+  }
+  return { sideLengths, totalPerimeter };
+};
 
-// Convert hours (0-24) to point on hexagon
-const hoursToPoint = (hours) => {
+// Pre-compute perimeter data for each ring
+const RING_PERIMETER = {
+  success: calcPerimeterData(RING_HEX_POINTS.success),
+  error: calcPerimeterData(RING_HEX_POINTS.error),
+  exception: calcPerimeterData(RING_HEX_POINTS.exception),
+};
+
+// Also compute for the base (used for tracer, current time dot, etc.)
+const BASE_PERIMETER = calcPerimeterData(BASE_HEX_POINTS);
+
+// Convert hours (0-24) to point on a specific ring's hexagon
+const hoursToPointOnRing = (hours, ring) => {
+  const hexPoints = RING_HEX_POINTS[ring];
+  const { sideLengths, totalPerimeter } = RING_PERIMETER[ring];
+
   const normalized = ((hours % 24) + 24) % 24;
   const fraction = normalized / 24;
-  let targetDist = fraction * TOTAL_PERIMETER;
+  let targetDist = fraction * totalPerimeter;
 
   let accumulated = 0;
   for (let i = 0; i < 6; i++) {
-    const sideLen = SIDE_LENGTHS[i];
+    const sideLen = sideLengths[i];
     if (accumulated + sideLen >= targetDist) {
       const progress = (targetDist - accumulated) / sideLen;
-      const p1 = HEX_POINTS[i];
-      const p2 = HEX_POINTS[(i + 1) % 6];
+      const p1 = hexPoints[i];
+      const p2 = hexPoints[(i + 1) % 6];
       return {
         x: p1[0] + (p2[0] - p1[0]) * progress,
         y: p1[1] + (p2[1] - p1[1]) * progress,
@@ -53,7 +89,30 @@ const hoursToPoint = (hours) => {
     }
     accumulated += sideLen;
   }
-  return { x: HEX_POINTS[0][0], y: HEX_POINTS[0][1] };
+  return { x: hexPoints[0][0], y: hexPoints[0][1] };
+};
+
+// Convert hours to point on the base hexagon (for tracer, current time, etc.)
+const hoursToPoint = (hours) => {
+  const normalized = ((hours % 24) + 24) % 24;
+  const fraction = normalized / 24;
+  let targetDist = fraction * BASE_PERIMETER.totalPerimeter;
+
+  let accumulated = 0;
+  for (let i = 0; i < 6; i++) {
+    const sideLen = BASE_PERIMETER.sideLengths[i];
+    if (accumulated + sideLen >= targetDist) {
+      const progress = (targetDist - accumulated) / sideLen;
+      const p1 = BASE_HEX_POINTS[i];
+      const p2 = BASE_HEX_POINTS[(i + 1) % 6];
+      return {
+        x: p1[0] + (p2[0] - p1[0]) * progress,
+        y: p1[1] + (p2[1] - p1[1]) * progress,
+      };
+    }
+    accumulated += sideLen;
+  }
+  return { x: BASE_HEX_POINTS[0][0], y: BASE_HEX_POINTS[0][1] };
 };
 
 // Parse time string to a local Date object
@@ -91,17 +150,20 @@ const getLocalTodayStart = () => {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
 };
 
-// Generate points for a time segment
-const generateSegmentPoints = (startHours, endHours) => {
+// Generate points for a time segment on a specific ring
+const generateSegmentPoints = (startHours, endHours, ring) => {
+  const hexPoints = RING_HEX_POINTS[ring];
+  const { sideLengths, totalPerimeter } = RING_PERIMETER[ring];
+
   if (endHours < startHours) {
     return [
-      ...generateSegmentPoints(startHours, 24),
-      ...generateSegmentPoints(0, endHours)
+      ...generateSegmentPoints(startHours, 24, ring),
+      ...generateSegmentPoints(0, endHours, ring)
     ];
   }
 
   const points = [];
-  const start = hoursToPoint(startHours);
+  const start = hoursToPointOnRing(startHours, ring);
   points.push(`${start.x},${start.y}`);
 
   const startFrac = startHours / 24;
@@ -109,17 +171,17 @@ const generateSegmentPoints = (startHours, endHours) => {
 
   let accumulated = 0;
   for (let i = 0; i < 6; i++) {
-    const sideFrac = SIDE_LENGTHS[i] / TOTAL_PERIMETER;
+    const sideFrac = sideLengths[i] / totalPerimeter;
     const sideEndFrac = accumulated + sideFrac;
 
     if (sideEndFrac > startFrac && sideEndFrac < endFrac) {
-      const vertex = HEX_POINTS[(i + 1) % 6];
+      const vertex = hexPoints[(i + 1) % 6];
       points.push(`${vertex[0]},${vertex[1]}`);
     }
     accumulated += sideFrac;
   }
 
-  const end = hoursToPoint(endHours);
+  const end = hoursToPointOnRing(endHours, ring);
   points.push(`${end.x},${end.y}`);
 
   return points;
@@ -149,8 +211,7 @@ const HexTimeline = ({ transactions = [], machineName }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Process transactions - get segments (lines) and completion dot positions
-  // Only show today's portion, clamped to current time
+  // Process transactions - each type goes on its own ring
   const { segments, completionDots } = useMemo(() => {
     if (!transactions || transactions.length === 0) return { segments: [], completionDots: [] };
 
@@ -182,8 +243,8 @@ const HexTimeline = ({ transactions = [], machineName }) => {
       const startHours = dateToHours(clampedStart);
       const endHours = dateToHours(clampedEnd);
 
-      // Add segment line
-      const points = generateSegmentPoints(startHours, endHours);
+      // Generate segment on the ring for this type
+      const points = generateSegmentPoints(startHours, endHours, type);
       if (points.length >= 2) {
         segs.push({
           type,
@@ -192,9 +253,9 @@ const HexTimeline = ({ transactions = [], machineName }) => {
         });
       }
 
-      // Add dot at end time (only if the actual end time is today and not clamped to now)
+      // Add dot at end time on the correct ring
       if (endDate <= now && endDate >= todayStart) {
-        const pos = hoursToPoint(dateToHours(endDate));
+        const pos = hoursToPointOnRing(dateToHours(endDate), type);
         dots.push({
           type,
           x: pos.x,
@@ -208,12 +269,29 @@ const HexTimeline = ({ transactions = [], machineName }) => {
   }, [transactions, currentTime]);
 
   const currentPos = useMemo(() => hoursToPoint(currentTime), [currentTime]);
-  const hexPath = HEX_POINTS.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]},${p[1]}`).join(' ') + ' Z';
 
-  // Path for the tracer light - from 00:00 around the full hexagon
-  const tracerPath = `M ${HEX_POINTS[0][0]},${HEX_POINTS[0][1]} ` +
-    HEX_POINTS.slice(1).map(p => `L ${p[0]},${p[1]}`).join(' ') +
-    ` L ${HEX_POINTS[0][0]},${HEX_POINTS[0][1]}`;
+  // Generate hex paths for each ring (dotted guide lines)
+  const ringPaths = useMemo(() => {
+    const paths = {};
+    for (const ring of ['success', 'error', 'exception']) {
+      const pts = RING_HEX_POINTS[ring];
+      paths[ring] = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]},${p[1]}`).join(' ') + ' Z';
+    }
+    return paths;
+  }, []);
+
+  // Path for the tracer light - from 00:00 around the full hexagon (base ring)
+  const tracerPath = `M ${BASE_HEX_POINTS[0][0]},${BASE_HEX_POINTS[0][1]} ` +
+    BASE_HEX_POINTS.slice(1).map(p => `L ${p[0]},${p[1]}`).join(' ') +
+    ` L ${BASE_HEX_POINTS[0][0]},${BASE_HEX_POINTS[0][1]}`;
+
+  // Check which rings have data (to only show guides for active rings)
+  const activeRings = useMemo(() => {
+    const rings = new Set();
+    segments.forEach(seg => rings.add(seg.type));
+    completionDots.forEach(dot => rings.add(dot.type));
+    return rings;
+  }, [segments, completionDots]);
 
   return (
     <svg
@@ -221,48 +299,33 @@ const HexTimeline = ({ transactions = [], machineName }) => {
       viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
       preserveAspectRatio="none"
     >
-      {/* Glow filter for segments */}
-      <defs>
-        <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="glow-orange" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="glow-dot" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="1.5" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-
-      {/* Base dotted hexagon border */}
+      {/* Base dotted hexagon border (middle ring - always visible) */}
       <path
-        d={hexPath}
+        d={ringPaths.error}
         fill="none"
         strokeDasharray="4,3"
         className="timeline-base"
       />
 
-      {/* Transaction segments - colored lines along hexagon border */}
+      {/* Subtle guide rings for outer and inner - only shown when they have data */}
+      {activeRings.has('success') && (
+        <path
+          d={ringPaths.success}
+          fill="none"
+          strokeDasharray="2,4"
+          className="timeline-ring-guide timeline-ring-guide-success"
+        />
+      )}
+      {activeRings.has('exception') && (
+        <path
+          d={ringPaths.exception}
+          fill="none"
+          strokeDasharray="2,4"
+          className="timeline-ring-guide timeline-ring-guide-exception"
+        />
+      )}
+
+      {/* Transaction segments - each type on its own concentric ring */}
       {segments.map((seg, idx) => (
         <polyline
           key={`${machineName}-seg-${idx}`}
@@ -277,7 +340,7 @@ const HexTimeline = ({ transactions = [], machineName }) => {
         </polyline>
       ))}
 
-      {/* Tracer light - moving glow along the hexagon edge */}
+      {/* Tracer light - moving along base hexagon edge */}
       <circle r="2" className="timeline-tracer">
         <animateMotion
           dur="8s"
@@ -294,15 +357,15 @@ const HexTimeline = ({ transactions = [], machineName }) => {
       </circle>
 
       {/* 00:00 Start marker at top-left (midnight) */}
-      <circle cx={HEX_POINTS[0][0]} cy={HEX_POINTS[0][1]} r="3" className="start-dot" />
+      <circle cx={BASE_HEX_POINTS[0][0]} cy={BASE_HEX_POINTS[0][1]} r="3" className="start-dot" />
 
-      {/* Transaction completion dots */}
+      {/* Transaction completion dots - on their respective rings */}
       {completionDots.map((dot, idx) => (
         <circle
           key={`${machineName}-dot-${idx}`}
           cx={dot.x}
           cy={dot.y}
-          r="2.5"
+          r="2"
           className={`timeline-${dot.type}-fill`}
         >
           <title>{dot.processName} ({dot.type.toUpperCase()})</title>
@@ -323,7 +386,6 @@ const HexTimeline = ({ transactions = [], machineName }) => {
         cy={currentPos.y}
         r="3"
         className="timeline-dot"
-        filter="url(#glow-dot)"
       />
     </svg>
   );
