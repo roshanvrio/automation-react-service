@@ -27,8 +27,8 @@
 /* VM GRID - Base styles */
 .vm-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(calc((100% - 48px) / 9), 1fr)) !important;
-  gap: 4px !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 6px !important;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -106,35 +106,42 @@
 /* VM CELL - Common styles */
 .vm-cell {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  border-radius: 2px !important;
-  padding: 4px !important;
+  gap: 5px;
+  border-radius: 6px !important;
+  padding: 10px 14px !important;
   min-height: 0;
   overflow: hidden;
 }
 
+/* VM icon inside cell */
+.vm-cell-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 /* TEXT - Common styles */
 .vm-id {
-  font-weight: 600;
-  font-size: clamp(8px, 0.9vmin, 12px);
+  font-weight: 700;
+  font-size: clamp(28px, 3vmin, 34px);
   color: inherit;
-  line-height: 1.1;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  flex: 1;
+  min-width: 0;
 }
 
 .vm-time {
-  font-size: clamp(7px, 0.75vmin, 10px);
+  font-weight: 700;
+  font-size: clamp(28px, 3vmin, 34px);
   color: inherit;
-  line-height: 1.1;
+  line-height: 1.2;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  flex-shrink: 0;
 }
 
 .small-card-heights {

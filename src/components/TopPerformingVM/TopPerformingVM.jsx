@@ -3,7 +3,7 @@ import "./TopPerformingVM.css";
 const TopPerformingVM = ({ topPerformer }) => {
   return (
     <div className="dashboard-card small-card-height">
-      <div className="card-title">Top Performing VM</div>
+      <div className="card-title">Top Performing VA</div>
       <div className="performer-display">
         <div className="performer-badge">
           {/* Outer stars with dashed lines */}
@@ -38,7 +38,7 @@ const TopPerformingVM = ({ topPerformer }) => {
           </div>
           {/* Center circle with VM info */}
           <div className="performer-content">
-            <span className="performer-vm-id">{topPerformer?.vmName || "N/A"}</span>
+            <span className="performer-vm-id">{topPerformer?.vmName?.replace(/VM/gi, 'VA') || "N/A"}</span>
             <span className="performer-time">{topPerformer?.utilizationMinutes ? (topPerformer.utilizationMinutes / 60).toFixed(1) : 0} hrs</span>
           </div>
         </div>

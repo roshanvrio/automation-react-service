@@ -1,4 +1,5 @@
 import "./VMUtilization.css";
+import vmIcon from "../../assets/Icon.png";
 
 const VMUtilization = ({ vmUtilizationUpdate }) => {
   const vms = Array.isArray(vmUtilizationUpdate) ? vmUtilizationUpdate : [];
@@ -23,7 +24,7 @@ const VMUtilization = ({ vmUtilizationUpdate }) => {
   return (
     <div className="dashboard-card small-card-heights">
       <div className="vm-header">
-        <h5 className="card-title mb-0">VM Utilization</h5>
+        <h5 className="card-title mb-0">VA Utilization</h5>
         <div className="vm-legend">
           <span className="legend-label">Less</span>
           <div className="legend-gradient"></div>
@@ -44,7 +45,8 @@ const VMUtilization = ({ vmUtilizationUpdate }) => {
                 color: isDark ? "#ffffff" : "#0a0e27",
               }}
             >
-              <div className="vm-id">{vm.vmName}</div>
+              <img src={vmIcon} alt="VA" className="vm-cell-icon" style={{ filter: isDark ? 'none' : 'invert(1)' }} />
+              <div className="vm-id">{vm.vmName?.replace(/VM/gi, 'VA')}</div>
               <div className="vm-time">{(minutes / 60).toFixed(1)}hrs</div>
             </div>
           );

@@ -45,7 +45,7 @@ const ExitQueue = () => {
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <i className={`bi ${getOutcomeIcon(vm.outcome)} outcome-icon`}></i>
-            <span className="exit-vm-name">{vm.machineName}</span>
+            <span className="exit-vm-name">{vm.machineName?.replace(/VM/gi, 'VA')}</span>
             <div className="exit-queue-pulse"></div>
           </div>
         ))}
