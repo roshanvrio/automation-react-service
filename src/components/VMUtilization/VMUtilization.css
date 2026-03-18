@@ -125,7 +125,7 @@
 /* TEXT - Common styles */
 .vm-id {
   font-weight: 700;
-  font-size: clamp(10px, 1.2vmin, 14px);
+  font-size: 12px !important;
   color: inherit;
   line-height: 1.2;
   white-space: nowrap;
@@ -137,7 +137,7 @@
 
 .vm-time {
   font-weight: 700;
-  font-size: clamp(9px, 1vmin, 12px);
+  font-size: 12px !important;
   color: inherit;
   line-height: 1.2;
   white-space: nowrap;
