@@ -233,43 +233,92 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     }, 5500); // Wait for fly animation to complete (matching AnimationContext timing)
   }, [queueAnimations, onVmProcessed, pendingVmCountRef]);
 
-  // Determine transaction outcome by matching transactionId
+  // Determine transaction outcome — CaseStatus is the source of truth
   const determineOutcome = useCallback((vm, completedTransactionsData) => {
-    const txId = String(vm.transactionId); // Convert to string for comparison
-    console.log(`🔍 determineOutcome for VM: ${vm.machineName}, txId: ${txId}, type: ${typeof vm.transactionId}`);
+    const txId = vm.transactionId ? String(vm.transactionId) : null;
+    const vmName = vm.machineName;
+    const normalizedVm = normalizeMachineName(vmName);
+    console.log(`🔍 determineOutcome for VM: ${vmName}, txId: ${txId}`);
 
     if (!completedTransactionsData) {
       console.log(`❌ No completedTransactionsData available`);
       return 'unknown';
     }
 
-    if (!vm.transactionId) {
-      console.log(`❌ No transactionId on VM`);
-      return 'unknown';
+    // Resolve outcome from a transaction's CaseStatus field
+    const outcomeFromCaseStatus = (t) => {
+      const caseStatus = (t.CaseStatus || t.caseStatus || t.casestatus || '').toLowerCase();
+      if (caseStatus.includes('exception')) return 'exception';
+      if (caseStatus.includes('fail') || caseStatus.includes('error')) return 'error';
+      if (caseStatus.includes('success') || caseStatus.includes('complete')) return 'success';
+      return null;
+    };
+
+    // Collect all transactions from all lists
+    const allTransactions = [
+      ...(completedTransactionsData.successful || []),
+      ...(completedTransactionsData.error || []),
+      ...(completedTransactionsData.exception || []),
+    ];
+
+    // STEP 1: Exact transactionId match — use its CaseStatus
+    if (txId) {
+      const exactMatch = allTransactions.find(t => String(t.transactionId) === txId);
+      if (exactMatch) {
+        const outcome = outcomeFromCaseStatus(exactMatch);
+        if (outcome) {
+          console.log(`🎯 Exact txId ${txId} → CaseStatus outcome: ${outcome}`);
+          return outcome;
+        }
+        // CaseStatus missing — fall through to list-based detection below
+      }
     }
 
-    // Check successful list by transactionId (convert both to string for comparison)
-    if (completedTransactionsData.successful?.some(t => String(t.transactionId) === txId)) {
-      console.log(`✅ Found txId ${txId} in successful`);
-      return 'success';
+    // STEP 2: Match by machineName — find MOST RECENT transaction, use its CaseStatus
+    const vmMatches = allTransactions.filter(t => {
+      if (!t.machineName) return false;
+      return normalizeMachineName(t.machineName) === normalizedVm;
+    });
+
+    if (vmMatches.length > 0) {
+      // Sort: most recent first (by timestamp, then by transactionId)
+      vmMatches.sort((a, b) => {
+        const timeA = new Date(a.completedAt || a.endTime || a.timestamp || 0).getTime();
+        const timeB = new Date(b.completedAt || b.endTime || b.timestamp || 0).getTime();
+        if (timeA !== timeB) return timeB - timeA;
+        return (Number(b.transactionId) || 0) - (Number(a.transactionId) || 0);
+      });
+
+      const latest = vmMatches[0];
+      const outcome = outcomeFromCaseStatus(latest);
+      if (outcome) {
+        console.log(`📌 machineName match for ${vmName}: txId=${latest.transactionId}, CaseStatus → ${outcome}`);
+        return outcome;
+      }
     }
 
-    // Check error list by transactionId
-    if (completedTransactionsData.error?.some(t => String(t.transactionId) === txId)) {
-      console.log(`❗ Found txId ${txId} in error`);
-      return 'error';
+    // STEP 3: Fallback — check which list contains the most recent match
+    // (for backends that don't send CaseStatus but do categorize into lists)
+    if (txId) {
+      if (completedTransactionsData.exception?.some(t => String(t.transactionId) === txId)) return 'exception';
+      if (completedTransactionsData.error?.some(t => String(t.transactionId) === txId)) return 'error';
+      if (completedTransactionsData.successful?.some(t => String(t.transactionId) === txId)) return 'success';
     }
 
-    // Check exception list by transactionId
-    if (completedTransactionsData.exception?.some(t => String(t.transactionId) === txId)) {
-      console.log(`⚠️ Found txId ${txId} in exception`);
-      return 'exception';
+    // STEP 4: Fallback to vmCompletedTransactions timeline data
+    const vmTxList = vmTransactionsMap.get(vmName);
+    if (vmTxList && vmTxList.length > 0) {
+      const latest = vmTxList[vmTxList.length - 1];
+      const outcome = outcomeFromCaseStatus(latest);
+      if (outcome) {
+        console.log(`📊 vmCompletedTransactions for ${vmName}: CaseStatus → ${outcome}`);
+        return outcome;
+      }
     }
 
-    console.log(`❓ txId ${txId} not found. Available successful txIds:`,
-      completedTransactionsData.successful?.map(t => t.transactionId).slice(0, 5));
+    console.log(`❓ ${vmName} (txId: ${txId}) — no CaseStatus found in any source`);
     return 'unknown';
-  }, []);
+  }, [normalizeMachineName, vmTransactionsMap]);
 
   // Process the exit queue one by one (synced with robot animation)
   const processExitQueue = useCallback(() => {
