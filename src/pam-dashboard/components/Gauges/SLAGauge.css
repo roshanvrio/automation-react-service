@@ -1,0 +1,160 @@
+.sla-gauge {
+  --sla-border: rgba(0, 229, 255, 0.12);
+  --sla-muted: #7FA6BF;
+  --sla-padding: 5px 2px;
+  --sla-summary-gap: 24px;
+  --sla-summary-pad: 4px 8px;
+  --sla-summary-title-fs: 6px;
+  --sla-summary-pct-fs: 10px;
+  --sla-summary-count-fs: 6px;
+  --sla-footer-fs: 8px;
+  --sla-footer-gap: 6px;
+  --sla-footer-mt: 2px;
+  --sla-txn-fs: 7px;
+  --sla-meter-mt: -20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 1 calc(33.33% - 8px);
+  max-width: calc(33.33% - 8px);
+  min-width: 0;
+  background: linear-gradient(180deg, #0E2235, #0B1C2C);
+  border: 1px solid var(--sla-border);
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.06);
+  border-radius: 10px;
+  padding: var(--sla-padding);
+  height: fit-content;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Density: medium ── */
+.sla-gauge[data-density="medium"] {
+  --sla-padding: 4px 1px;
+  --sla-summary-gap: 16px;
+  --sla-summary-pad: 3px 6px;
+  --sla-summary-title-fs: 5.5px;
+  --sla-summary-pct-fs: 9px;
+  --sla-summary-count-fs: 5.5px;
+  --sla-footer-fs: 7px;
+  --sla-footer-gap: 4px;
+  --sla-footer-mt: 0px;
+  --sla-txn-fs: 6px;
+  --sla-meter-mt: -22px;
+}
+
+/* ── Density: high ── */
+.sla-gauge[data-density="high"] {
+  --sla-padding: 3px 0px;
+  --sla-summary-gap: 10px;
+  --sla-summary-pad: 2px 4px;
+  --sla-summary-title-fs: 5px;
+  --sla-summary-pct-fs: 8px;
+  --sla-summary-count-fs: 5px;
+  --sla-footer-fs: 6.5px;
+  --sla-footer-gap: 3px;
+  --sla-footer-mt: -2px;
+  --sla-txn-fs: 5.5px;
+  --sla-meter-mt: -18px;
+}
+
+/* ── Summary boxes (Weekly / Monthly) ── */
+.sla-gauge-summary {
+  display: flex;
+  gap: var(--sla-summary-gap);
+  width: 100%;
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+.sla-gauge[data-density="medium"] .sla-gauge-summary {
+  padding: 0 4px;
+}
+
+.sla-gauge[data-density="high"] .sla-gauge-summary {
+  padding: 0 3px;
+}
+
+.sla-gauge-summary-box {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: #0a1525;
+  border: 1px solid var(--sla-border);
+  border-radius: 7px;
+  padding: var(--sla-summary-pad);
+}
+
+.sla-gauge-summary-title {
+  font-size: var(--sla-summary-title-fs);
+  color: #9fb3c8;
+  display: block;
+  margin-bottom: 1px;
+}
+
+.sla-gauge-summary-values {
+  display: flex;
+  gap: 3px;
+  align-items: baseline;
+}
+
+.sla-gauge-summary-pct {
+  font-size: var(--sla-summary-pct-fs);
+  font-weight: 700;
+}
+
+.sla-gauge-summary-count {
+  font-size: var(--sla-summary-count-fs);
+  color: var(--sla-muted);
+}
+
+/* ── Gauge meter ── */
+.sla-gauge-meter {
+  position: relative;
+  width: 100%;
+  margin-top: var(--sla-meter-mt);
+}
+
+.sla-gauge-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* SVG text — percentage */
+.sla-gauge-pct-text {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+/* SVG text — ON-TIME label */
+.sla-gauge-ontime-text {
+  font-size: 12px;
+  fill: #8FB3C9;
+  letter-spacing: 2px;
+}
+
+/* ── Footer ── */
+.sla-gauge-footer {
+  margin-top: var(--sla-footer-mt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sla-footer-gap);
+  font-size: var(--sla-footer-fs);
+}
+
+.sla-gauge-label {
+  font-weight: 600;
+  color: #00E5FF;
+}
+
+.sla-gauge-footer-sep {
+  width: 1px;
+  height: 8px;
+  background: rgba(0, 229, 255, 0.25);
+}
+
+.sla-gauge-transactions {
+  font-size: var(--sla-txn-fs);
+  color: var(--sla-muted);
+}

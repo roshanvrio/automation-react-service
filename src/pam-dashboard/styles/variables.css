@@ -1,0 +1,19 @@
+/* ── Theme & Spacing Variables ── */
+
+:root {
+  --bg-main: #0a0f14;
+  --bg-card: #0f1724;
+  --border-glow: rgba(0, 255, 200, 0.25);
+  --text-primary: #e5f0ff;
+  --text-muted: #9fb3c8;
+  --accent-cyan: #00f6ff;
+  --accent-green: #2dff8f;
+  --accent-red: #ff4d4f;
+
+  /* Fixed spacing - consistent across all resolutions */
+  --gap-lg: 10px;
+  --gap-md: 8px;
+  --gap-sm: 4px;
+  --padding-card: 10px;
+  --border-radius: 10px;
+}

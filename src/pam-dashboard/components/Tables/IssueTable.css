@@ -1,0 +1,92 @@
+.issue-table {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+/* ── Header row ── */
+.it-header {
+  display: flex;
+  align-items: center;
+  padding: 0px 13px;
+  margin-bottom: 6px;
+}
+
+.it-hcell {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-transform: capitalize;
+}
+
+/* ── Body ── */
+.it-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Row ── */
+.it-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(0, 255, 200, 0.12);
+  border-radius: 10px;
+  animation: slide-up-fade 0.35s ease-out both;
+}
+
+/* ── Cell base ── */
+.it-cell {
+  font-size: 9px;
+  color: var(--text-primary);
+  line-height: 1.4;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ── Column widths ── */
+.it-col-process {
+  width: 18%;
+  flex-shrink: 0;
+}
+
+.it-col-vm {
+  width: 15%;
+  flex-shrink: 0;
+}
+
+.it-col-issue {
+  flex: 1;
+  min-width: 0;
+  padding-right: 10px;
+}
+
+.it-col-total {
+  width: 10%;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.it-col-error {
+  width: 10%;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Total value color ── */
+.it-row .it-col-total {
+  color: var(--accent-cyan);
+}
+
+/* ── Error value color ── */
+.it-row .it-col-error {
+  color: var(--accent-red, #ff4d4f);
+}

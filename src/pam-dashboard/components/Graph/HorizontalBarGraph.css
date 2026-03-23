@@ -1,0 +1,209 @@
+/* ── Card container ── */
+.hbar-card {
+  --hbar-padding: 4px 4px 10px;
+  --hbar-label-fs: 10.5px;
+  --hbar-label-w: 105px;
+  /* --hbar-row-gap: 2px; */
+  --hbar-row-min-h: 20px;
+  --hbar-bar-h: 15px;
+  --hbar-pct-fs: 11px;
+  --hbar-scale-fs: 9px;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  padding: var(--hbar-padding);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* ── Density: medium ── */
+.hbar-card[data-density="medium"] {
+  --hbar-padding: 4px 6px 8px;
+  --hbar-label-fs: 9.5px;
+  --hbar-label-w: 82px;
+  --hbar-row-gap: 1px;
+  --hbar-row-min-h: 16px;
+  --hbar-bar-h: 12px;
+  --hbar-pct-fs: 10px;
+  --hbar-scale-fs: 7px;
+}
+
+/* ── Density: high ── */
+.hbar-card[data-density="high"] {
+  --hbar-padding: 3px 4px 5px;
+  --hbar-label-fs: 8.5px;
+  --hbar-label-w: 72px;
+  --hbar-row-gap: 0px;
+  --hbar-row-min-h: 13px;
+  --hbar-bar-h: 10px;
+  --hbar-pct-fs: 9px;
+  --hbar-scale-fs: 6.5px;
+}
+
+/* ── Chart area ── */
+.hbar-chart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: 18px;
+}
+
+/* ── Grid lines ── */
+.hbar-grid {
+  position: absolute;
+  top: 0;
+  bottom: 18px;
+  left: calc(var(--hbar-label-w) + 4px);
+  right: 46px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hbar-grid-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(100, 116, 139, 0.521) 0px,
+    rgba(100, 116, 139, 0.521) 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+
+/* ── Rows container ── */
+.hbar-rows {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hbar-row-gap);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Row ── */
+.hbar-row {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-height: var(--hbar-row-min-h);
+  gap: 4px;
+}
+
+/* ── Label ── */
+.hbar-label {
+  width: var(--hbar-label-w);
+  min-width: var(--hbar-label-w);
+  text-align: left;
+  font-size: var(--hbar-label-fs);
+  font-weight: 400;
+  color: #7a9db3;
+  line-height: 1.25;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ── Bar track & bar ── */
+.hbar-bar-track {
+  flex: 1;
+  height: var(--hbar-bar-h);
+  position: relative;
+  min-width: 0;
+}
+
+.hbar-bar {
+  height: 100%;
+  border-radius: 0 5px 5px 0;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.78;
+}
+
+.hbar-bar:hover {
+  opacity: 0.9;
+}
+
+/* ── Value indicator ── */
+.hbar-value {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  white-space: nowrap;
+  width: 42px;
+  min-width: 42px;
+  justify-content: flex-end;
+}
+
+.hbar-triangle {
+  font-size: 6px;
+  color: #d4706e;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.hbar-percent {
+  font-size: var(--hbar-pct-fs);
+  font-weight: 500;
+  color: #d4706e;
+  min-width: 28px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Bottom scale ── */
+.hbar-scale {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--hbar-label-w) + 4px);
+  right: 46px;
+  height: 16px;
+}
+
+.hbar-scale-label {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: var(--hbar-scale-fs);
+  color: #8ea4be;
+  bottom: 0;
+  font-weight: 500;
+}
+
+/* ── Legend ── */
+.hbar-legend {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.hbar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hbar-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.hbar-legend-label {
+  font-size: 8px;
+  color: #8ea4be;
+  font-weight: 500;
+}
+
+/* ── No data ── */
+.hbar-card .no-data {
+  margin: auto;
+  font-size: 10px;
+  color: var(--text-muted, #9fb3c8);
+}

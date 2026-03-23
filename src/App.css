@@ -16,6 +16,11 @@
   --border-radius: 10px;
 }
 
+/* Override bootstrap white background */
+body {
+  background: #0a0f14 !important;
+}
+
 .app-root {
   height: 100vh;
   width: 100%;
@@ -273,4 +278,46 @@
   .card-title {
     font-size: 10px;
   }
+}
+
+/* ========================================
+   DASHBOARD NAV TOGGLE
+   ======================================== */
+
+.dashboard-nav {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  gap: 2px;
+  background: rgba(10, 15, 20, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 255, 200, 0.2);
+  border-radius: 8px;
+  padding: 3px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.nav-tab {
+  padding: 5px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8fa3bf;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-tab:hover {
+  color: #e5f0ff;
+  background: rgba(0, 255, 200, 0.08);
+}
+
+.nav-tab.active {
+  color: #00f6ff;
+  background: rgba(0, 246, 255, 0.12);
+  box-shadow: 0 0 8px rgba(0, 246, 255, 0.15);
 }

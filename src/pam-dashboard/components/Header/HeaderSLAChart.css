@@ -1,0 +1,102 @@
+/* ── Chart container — y-axis + plot ── */
+.hsla-chart {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+/* ── Y-axis ── */
+.hsla-yaxis {
+  position: relative;
+  width: 20px;
+  flex-shrink: 0;
+  margin-bottom: 14px;
+}
+
+.hsla-yaxis-label {
+  position: absolute;
+  right: 2px;
+  font-size: 7px;
+  color: #9fb3c8;
+  line-height: 1;
+  transform: translateY(50%);
+}
+
+/* ── Plot area ── */
+.hsla-plot {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+  margin-bottom: 14px;
+}
+
+/* Grid lines */
+.hsla-grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+}
+
+/* ── Groups container ── */
+.hsla-groups {
+  display: flex;
+  height: 100%;
+  gap: 4px;
+  padding: 0 2px;
+}
+
+.hsla-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Bars within a group ── */
+.hsla-bars {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1px;
+}
+
+.hsla-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  max-width: 9px;
+  height: 100%;
+}
+
+.hsla-bar-label {
+  font-size: 5.5px;
+  color: #e5f0ff;
+  white-space: nowrap;
+  line-height: 1;
+  margin-bottom: 1px;
+  text-align: center;
+}
+
+.hsla-bar {
+  width: 100%;
+  border-radius: 1px 1px 0 0;
+  min-height: 1px;
+  transition: height 0.5s ease;
+}
+
+/* ── X-axis labels ── */
+.hsla-x-label {
+  font-size: 6px;
+  color: #9fb3c8;
+  text-align: center;
+  margin-top: 2px;
+  white-space: nowrap;
+  line-height: 1;
+}

@@ -1,0 +1,118 @@
+/* ── Container with subtle side borders ── */
+.rings-card {
+  --rings-content-gap: 28px;
+  --rings-content-pl: 6px;
+  --rings-legend-gap: 12px;
+  --rings-legend-pad: 4px 0;
+  --rings-legend-dot: 10px;
+  --rings-legend-item-gap: 8px;
+  --rings-legend-fs: 10.5px;
+  --rings-legend-max-w: 90px;
+  --rings-pct-fs: 8px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* ── Density: medium ── */
+.rings-card[data-density="medium"] {
+  --rings-content-gap: 18px;
+  --rings-content-pl: 3px;
+  --rings-legend-gap: 8px;
+  --rings-legend-pad: 2px 0;
+  --rings-legend-dot: 8px;
+  --rings-legend-item-gap: 6px;
+  --rings-legend-fs: 9.5px;
+  --rings-legend-max-w: 75px;
+  --rings-pct-fs: 7px;
+}
+
+/* ── Density: high ── */
+.rings-card[data-density="high"] {
+  --rings-content-gap: 10px;
+  --rings-content-pl: 1px;
+  --rings-legend-gap: 5px;
+  --rings-legend-pad: 1px 0;
+  --rings-legend-dot: 7px;
+  --rings-legend-item-gap: 4px;
+  --rings-legend-fs: 8.5px;
+  --rings-legend-max-w: 60px;
+  --rings-pct-fs: 6.5px;
+}
+
+/* ── Content row: chart left-weighted + legend right ── */
+.rings-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--rings-content-gap);
+  min-height: 0;
+  padding-left: var(--rings-content-pl);
+}
+
+/* ── SVG chart area ── */
+.rings-svg-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rings-svg-wrap svg {
+  display: block;
+}
+
+/* Ring arcs animate on mount */
+.rings-arc {
+  transition: stroke-dashoffset 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Percentage labels — vertical spine ── */
+.rings-pct {
+  font-size: var(--rings-pct-fs);
+  font-weight: 600;
+  fill: rgba(200, 216, 232, 0.85);
+  text-anchor: start;
+  dominant-baseline: auto;
+}
+
+/* ── Legend ── */
+.rings-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rings-legend-gap);
+  padding: var(--rings-legend-pad);
+}
+
+.rings-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--rings-legend-item-gap);
+}
+
+.rings-legend-dot {
+  width: var(--rings-legend-dot);
+  height: var(--rings-legend-dot);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.rings-legend-label {
+  font-size: var(--rings-legend-fs);
+  color: #9fb3c8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: var(--rings-legend-max-w);
+}
+
+/* ── No data ── */
+.rings-card .no-data {
+  margin: auto;
+  font-size: 10px;
+  color: var(--text-muted, #9fb3c8);
+}

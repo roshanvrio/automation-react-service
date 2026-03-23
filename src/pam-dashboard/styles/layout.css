@@ -1,0 +1,357 @@
+/* ── Dashboard Layout (scoped to .pam-dashboard-root) ── */
+
+.pam-dashboard-root .dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  height: 100%;
+}
+
+/* ── Header ── */
+
+.pam-dashboard-root .header-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.pam-dashboard-root .header-title .mindsprint-logo {
+  height: 18px;
+  width: auto;
+  position: absolute;
+  left: 0;
+}
+
+.pam-dashboard-root .dashboard-title {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.pam-dashboard-root .refresh-timer {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.pam-dashboard-root .refresh-label {
+  font-size: 8px;
+  color: var(--text-muted);
+}
+
+.pam-dashboard-root .refresh-time {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── Top Row (Header Cards) ── */
+
+.pam-dashboard-root .top-row {
+  display: flex;
+  gap: var(--gap-lg);
+  height: 150px;
+}
+
+.pam-dashboard-root .dashboard-card {
+  background: linear-gradient(180deg, #101a2e, #0b1220);
+  border-radius: var(--border-radius);
+  padding: var(--padding-card);
+  border: 1px solid rgba(0, 255, 200, 0.12);
+  box-shadow:
+    inset 0 0 12px rgba(0, 255, 200, 0.05),
+    0 0 12px rgba(0, 255, 200, 0.08);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pam-dashboard-root .header_transactions {
+  width: 30%;
+  flex-shrink: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+}
+
+.pam-dashboard-root .header_transactions-label {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--accent-cyan);
+  line-height: 1.4;
+}
+
+.pam-dashboard-root .header_transactions-value {
+  font-size: 55px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  letter-spacing: 1px;
+  margin-right: 25px;
+}
+
+.pam-dashboard-root .header_sla {
+  flex: 1;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  padding: 8px 12px;
+}
+
+.pam-dashboard-root .header_sla-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  padding-right: 14px;
+  height: 100%;
+}
+
+.pam-dashboard-root .header_sla-text-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.pam-dashboard-root .header_sla-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.pam-dashboard-root .header_sla-hr {
+  align-self: stretch;
+  height: 1px;
+  background: rgba(77, 240, 240, 0.08);
+  flex-shrink: 0;
+  margin-top: -8px;
+}
+
+.pam-dashboard-root .header_sla-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4df0f0;
+  line-height: 1;
+}
+
+.pam-dashboard-root .header_sla-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: #4df0f0;
+  letter-spacing: 1.5px;
+  line-height: 1;
+}
+
+/* ── Legend below divider ── */
+.pam-dashboard-root .header_sla-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.pam-dashboard-root .header_sla-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.pam-dashboard-root .header_sla-legend-swatch {
+  width: 8px;
+  height: 5px;
+  border-radius: 0.5px;
+  flex-shrink: 0;
+}
+
+.pam-dashboard-root .header_sla-legend-name {
+  font-size: 6.5px;
+  color: #c8d8e8;
+  white-space: nowrap;
+  line-height: 1.1;
+  letter-spacing: 0.2px;
+}
+
+
+/* ── SLA Body ── */
+
+.pam-dashboard-root .sla_body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  background: linear-gradient(180deg, #101a2e, #0b1220);
+  border-radius: var(--border-radius);
+  padding: var(--padding-card);
+  border: 1px solid rgba(0, 255, 200, 0.12);
+  box-shadow:
+    inset 0 0 12px rgba(0, 255, 200, 0.05),
+    0 0 12px rgba(0, 255, 200, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.pam-dashboard-root .sla_body-title {
+  position: absolute;
+  top: var(--padding-card);
+  right: var(--padding-card);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+.pam-dashboard-root .sla_body-top {
+  display: flex;
+  gap: var(--gap-lg);
+  flex: 3;
+}
+
+/* ── SLA Compliance ── */
+
+.pam-dashboard-root .sla_compliance {
+  width: calc(30% - var(--gap-lg));
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.pam-dashboard-root .sla_compliance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pam-dashboard-root .sla_compliance-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pam-dashboard-root .sla_compliance-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.pam-dashboard-root .sla_compliance-subtitle {
+  font-size: 8px;
+  color: var(--text-muted);
+}
+
+.pam-dashboard-root .sla_compliance-pct {
+  font-size: 9px;
+  color: var(--accent-cyan);
+  white-space: nowrap;
+}
+
+/* ── Gauge Section ── */
+
+.pam-dashboard-root .sla_compliance-gauges {
+  --gauge-section-gap: var(--gap-md);
+  --gauge-row-gap: var(--gap-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gauge-section-gap);
+  flex: 2;
+  margin-top: var(--gauge-section-gap);
+}
+
+.pam-dashboard-root .sla_compliance-gauges[data-density="medium"] {
+  --gauge-section-gap: var(--gap-sm);
+  --gauge-row-gap: var(--gap-sm);
+}
+.pam-dashboard-root .sla_compliance-gauges[data-density="high"] {
+  --gauge-section-gap: 2px;
+  --gauge-row-gap: 2px;
+}
+
+.pam-dashboard-root .sla_gauge-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--gauge-row-gap);
+  flex: 1;
+}
+
+/* ── Hourly SLA Bar Graph ── */
+
+.pam-dashboard-root .sla_compliance-bargraph {
+  flex: 2;
+  margin-top: var(--gap-md);
+  padding: 8px;
+  min-height: 0;
+}
+
+.pam-dashboard-root .sla_compliance-bargraph-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+/* ── Bottom Section (Critical Issues) ── */
+
+.pam-dashboard-root .sla_body-bottom {
+  flex: 1.2;
+  display: flex;
+  gap: var(--gap-lg);
+  position: relative;
+}
+
+.pam-dashboard-root .critical-issue-title {
+  position: absolute;
+  top: -30px;
+  left: 60%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+.pam-dashboard-root .warning-icon {
+  color: #f0c040;
+  font-size: 20px;
+  text-shadow: 0 0 8px rgba(240, 192, 64, 0.6), 0 0 16px rgba(240, 192, 64, 0.3);
+}
+
+/* ── Subprocess Summary ── */
+
+.pam-dashboard-root .subprocess_summary {
+  width: 60%;
+  flex-shrink: 0;
+  flex-direction: row;
+}
+
+.pam-dashboard-root .subprocess_col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-right: 1px solid rgba(0, 255, 200, 0.12);
+  padding: 0 var(--padding-card);
+  overflow: visible;
+  min-width: 0;
+}
+
+.pam-dashboard-root .subprocess_col:last-child {
+  border-right: none;
+}
+
+.pam-dashboard-root .subprocess_col-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+.pam-dashboard-root .subprocess_count {
+  flex: 1;
+}

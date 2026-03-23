@@ -1,0 +1,107 @@
+.case-reason-table {
+  --crt-fs: 9px;
+  --crt-row-pad: 6px 0;
+  --crt-icon-size: 11px;
+  --crt-count-fs: 12px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ── Density: medium ── */
+.case-reason-table[data-density="medium"] {
+  --crt-fs: 8px;
+  --crt-row-pad: 4px 0;
+  --crt-icon-size: 10px;
+  --crt-count-fs: 11px;
+}
+
+/* ── Density: high ── */
+.case-reason-table[data-density="high"] {
+  --crt-fs: 7px;
+  --crt-row-pad: 3px 0;
+  --crt-icon-size: 9px;
+  --crt-count-fs: 10px;
+}
+
+/* ── List reset ── */
+.crt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Row ── */
+.crt-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(0, 255, 200, 0.12);
+  border-radius: 10px;
+  animation: slide-up-fade 0.35s ease-out both;
+}
+
+/* ── Reason text ── */
+.crt-reason {
+  color: var(--text-primary);
+  font-size: var(--crt-fs);
+  flex: 1;
+  min-width: 0;
+  padding-right: 10px;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+}
+
+/* ── Count + icon ── */
+.crt-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--crt-count-fs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.crt-icon {
+  font-size: var(--crt-icon-size);
+  line-height: 1;
+  vertical-align: baseline;
+  position: relative;
+  top: -0.5px;
+}
+
+/* ── Exception (yellow) ── */
+.crt-exception {
+  color: #f5a623;
+}
+
+.crt-exception .crt-icon {
+  color: #f5a623;
+}
+
+/* ── Error (red) ── */
+.crt-error {
+  color: var(--accent-red, #ff4d4f);
+}
+
+.crt-error .crt-icon {
+  color: var(--accent-red, #ff4d4f);
+}
+
+.case-reason-table .no-data {
+  font-size: 10px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

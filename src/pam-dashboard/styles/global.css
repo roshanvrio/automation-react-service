@@ -1,0 +1,36 @@
+/* ── PAM Dashboard Shell (scoped to .pam-dashboard-root) ── */
+/* Removed global resets (*, body) to avoid conflicts with Queue dashboard */
+
+.pam-dashboard-root .loading,
+.pam-dashboard-root .error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.125rem;
+}
+
+.pam-dashboard-root .error {
+  color: #ef4444;
+}
+
+.pam-dashboard-root.app-root {
+  height: 100vh;
+  width: 100%;
+  background: radial-gradient(circle at top, #0f1b2d, #05080d) !important;
+  color: var(--text-primary);
+  font-family: "Inter", system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Override bootstrap's .container-fluid padding */
+.pam-dashboard-root.app-root > .container-fluid {
+  padding: 10px 20px 0 !important;
+  height: 100%;
+  box-sizing: border-box;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+}
