@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import QueueDashboard from "./QueueDashboard";
 import PAMDashboardApp from "./pam-dashboard/PAMDashboardApp";
 
@@ -44,16 +44,6 @@ class ErrorBoundary extends Component {
 const App = () => {
   return (
     <BrowserRouter>
-      {/* Floating nav toggle */}
-      <nav className="dashboard-nav">
-        <NavLink to="/queue" className={({ isActive }) => `nav-tab${isActive ? ' active' : ''}`}>
-          Queue Dashboard
-        </NavLink>
-        <NavLink to="/sla" className={({ isActive }) => `nav-tab${isActive ? ' active' : ''}`}>
-          SLA Dashboard
-        </NavLink>
-      </nav>
-
       <Routes>
         <Route path="/queue" element={
           <ErrorBoundary>
