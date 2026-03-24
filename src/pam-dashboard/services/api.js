@@ -5,18 +5,12 @@ const apiClient = axios.create({
   timeout: 5000,
 });
 
-/** Fetch list of regions from country data */
 export const fetchRegions = async () => {
   const { data } = await apiClient.get('/country');
   return [...new Set(data.map((item) => item.region).filter(Boolean))];
 };
 
-/**
- * Transform flat sla_bar_graph rows into { series_names, series_data } for HeaderSLAChart.
- * Backend rows: [{ interval_range, SubProcessName, sla_percentage }, ...]
- * Output: { series_names: string[], series_data: number[][] }
- *   where series_data[seriesIdx][slotIdx] = sla_percentage
- */
+/** Transform flat SLA rows into grouped series for HeaderSLAChart. */
 function transformBarGraph(rows) {
   if (!rows || rows.length === 0) return { series_names: [], series_data: [] };
 
@@ -35,11 +29,10 @@ function transformBarGraph(rows) {
   return { series_names: subprocesses, series_data, slots };
 }
 
-/** Fetch header metrics, optionally filtered by region */
 export const fetchHeaderData = async (region) => {
   const params = region ? { region } : {};
   const { data } = await apiClient.get('/header', { params });
-  const inner = data?.data ?? data;
+  const inner = data?.data !== undefined ? data.data : data;
 
   const barGraph = transformBarGraph(inner.sla_bar_graph);
 
@@ -51,7 +44,6 @@ export const fetchHeaderData = async (region) => {
   };
 };
 
-/** Fetch summary data, optionally filtered by region */
 export const fetchSummaryData = async (region) => {
   const params = region ? { region } : {};
   const { data } = await apiClient.get('/summary', { params });

@@ -1,27 +1,20 @@
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useId, useMemo, useState, useEffect, useRef } from 'react';
+import formatCompact from '../../utils/formatCompact';
+import './SLAGauge.css';
 
-const formatCount = (n) => {
-  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-  if (n >= 1000) return Math.round(n / 1000) + 'K';
-  return String(n);
-};
-
-// Dynamic color based on value zone
+/** Red ≤50%, Amber 50-80%, Green >80% */
 const getZoneColor = (val) => {
-  if (val <= 50) return '#FF4D4D';   // Red: ≤ 50%
-  if (val <= 80) return '#FFB347';   // Amber: 50% - 80%
-  return '#00D084';                  // Green: > 80%
+  if (val <= 50) return '#FF4D4D';
+  if (val <= 80) return '#FFB347';
+  return '#00D084';
 };
 
 const dotAngles = [126, 90, 54];
 const dotColors = ['#ff6600', '#ffcc00', '#00ff2a'];
 
-// Ease-out cubic: fast start, smooth deceleration
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const ANIM_DURATION = 1200;
 
-const ANIM_DURATION = 1200; // 1.2 seconds
-
-// SVG geometry per density tier
 const GAUGE_GEOM = {
   default: { r: 120, arcStroke: 20, trackStroke: 14, dotR: 10, needleW: 3, pivotOuter: 8, pivotMid: 5, pivotInner: 2.5, pctFs: 36, pctOffY: 36, ontimeFs: 12, ontimeOffY: 14 },
   medium:  { r: 105, arcStroke: 17, trackStroke: 12, dotR: 8,  needleW: 2.5, pivotOuter: 7, pivotMid: 4.5, pivotInner: 2, pctFs: 30, pctOffY: 30, ontimeFs: 10, ontimeOffY: 12 },
@@ -30,17 +23,25 @@ const GAUGE_GEOM = {
 
 const CX = 150, CY = 140;
 
-export default function SLAGauge({ value = 0, label = '', transactions = 0, weeklySla = 0, weeklyCount = 0, monthlySla = 0, monthlyCount = 0, density = 'default' }) {
+export default function SLAGauge({
+  value = 0,
+  label = '',
+  transactions = 0,
+  weeklySla = 0,
+  weeklyCount = 0,
+  monthlySla = 0,
+  monthlyCount = 0,
+  density = 'default',
+}) {
   const pct = Math.min(Math.max(value, 0), 100);
   const [animatedValue, setAnimatedValue] = useState(0);
   const animFrameRef = useRef(null);
+  const prevValueRef = useRef(0);
 
-  // Pick geometry for current density
-  const g = GAUGE_GEOM[density] || GAUGE_GEOM.default;
+  const g = GAUGE_GEOM[density];
   const r = g.r;
   const needleLen = r * 0.95;
 
-  // Derived SVG paths & dots (recomputed when density changes)
   const arcD = `M ${CX - r} ${CY} A ${r} ${r} 0 0 1 ${CX + r} ${CY}`;
   const dots = useMemo(() =>
     dotAngles.map((deg) => {
@@ -51,33 +52,29 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
   );
 
   useEffect(() => {
-    // Cancel any ongoing animation
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
 
-    // Reset needle to 0 instantly
-    setAnimatedValue(0);
-
+    const startValue = prevValueRef.current;
     const target = Math.min(Math.max(value, 0), 100);
-    if (target === 0) return;
+    prevValueRef.current = target;
 
-    // Wait one frame for the reset to render, then animate to target
-    animFrameRef.current = requestAnimationFrame(() => {
-      const startTime = performance.now();
+    if (startValue === target) return;
 
-      const animate = (now) => {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / ANIM_DURATION, 1);
-        setAnimatedValue(target * easeOut(progress));
+    const startTime = performance.now();
 
-        if (progress < 1) {
-          animFrameRef.current = requestAnimationFrame(animate);
-        } else {
-          animFrameRef.current = null;
-        }
-      };
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / ANIM_DURATION, 1);
+      setAnimatedValue(startValue + (target - startValue) * easeOut(progress));
 
-      animFrameRef.current = requestAnimationFrame(animate);
-    });
+      if (progress < 1) {
+        animFrameRef.current = requestAnimationFrame(animate);
+      } else {
+        animFrameRef.current = null;
+      }
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
@@ -88,17 +85,12 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
   const weeklyColor = getZoneColor(weeklySla);
   const monthlyColor = getZoneColor(monthlySla);
 
-  // Needle position driven by animatedValue (not pct)
-  const { tipX, tipY } = useMemo(() => {
-    const angleDeg = 180 - (animatedValue / 100) * 180;
-    const angleRad = (angleDeg * Math.PI) / 180;
-    return {
-      tipX: CX + needleLen * Math.cos(angleRad),
-      tipY: CY - needleLen * Math.sin(angleRad),
-    };
-  }, [animatedValue, needleLen]);
+  const angleDeg = 180 - (animatedValue / 100) * 180;
+  const angleRad = (angleDeg * Math.PI) / 180;
+  const tipX = CX + needleLen * Math.cos(angleRad);
+  const tipY = CY - needleLen * Math.sin(angleRad);
 
-  const uid = label.replace(/[^a-zA-Z0-9]/g, '');
+  const uid = useId().replace(/:/g, '');
 
   return (
     <div className="sla-gauge" data-density={density}>
@@ -107,14 +99,14 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
           <span className="sla-gauge-summary-title">Weekly</span>
           <div className="sla-gauge-summary-values">
             <span className="sla-gauge-summary-pct" style={{ color: weeklyColor }}>{weeklySla}%</span>
-            <span className="sla-gauge-summary-count">{formatCount(weeklyCount)}</span>
+            <span className="sla-gauge-summary-count">{formatCompact(weeklyCount)}</span>
           </div>
         </div>
         <div className="sla-gauge-summary-box">
           <span className="sla-gauge-summary-title">Monthly</span>
           <div className="sla-gauge-summary-values">
             <span className="sla-gauge-summary-pct" style={{ color: monthlyColor }}>{monthlySla}%</span>
-            <span className="sla-gauge-summary-count">{formatCount(monthlyCount)}</span>
+            <span className="sla-gauge-summary-count">{formatCompact(monthlyCount)}</span>
           </div>
         </div>
       </div>
@@ -158,10 +150,8 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
             </filter>
           </defs>
 
-          {/* Background track */}
           <path d={arcD} fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth={g.trackStroke} strokeLinecap="round" />
 
-          {/* Main arc with gradient */}
           <path
             d={arcD}
             fill="none"
@@ -171,12 +161,10 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
             filter={`url(#ag-${uid})`}
           />
 
-          {/* Marker dots */}
           {dots.map((d, i) => (
             <circle key={i} cx={d.x} cy={d.y} r={g.dotR} fill={dotColors[i]} />
           ))}
 
-          {/* Needle */}
           <g filter={`url(#ng-${uid})`} className="sla-gauge-needle">
             <line
               x1={CX} y1={CY}
@@ -187,16 +175,13 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
             />
           </g>
 
-          {/* Pivot */}
           <circle cx={CX} cy={CY} r={g.pivotOuter} fill="none" stroke="#00E5FF" strokeWidth="1.5" opacity="0.35" />
           <circle cx={CX} cy={CY} r={g.pivotMid} fill="#00E5FF" />
           <circle cx={CX} cy={CY} r={g.pivotInner} fill="#121c2e" />
 
-          {/* Center text */}
           <text
             x={CX} y={CY - g.pctOffY}
             textAnchor="middle"
-            dominantBaseline="auto"
             className="sla-gauge-pct-text"
             filter={`url(#tg-${uid})`}
             style={{ fill: mainColor, fontSize: g.pctFs }}
@@ -206,7 +191,6 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
           <text
             x={CX} y={CY - g.ontimeOffY}
             textAnchor="middle"
-            dominantBaseline="auto"
             className="sla-gauge-ontime-text"
             style={{ fontSize: g.ontimeFs }}
           >
@@ -218,7 +202,7 @@ export default function SLAGauge({ value = 0, label = '', transactions = 0, week
       <div className="sla-gauge-footer">
         <span className="sla-gauge-label">{label}</span>
         <span className="sla-gauge-footer-sep"></span>
-        <span className="sla-gauge-transactions">Transactions {formatCount(transactions)}</span>
+        <span className="sla-gauge-transactions">Transactions {formatCompact(transactions)}</span>
       </div>
     </div>
   );

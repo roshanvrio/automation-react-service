@@ -1,8 +1,14 @@
-import { useMemo } from 'react';
+import { useRef } from 'react';
 import './IssueTable.css';
 
 export default function IssueTable({ data = [] }) {
-  const animKey = useMemo(() => JSON.stringify(data), [data]);
+  const counterRef = useRef(0);
+  const prevDataRef = useRef(data);
+  if (prevDataRef.current !== data) {
+    counterRef.current += 1;
+    prevDataRef.current = data;
+  }
+  const animKey = counterRef.current;
 
   return (
     <div className="issue-table">
@@ -17,7 +23,7 @@ export default function IssueTable({ data = [] }) {
         <div className="it-body" key={animKey}>
           {data.map((row, i) => (
             <div
-              key={i}
+              key={`${row.process}-${row.vm}-${row.issue}-${i}`}
               className="it-row"
               style={{ animationDelay: `${i * 80}ms` }}
             >

@@ -3,9 +3,8 @@ import { fetchRegions as apiFetchRegions } from '../services/api';
 import { REFRESH_INTERVAL } from '../utils/constants';
 
 /**
- * Manages region cycling with a countdown timer.
- * If the backend is unreachable, stops all API calls and uses fallback data.
- *
+ * Cycles through regions with a countdown timer.
+ * Falls back gracefully when backend is unreachable.
  * @returns {{ region: string|null, countdown: string, connected: boolean }}
  */
 export default function useRegionCycling() {
@@ -42,11 +41,12 @@ export default function useRegionCycling() {
 
     if (indexRef.current >= cycle.length) {
       indexRef.current = 0;
-      fetchRegions();
+      fetchRegions().then((ok) => {
+        if (!ok) setTimeout(() => fetchRegions(), 5000);
+      });
     }
   }, [fetchRegions]);
 
-  // Initial load — only once
   useEffect(() => {
     if (initRef.current) return;
     initRef.current = true;
@@ -56,7 +56,6 @@ export default function useRegionCycling() {
     });
   }, [fetchRegions, advance]);
 
-  // Countdown timer — only runs when connected to backend
   useEffect(() => {
     if (!connected) return;
 
@@ -72,7 +71,9 @@ export default function useRegionCycling() {
     return () => clearInterval(interval);
   }, [connected, advance]);
 
-  const formatted = `00:${String(countdown).padStart(2, '0')}`;
+  const mins = String(Math.floor(countdown / 60)).padStart(2, '0');
+  const secs = String(countdown % 60).padStart(2, '0');
+  const formatted = `${mins}:${secs}`;
 
   return { region, countdown: formatted, connected };
 }

@@ -2,7 +2,6 @@
 export { default as ConcentricRingsChart } from './Charts/ConcentricRingsChart';
 
 // Gauges
-import './Gauges/SLAGauge.css';
 export { default as SLAGauge } from './Gauges/SLAGauge';
 
 // Graph

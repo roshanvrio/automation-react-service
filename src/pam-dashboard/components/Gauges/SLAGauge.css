@@ -86,7 +86,7 @@
 
 .sla-gauge-summary-title {
   font-size: var(--sla-summary-title-fs);
-  color: #9fb3c8;
+  color: var(--text-muted, #9fb3c8);
   display: block;
   margin-bottom: 1px;
 }
@@ -122,14 +122,12 @@
 
 /* SVG text — percentage */
 .sla-gauge-pct-text {
-  font-size: 36px;
   font-weight: 700;
 }
 
 /* SVG text — ON-TIME label */
 .sla-gauge-ontime-text {
-  font-size: 12px;
-  fill: #8FB3C9;
+  fill: var(--text-muted, #9fb3c8);
   letter-spacing: 2px;
 }
 
@@ -145,7 +143,7 @@
 
 .sla-gauge-label {
   font-weight: 600;
-  color: #00E5FF;
+  color: var(--accent-cyan, #00e5ff);
 }
 
 .sla-gauge-footer-sep {

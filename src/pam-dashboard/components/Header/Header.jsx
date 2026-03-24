@@ -26,7 +26,6 @@ export default function Header({ headerData, formatted }) {
           <span className="header_transactions-value">{displayTotal}</span>
         </div>
         <div className="dashboard-card header_sla">
-          {/* Left block: SLA info + legend */}
           <div className="header_sla-left">
             <div className="header_sla-text-area">
               <span className="header_sla-text">
@@ -37,7 +36,7 @@ export default function Header({ headerData, formatted }) {
             <div className="header_sla-hr" />
             <div className="header_sla-legend">
               {seriesNames.map((name, i) => (
-                <div className="header_sla-legend-item" key={i}>
+                <div className="header_sla-legend-item" key={name}>
                   <span
                     className="header_sla-legend-swatch"
                     style={{ backgroundColor: BAR_COLORS[i % BAR_COLORS.length] }}
@@ -47,7 +46,6 @@ export default function Header({ headerData, formatted }) {
               ))}
             </div>
           </div>
-          {/* Chart */}
           <HeaderSLAChart data={barGraph} />
         </div>
       </div>

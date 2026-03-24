@@ -10,9 +10,10 @@ const BAR_COLORS = [
 ];
 
 const GRID_MARKS = [0, 25, 50, 75, 100];
+const EMPTY = [];
 
 export default function HourlySLAGraph({ data }) {
-  const chartData = data && data.length > 0 ? data : [];
+  const chartData = data && data.length > 0 ? data : EMPTY;
   const [animated, setAnimated] = useState(false);
   const cardRef = useRef(null);
 
@@ -39,17 +40,15 @@ export default function HourlySLAGraph({ data }) {
   return (
     <div className="hbar-card" ref={cardRef}>
       <div className="hbar-chart">
-        {/* Grid lines */}
         <div className="hbar-grid">
           {GRID_MARKS.map((mark) => (
             <div key={mark} className="hbar-grid-line" style={{ left: `${mark}%` }} />
           ))}
         </div>
 
-        {/* Rows */}
         <div className="hbar-rows">
           {chartData.map((item, i) => (
-            <div className="hbar-row" key={i}>
+            <div className="hbar-row" key={item.name}>
               <div className="hbar-label">{item.name}</div>
               <div className="hbar-bar-track">
                 <div
@@ -61,14 +60,13 @@ export default function HourlySLAGraph({ data }) {
                   }}
                 />
               </div>
-              <div className="hbar-value" style={{ visibility: 'hidden' }}>
+              <div className="hbar-value">
                 <span className="hbar-percent">{item.value}%</span>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Bottom scale */}
         <div className="hbar-scale">
           {GRID_MARKS.map((mark) => (
             <span key={mark} className="hbar-scale-label" style={{ left: `${mark}%` }}>
@@ -78,10 +76,9 @@ export default function HourlySLAGraph({ data }) {
         </div>
       </div>
 
-      {/* Legend */}
       <div className="hbar-legend">
         {chartData.map((item, i) => (
-          <div className="hbar-legend-item" key={i}>
+          <div className="hbar-legend-item" key={item.name}>
             <span
               className="hbar-legend-swatch"
               style={{ background: BAR_COLORS[i % BAR_COLORS.length] }}

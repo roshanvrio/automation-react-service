@@ -1,12 +1,17 @@
-import { useMemo } from 'react';
+import { useRef } from 'react';
 import useDensity from '../../hooks/useDensity';
 import './CaseReasonTable.css';
 
 export default function CaseReasonTable({ data = [] }) {
   const { ref: tableRef } = useDensity(data.length, { medium: 6, high: 10 });
 
-  // Generate a key that changes whenever data changes, forcing re-mount & animation replay
-  const animKey = useMemo(() => JSON.stringify(data), [data]);
+  const counterRef = useRef(0);
+  const prevDataRef = useRef(data);
+  if (prevDataRef.current !== data) {
+    counterRef.current += 1;
+    prevDataRef.current = data;
+  }
+  const animKey = counterRef.current;
 
   return (
     <div className="case-reason-table" ref={tableRef}>
@@ -19,7 +24,7 @@ export default function CaseReasonTable({ data = [] }) {
 
             return (
               <li
-                key={i}
+                key={`${row.reason}-${i}`}
                 className="crt-row"
                 style={{ animationDelay: `${i * 80}ms` }}
               >

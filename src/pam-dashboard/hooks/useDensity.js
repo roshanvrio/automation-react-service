@@ -1,13 +1,8 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 
 /**
- * Adaptive density hook — observes a container's content volume
- * and returns a density tier: 'default' | 'medium' | 'high'.
- *
- * Also sets `data-density` attribute on the container element.
- *
- * @param {number} itemCount  – number of data items inside the container
- * @param {object} thresholds – { medium: number, high: number }
+ * Returns a density tier ('default' | 'medium' | 'high') based on item count
+ * and sets `data-density` attribute on the referenced container element.
  */
 export default function useDensity(itemCount = 0, thresholds = { medium: 5, high: 8 }) {
   const ref = useRef(null);

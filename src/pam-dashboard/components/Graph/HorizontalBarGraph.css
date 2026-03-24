@@ -3,7 +3,6 @@
   --hbar-padding: 4px 4px 10px;
   --hbar-label-fs: 10.5px;
   --hbar-label-w: 105px;
-  /* --hbar-row-gap: 2px; */
   --hbar-row-min-h: 20px;
   --hbar-bar-h: 15px;
   --hbar-pct-fs: 11px;
@@ -101,7 +100,7 @@
   text-align: left;
   font-size: var(--hbar-label-fs);
   font-weight: 400;
-  color: #7a9db3;
+  color: var(--text-muted, #9fb3c8);
   line-height: 1.25;
   white-space: normal;
   word-break: break-word;
@@ -140,7 +139,7 @@
 
 .hbar-triangle {
   font-size: 6px;
-  color: #d4706e;
+  color: var(--accent-red, #ff4d4f);
   line-height: 1;
   display: flex;
   align-items: center;
@@ -149,7 +148,7 @@
 .hbar-percent {
   font-size: var(--hbar-pct-fs);
   font-weight: 500;
-  color: #d4706e;
+  color: var(--accent-red, #ff4d4f);
   min-width: 28px;
   line-height: 1;
   display: flex;
@@ -169,7 +168,7 @@
   position: absolute;
   transform: translateX(-50%);
   font-size: var(--hbar-scale-fs);
-  color: #8ea4be;
+  color: var(--text-muted, #9fb3c8);
   bottom: 0;
   font-weight: 500;
 }
@@ -191,19 +190,12 @@
 .hbar-legend-swatch {
   width: 10px;
   height: 10px;
-  border-radius: 2px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
 .hbar-legend-label {
   font-size: 8px;
-  color: #8ea4be;
-  font-weight: 500;
-}
-
-/* ── No data ── */
-.hbar-card .no-data {
-  margin: auto;
-  font-size: 10px;
   color: var(--text-muted, #9fb3c8);
+  font-weight: 500;
 }

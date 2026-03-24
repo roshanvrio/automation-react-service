@@ -9,6 +9,7 @@
   --accent-cyan: #00f6ff;
   --accent-green: #2dff8f;
   --accent-red: #ff4d4f;
+  --accent-amber: #f5a623;
 
   /* Fixed spacing - consistent across all resolutions */
   --gap-lg: 10px;

@@ -2,11 +2,54 @@ import { Header, SLAGauge, SubProcessGraph, HourlySLAGraph, ConcentricRingsChart
 import useRegionCycling from './hooks/useRegionCycling';
 import useDashboardData from './hooks/useDashboardData';
 
-/** Compute density tier from item count + thresholds */
 function getDensity(count, medium, high) {
   if (count >= high) return 'high';
   if (count >= medium) return 'medium';
   return 'default';
+}
+
+function GaugeGrid({ gaugeData = [] }) {
+  const items = gaugeData.slice(0, 5);
+  const row1 = items.slice(0, 3);
+  const row2 = items.slice(3);
+  const gaugeDensity = getDensity(items.length, 4, 5);
+
+  return (
+    <>
+      <div className="sla_gauge-row" data-density={gaugeDensity}>
+        {row1.map((item) => (
+          <SLAGauge
+            key={item.SubProcessName}
+            density={gaugeDensity}
+            value={item.today_sla ?? 0}
+            label={item.SubProcessName}
+            transactions={item.total_transactions ?? 0}
+            weeklySla={item.weekly_sla ?? 0}
+            weeklyCount={item.total_transactions ?? 0}
+            monthlySla={item.monthly_sla ?? 0}
+            monthlyCount={item.total_transactions ?? 0}
+          />
+        ))}
+      </div>
+      {row2.length > 0 && (
+        <div className="sla_gauge-row" data-density={gaugeDensity}>
+          {row2.map((item) => (
+            <SLAGauge
+              key={item.SubProcessName}
+              density={gaugeDensity}
+              value={item.today_sla ?? 0}
+              label={item.SubProcessName}
+              transactions={item.total_transactions ?? 0}
+              weeklySla={item.weekly_sla ?? 0}
+              weeklyCount={item.total_transactions ?? 0}
+              monthlySla={item.monthly_sla ?? 0}
+              monthlyCount={item.total_transactions ?? 0}
+            />
+          ))}
+        </div>
+      )}
+    </>
+  );
 }
 
 export default function Dashboard() {
@@ -29,54 +72,10 @@ export default function Dashboard() {
               <span className="sla_compliance-pct">Total % of transactions met SLA - <strong>{summaryData?.percentage?.[0]?.SLA_Percentage ?? '00'}%</strong></span>
             </div>
 
-            {/* Gauge meters - data-driven, max 3 per row, 5 total */}
             <div className="sla_compliance-gauges" data-density={getDensity(summaryData?.gauge?.length ?? 5, 4, 5)}>
-              {(() => {
-                const gaugeData = summaryData?.gauge ?? [];
-                const items = gaugeData.slice(0, 5);
-                const row1 = items.slice(0, 3);
-                const row2 = items.slice(3);
-                const gaugeDensity = getDensity(items.length, 4, 5);
-                return (
-                  <>
-                    <div className="sla_gauge-row" data-density={gaugeDensity}>
-                      {row1.map((item, i) => (
-                        <SLAGauge
-                          key={i}
-                          density={gaugeDensity}
-                          value={item.today_sla ?? 0}
-                          label={item.SubProcessName}
-                          transactions={item.total_transactions ?? 0}
-                          weeklySla={item.weekly_sla ?? 0}
-                          weeklyCount={item.total_transactions ?? 0}
-                          monthlySla={item.monthly_sla ?? 0}
-                          monthlyCount={item.total_transactions ?? 0}
-                        />
-                      ))}
-                    </div>
-                    {row2.length > 0 && (
-                      <div className="sla_gauge-row" data-density={gaugeDensity}>
-                        {row2.map((item, i) => (
-                          <SLAGauge
-                            key={i}
-                            density={gaugeDensity}
-                            value={item.today_sla ?? 0}
-                            label={item.SubProcessName}
-                            transactions={item.total_transactions ?? 0}
-                            weeklySla={item.weekly_sla ?? 0}
-                            weeklyCount={item.total_transactions ?? 0}
-                            monthlySla={item.monthly_sla ?? 0}
-                            monthlyCount={item.total_transactions ?? 0}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
+              <GaugeGrid gaugeData={summaryData?.gauge ?? []} />
             </div>
 
-            {/* Bar graph placeholder */}
             <div className="sla_compliance-bargraph">
               <span className="sla_compliance-bargraph-title">Hourly SLA</span>
               <HourlySLAGraph data={summaryData?.hourlySla ?? []} />

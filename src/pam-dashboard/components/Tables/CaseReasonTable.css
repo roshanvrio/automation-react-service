@@ -39,7 +39,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 6px 10px;
+  padding: var(--crt-row-pad);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(0, 255, 200, 0.12);
   border-radius: 10px;
@@ -81,11 +81,11 @@
 
 /* ── Exception (yellow) ── */
 .crt-exception {
-  color: #f5a623;
+  color: var(--accent-amber, #f5a623);
 }
 
 .crt-exception .crt-icon {
-  color: #f5a623;
+  color: var(--accent-amber, #f5a623);
 }
 
 /* ── Error (red) ── */
@@ -95,13 +95,4 @@
 
 .crt-error .crt-icon {
   color: var(--accent-red, #ff4d4f);
-}
-
-.case-reason-table .no-data {
-  font-size: 10px;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
 }

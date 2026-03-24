@@ -75,9 +75,9 @@
 .rings-pct {
   font-size: var(--rings-pct-fs);
   font-weight: 600;
-  fill: rgba(200, 216, 232, 0.85);
+  fill: var(--text-primary, #e5f0ff);
+  opacity: 0.85;
   text-anchor: start;
-  dominant-baseline: auto;
 }
 
 /* ── Legend ── */
@@ -97,22 +97,15 @@
 .rings-legend-dot {
   width: var(--rings-legend-dot);
   height: var(--rings-legend-dot);
-  border-radius: 2px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
 .rings-legend-label {
   font-size: var(--rings-legend-fs);
-  color: #9fb3c8;
+  color: var(--text-muted, #9fb3c8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: var(--rings-legend-max-w);
-}
-
-/* ── No data ── */
-.rings-card .no-data {
-  margin: auto;
-  font-size: 10px;
-  color: var(--text-muted, #9fb3c8);
 }

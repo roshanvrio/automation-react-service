@@ -23,7 +23,6 @@ export default function HeaderSLAChart({ data }) {
 
   return (
     <div className="hsla-chart">
-      {/* Y-axis */}
       <div className="hsla-yaxis">
         {Y_TICKS.slice().reverse().map((v) => (
           <span
@@ -36,40 +35,44 @@ export default function HeaderSLAChart({ data }) {
         ))}
       </div>
 
-      {/* Plot region */}
-      <div className="hsla-plot">
-        {/* Grid lines */}
-        {Y_TICKS.map((v) => (
-          <div
-            key={v}
-            className="hsla-grid-line"
-            style={{ bottom: `${pct(v)}%` }}
-          />
-        ))}
+      <div className="hsla-plot-wrapper">
+        <div className="hsla-plot">
+          {Y_TICKS.map((v) => (
+            <div
+              key={v}
+              className="hsla-grid-line"
+              style={{ bottom: `${pct(v)}%` }}
+            />
+          ))}
 
-        {/* Bar groups */}
-        <div className="hsla-groups">
-          {timeSlots.map((slot, si) => (
-            <div className="hsla-group" key={si}>
-              <div className="hsla-bars">
-                {chartData.map((series, bi) => {
-                  const val = series[si] ?? 0;
-                  return (
-                    <div className="hsla-bar-col" key={bi}>
-                      <span className="hsla-bar-label">{val}%</span>
-                      <div
-                        className="hsla-bar"
-                        style={{
-                          height: `${pct(val)}%`,
-                          backgroundColor: BAR_COLORS[bi],
-                        }}
-                      />
-                    </div>
-                  );
-                })}
+          <div className="hsla-groups">
+            {timeSlots.map((slot, si) => (
+              <div className="hsla-group" key={slot}>
+                <div className="hsla-bars">
+                  {chartData.map((series, bi) => {
+                    const val = series[si] ?? 0;
+                    return (
+                      <div className="hsla-bar-col" key={`${slot}-${bi}`}>
+                        <span className="hsla-bar-label">{val}%</span>
+                        <div
+                          className="hsla-bar"
+                          style={{
+                            height: `${pct(val)}%`,
+                            backgroundColor: BAR_COLORS[bi % BAR_COLORS.length],
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <span className="hsla-x-label">{slot}</span>
-            </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="hsla-x-axis">
+          {timeSlots.map((slot) => (
+            <span className="hsla-x-label" key={slot}>{slot}</span>
           ))}
         </div>
       </div>

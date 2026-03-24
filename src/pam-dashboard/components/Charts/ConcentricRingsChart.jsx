@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import useDensity from '../../hooks/useDensity';
 import './ConcentricRingsChart.css';
 
-// Color order: outer → inner (pink, purple, yellow, teal, red)
 const COLORS = ['#ff6b8a', '#a78bfa', '#f0c040', '#00e5c8', '#e8455a'];
 const TRACK_COLOR = 'rgba(100,140,180,0.08)';
 
 const OUTER_RADIUS = 90;
 
-// Ring geometry per density tier
 const DENSITY_RING = {
   default: { thickness: 10, gap: 8 },
   medium:  { thickness: 9,  gap: 6 },
@@ -19,7 +17,7 @@ export default function ConcentricRingsChart({ data = [] }) {
   const [mounted, setMounted] = useState(false);
   const { ref: cardRef, density } = useDensity(data.length, { medium: 4, high: 6 });
 
-  const { thickness: RING_THICKNESS, gap: RING_GAP } = DENSITY_RING[density] || DENSITY_RING.default;
+  const { thickness: RING_THICKNESS, gap: RING_GAP } = DENSITY_RING[density];
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -28,12 +26,12 @@ export default function ConcentricRingsChart({ data = [] }) {
 
   const items = data.slice(0, 5);
 
-  const cx = 105;
-  const cy = 105;
-  const svgW = 220;
-  const svgH = 210;
+  const PADDING = 15;
+  const cx = OUTER_RADIUS + PADDING;
+  const cy = OUTER_RADIUS + PADDING;
+  const svgW = cx * 2 + 10;
+  const svgH = cy * 2;
 
-  // Label X position — vertical spine slightly right of center
   const labelX = cx + 6;
 
   const rings = items.map((item, i) => {
@@ -42,21 +40,18 @@ export default function ConcentricRingsChart({ data = [] }) {
     const pct = Math.min(Math.max(item.value, 0), 100);
     const offset = circumference - (circumference * pct) / 100;
 
-    // Label Y: just above each ring at 12 o'clock
     const labelY = cy - r - 5;
 
     return { ...item, r, circumference, pct, offset, color: COLORS[i % COLORS.length], labelY };
   });
-
 
   return (
     <div className="rings-card" ref={cardRef}>
       <div className="rings-content">
         <div className="rings-svg-wrap">
           <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
-            {rings.map((ring, i) => (
-              <g key={i}>
-                {/* Background track */}
+            {rings.map((ring) => (
+              <g key={ring.name}>
                 <circle
                   cx={cx}
                   cy={cy}
@@ -65,7 +60,7 @@ export default function ConcentricRingsChart({ data = [] }) {
                   stroke={TRACK_COLOR}
                   strokeWidth={RING_THICKNESS}
                 />
-                {/* Progress arc */}
+                {/* Rotate to 12 o'clock start, flip to run clockwise */}
                 <circle
                   className="rings-arc"
                   cx={cx}
@@ -79,7 +74,6 @@ export default function ConcentricRingsChart({ data = [] }) {
                   strokeDashoffset={mounted ? ring.offset : ring.circumference}
                   transform={`rotate(-90 ${cx} ${cy}) scale(1,-1) translate(0,-${cy * 2})`}
                 />
-                {/* Percentage label — aligned to vertical spine */}
                 <text className="rings-pct" x={labelX} y={ring.labelY}>
                   {Math.round(ring.pct)}%
                 </text>
@@ -89,8 +83,8 @@ export default function ConcentricRingsChart({ data = [] }) {
         </div>
 
         <div className="rings-legend">
-          {rings.map((ring, i) => (
-            <div className="rings-legend-item" key={i}>
+          {rings.map((ring) => (
+            <div className="rings-legend-item" key={ring.name}>
               <span className="rings-legend-dot" style={{ backgroundColor: ring.color }} />
               <span className="rings-legend-label">{ring.name}</span>
             </div>
