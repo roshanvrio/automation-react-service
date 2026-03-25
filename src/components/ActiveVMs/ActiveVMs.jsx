@@ -57,6 +57,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     return botIndex > 0 ? name.substring(0, botIndex) : name;
   }, []);
 
+
+
   // Create a map of VM transactions for timeline display
   const vmTransactionsMap = useMemo(() => {
     const map = new Map();
@@ -367,8 +369,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     // Remove hexagon when robot picks it up (2200ms)
     setTimeout(() => {
       console.log(`🗑️ Robot picked up ${nextVm.machineName} - removing from display`);
-      seenVmsRef.current.delete(nextVm.machineName);
-      setDisplayedVMs(prev => prev.filter(vm => vm.machineName !== nextVm.machineName));
+      seenVmsRef.current.delete(`${nextVm.machineName}_${nextVm.transactionId}`);
+      setDisplayedVMs(prev => prev.filter(vm => !(vm.machineName === nextVm.machineName && vm.transactionId === nextVm.transactionId)));
 
       // Trigger exit animation (flying VM icon) when robot starts returning
       queueExitAnimation(nextVm, outcome);
@@ -378,7 +380,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     // Wait for full robot animation to complete before processing next VM
     setTimeout(() => {
       console.log(`✅ Robot animation complete for ${nextVm.machineName}`);
-      completingVmsRef.current.delete(nextVm.machineName);
+      completingVmsRef.current.delete(`${nextVm.machineName}_${nextVm.transactionId}`);
       removeFromExitQueue(nextVm.machineName);
 
       isProcessingExitQueue.current = false;
@@ -413,7 +415,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       // First load with VMs - display immediately without animation
       console.log("First load - displaying all VMs immediately:", activeVmUpdate.map(vm => vm.machineName));
       isFirstLoad.current = false; // Only set to false AFTER we have data
-      activeVmUpdate.forEach(vm => seenVmsRef.current.add(vm.machineName));
+      activeVmUpdate.forEach(vm => seenVmsRef.current.add(`${vm.machineName}_${vm.transactionId}`));
       setDisplayedVMs(activeVmUpdate);
       // Update ref immediately so exit detection works
       displayedVmsRef.current = activeVmUpdate;
@@ -421,21 +423,21 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     }
 
     // FIRST: Handle removed VMs - check BEFORE early return so exit works when activeVmUpdate is empty
-    const activeNames = Array.isArray(activeVmUpdate) ? activeVmUpdate.map(vm => vm.machineName) : [];
+    const activeKeys = Array.isArray(activeVmUpdate) ? activeVmUpdate.map(vm => `${vm.machineName}_${vm.transactionId}`) : [];
     const currentDisplayedVMs = displayedVmsRef.current;
 
     // Find VMs that were removed (exit animations should always work after first load)
     const removedVMs = currentDisplayedVMs.filter(vm =>
-      !activeNames.includes(vm.machineName) &&
-      !completingVmsRef.current.has(vm.machineName) &&
-      !exitQueue.current.some(queuedVm => queuedVm.machineName === vm.machineName)
+      !activeKeys.includes(`${vm.machineName}_${vm.transactionId}`) &&
+      !completingVmsRef.current.has(`${vm.machineName}_${vm.transactionId}`) &&
+      !exitQueue.current.some(queuedVm => queuedVm.machineName === vm.machineName && queuedVm.transactionId === vm.transactionId)
     );
 
     if (removedVMs.length > 0) {
       console.log("VMs removed - adding to exit queue:", removedVMs.map(vm => vm.machineName));
 
       // Mark all as completing immediately to prevent duplicate triggers
-      removedVMs.forEach(vm => completingVmsRef.current.add(vm.machineName));
+      removedVMs.forEach(vm => completingVmsRef.current.add(`${vm.machineName}_${vm.transactionId}`));
 
       // Add to exit queue (will process one by one - blink and robot animation synced)
       exitQueue.current.push(...removedVMs);
@@ -454,12 +456,12 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     }
 
     // Find new VMs that we haven't seen before
-    const newVMs = activeVmUpdate.filter(vm => !seenVmsRef.current.has(vm.machineName));
+    const newVMs = activeVmUpdate.filter(vm => !seenVmsRef.current.has(`${vm.machineName}_${vm.transactionId}`));
 
     // Update existing VMs with new data (e.g., lastRunTime) - use functional update
     setDisplayedVMs(prev => {
       const updated = prev.map(displayedVm => {
-        const updatedVm = activeVmUpdate.find(vm => vm.machineName === displayedVm.machineName);
+        const updatedVm = activeVmUpdate.find(vm => vm.machineName === displayedVm.machineName && vm.transactionId === displayedVm.transactionId);
         if (updatedVm) {
           return updatedVm;
         }
@@ -473,7 +475,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     if (newVMs.length > 0) {
       console.log("New VMs detected - adding to queue:", newVMs.map(vm => vm.machineName));
       // Mark as seen immediately to prevent duplicates
-      newVMs.forEach(vm => seenVmsRef.current.add(vm.machineName));
+      newVMs.forEach(vm => seenVmsRef.current.add(`${vm.machineName}_${vm.transactionId}`));
       pendingQueue.current.push(...newVMs);
 
       // Update pending count for parent
@@ -522,7 +524,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
             return (
               <div
                 className={`hex-wrapper ${isNewlyAdded ? 'hex-popup-animate' : ''} ${blinkClass}`}
-                key={vm.machineName || i}
+                key={`${vm.machineName}_${vm.transactionId}` || i}
                 ref={(el) => {
                   if (el) {
                     hexRefsMap.current[vm.machineName] = el;
