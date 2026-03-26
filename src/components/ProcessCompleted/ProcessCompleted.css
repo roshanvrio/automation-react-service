@@ -84,7 +84,7 @@
   gap: clamp(2px, 0.2vmin, 4px);
   padding: clamp(1px, 0.15vmin, 3px) clamp(4px, 0.4vmin, 7px);
   border-radius: clamp(3px, 0.4vmin, 6px);
-  font-size: clamp(9px, 1.1vmin, 13px);
+  font-size: clamp(11px, 1.4vmin, 16px);
   font-weight: 700;
 }
 
