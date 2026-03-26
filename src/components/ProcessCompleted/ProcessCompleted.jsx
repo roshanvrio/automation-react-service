@@ -10,6 +10,7 @@ const ProcessCompleted = ({ processCompletedUpdate }) => {
       <div className="process-completed-list">
         {processes.map((process, i) => {
           const icon = process.triggerIndication === "Email" ? "bi-envelope" : "bi-clock";
+          const total = (process.successCount || 0) + (process.exceptionCount || 0) + (process.errorCount || 0);
 
           return (
             <div className="process-completed-row" key={process.processName || i}>
@@ -18,7 +19,19 @@ const ProcessCompleted = ({ processCompletedUpdate }) => {
                 <span className="process-completed-name">{process.processName}</span>
               </div>
               <div className="process-completed-right">
-                <span className="completed-count">{process.completedCount}</span>
+                <div className="count-chip success">
+                  <i className="bi bi-check-circle-fill"></i>
+                  <span>{process.successCount || 0}</span>
+                </div>
+                <div className="count-chip exception">
+                  <i className="bi bi-exclamation-circle-fill"></i>
+                  <span>{process.exceptionCount || 0}</span>
+                </div>
+                <div className="count-chip error">
+                  <i className="bi bi-x-circle-fill"></i>
+                  <span>{process.errorCount || 0}</span>
+                </div>
+                <div className="count-total">{total}</div>
               </div>
             </div>
           );

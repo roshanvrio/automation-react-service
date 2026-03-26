@@ -39,7 +39,7 @@
   justify-content: space-between;
   background: linear-gradient(90deg, #0e2a30, #0b1f25);
   border-radius: clamp(4px, 0.6vmin, 10px);
-  padding: clamp(4px, 0.6vmin, 9px) clamp(5px, 0.7vmin, 11px);
+  padding: clamp(5px, 0.7vmin, 10px) clamp(6px, 0.8vmin, 12px);
   margin-bottom: clamp(4px, 0.5vmin, 8px);
   position: relative;
 }
@@ -73,14 +73,52 @@
 .process-completed-right {
   display: flex;
   align-items: center;
+  gap: clamp(4px, 0.5vmin, 8px);
   flex-shrink: 0;
 }
 
-/* COUNT */
-.completed-count {
-  font-size: clamp(10px, 1.4vmin, 17px);
+/* COUNT CHIPS */
+.count-chip {
+  display: flex;
+  align-items: center;
+  gap: clamp(2px, 0.2vmin, 4px);
+  padding: clamp(1px, 0.15vmin, 3px) clamp(4px, 0.4vmin, 7px);
+  border-radius: clamp(3px, 0.4vmin, 6px);
+  font-size: clamp(9px, 1.1vmin, 13px);
   font-weight: 700;
-  color: #3b82f6;
+}
+
+.count-chip i {
+  font-size: clamp(10px, 1.3vmin, 15px);
+}
+
+.count-chip.success {
+  background: rgba(45, 255, 143, 0.1);
+  color: #2dff8f;
+  border: 1px solid rgba(45, 255, 143, 0.2);
+}
+
+.count-chip.exception {
+  background: rgba(183, 92, 255, 0.1);
+  color: #b75cff;
+  border: 1px solid rgba(183, 92, 255, 0.2);
+}
+
+.count-chip.error {
+  background: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+  border: 1px solid rgba(255, 77, 79, 0.2);
+}
+
+/* TOTAL COUNT */
+.count-total {
+  font-size: clamp(11px, 1.5vmin, 18px);
+  font-weight: 800;
+  color: #00f6ff;
+  min-width: clamp(18px, 2vmin, 28px);
+  text-align: center;
+  padding-left: clamp(4px, 0.4vmin, 8px);
+  border-left: 1px solid rgba(0, 246, 255, 0.2);
 }
 
 /* RIGHT NOTCH */
@@ -102,7 +140,7 @@
 
 @media (min-width: 3440px) {
   .process-completed-row {
-    padding: 7px 9px;
+    padding: 8px 10px;
     margin-bottom: 7px;
     border-radius: 9px;
   }
@@ -119,15 +157,11 @@
     font-size: 11px;
     max-width: 180px;
   }
-
-  .completed-count {
-    font-size: 14px;
-  }
 }
 
 @media (min-width: 2560px) and (max-width: 3439px) {
   .process-completed-row {
-    padding: 7px 9px;
+    padding: 8px 10px;
     margin-bottom: 7px;
     border-radius: 9px;
   }
@@ -135,16 +169,12 @@
   .process-completed-name {
     font-size: 11px;
     max-width: 180px;
-  }
-
-  .completed-count {
-    font-size: 14px;
   }
 }
 
 @media (min-width: 1920px) and (max-width: 2559px) {
   .process-completed-row {
-    padding: 7px 9px;
+    padding: 8px 10px;
     margin-bottom: 7px;
     border-radius: 9px;
   }
@@ -152,10 +182,6 @@
   .process-completed-name {
     font-size: 11px;
     max-width: 180px;
-  }
-
-  .completed-count {
-    font-size: 14px;
   }
 }
 
@@ -169,10 +195,6 @@
   .process-completed-name {
     font-size: 11px;
     max-width: 180px;
-  }
-
-  .completed-count {
-    font-size: 14px;
   }
 }
 
@@ -195,10 +217,6 @@
     font-size: 10px;
     max-width: 140px;
   }
-
-  .completed-count {
-    font-size: 13px;
-  }
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
@@ -210,10 +228,6 @@
   .process-completed-name {
     font-size: 10px;
     max-width: 120px;
-  }
-
-  .completed-count {
-    font-size: 12px;
   }
 }
 
@@ -227,10 +241,6 @@
   .process-completed-name {
     font-size: 10px;
     max-width: 100px;
-  }
-
-  .completed-count {
-    font-size: 12px;
   }
 
   .process-completed-row::after {
@@ -258,10 +268,6 @@
     max-width: 150px;
   }
 
-  .completed-count {
-    font-size: 14px;
-  }
-
   .process-completed-row::after {
     display: none;
   }
@@ -275,9 +281,5 @@
   .process-completed-name {
     font-size: 10px;
     max-width: 120px;
-  }
-
-  .completed-count {
-    font-size: 13px;
   }
 }
