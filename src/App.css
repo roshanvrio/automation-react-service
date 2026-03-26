@@ -132,11 +132,11 @@
   overflow: hidden;
 }
 
-/* Right column grid - Entry on top, TopPerforming below */
+/* Right column grid - Entry on top, VM Utilization below */
 .right-column-grid {
   display: grid;
   /* grid-template-rows: 1fr auto; */
-  grid-template-rows: 1fr 0.35fr;
+  grid-template-rows: 1fr 1fr;
   gap: var(--gap-lg);
   min-height: 0;
   height: 100%;

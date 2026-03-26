@@ -2,8 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Header from "./components/Header/Header";
 import BotsInQueue from "./components/BotsInQueue/BotsInQueue";
 import VMUtilization from "./components/VMUtilization/VMUtilization";
-import TopPerformingVM from "./components/TopPerformingVM/TopPerformingVM";
+import ProcessCompleted from "./components/ProcessCompleted/ProcessCompleted";
 import ActiveVMs from "./components/ActiveVMs/ActiveVMs";
+
 import Entry from "./components/Entry/Entry";
 import AnimationOverlay from "./components/AnimationOverlay/AnimationOverlay";
 import RobotAnimator from "./components/RobotAnimator";
@@ -45,13 +46,13 @@ const AppContent = () => {
   const [activeVmUpdate, setActiveVmUpdate] = useState([]);
   const [idleVmUpdate, setIdleVmUpdate] = useState([]);
   const [vmUtilizationUpdate, setVmUtilizationUpdate] = useState([]);
-  const [topPerformer, setTopPerformer] = useState(null);
   const [completedTransactions, setCompletedTransactions] = useState({
     successful: [],
     error: [],
     exception: []
   });
   const [vmCompletedTransactions, setVmCompletedTransactions] = useState([]);
+  const [processCompletedUpdate, setProcessCompletedUpdate] = useState([]);
   const wsRef = useRef(null);
 
   // Sync metrics directly to target (with highlight animation)
@@ -158,7 +159,6 @@ const AppContent = () => {
           if (message.type === "vm_utilization_update" && message.data) {
             //console.log("VM Utilization Update:", message.data);
             setVmUtilizationUpdate(message.data.vmUtilization || []);
-            setTopPerformer(message.data.topPerformer || null);
           }
           if (message.type === "completed_transactions_update" && message.data) {
             //console.log("Completed Transactions Update:", message.data);
@@ -167,6 +167,9 @@ const AppContent = () => {
           if (message.type === "vm_completed_transactions_update" && message.data) {
             console.log("VM Completed Transactions Update:", message.data);
             setVmCompletedTransactions(message.data);
+          }
+          if (message.type === "process_completed_update" && message.data) {
+            setProcessCompletedUpdate(message.data);
           }
         } catch (error) {
           console.error("Error parsing WebSocket message:", error);
@@ -215,7 +218,7 @@ const AppContent = () => {
           {/* LEFT COLUMN */}
           <div className="left-column-grid">
             <BotsInQueue queuePriorityUpdate={queuePriorityUpdate} />
-            <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
+            <ProcessCompleted processCompletedUpdate={processCompletedUpdate} />
           </div>
 
           {/* CENTER COLUMN */}
@@ -229,10 +232,10 @@ const AppContent = () => {
             />
           </div>
 
-          {/* RIGHT COLUMN - Entry + TopPerforming stacked */}
+          {/* RIGHT COLUMN - Entry + VM Utilization stacked */}
           <div className="right-column-grid">
             <Entry idleVmUpdate={idleVmUpdate} />
-            <TopPerformingVM topPerformer={topPerformer} />
+            <VMUtilization vmUtilizationUpdate={vmUtilizationUpdate} />
           </div>
         </div>
 
