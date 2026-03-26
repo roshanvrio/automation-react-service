@@ -22,7 +22,8 @@ const AppContent = () => {
     successful: 0,
     totalInQueue: 0,
     errors: 0,
-    avgTime: 0
+    totalCompleted: 0,
+    inProgress: 0
   });
   // Target metrics - from WebSocket
   const targetMetricsRef = useRef({
@@ -30,7 +31,8 @@ const AppContent = () => {
     successful: 0,
     totalInQueue: 0,
     errors: 0,
-    avgTime: 0
+    totalCompleted: 0,
+    inProgress: 0
   });
   // Keys currently being highlighted
   const [highlightKeys, setHighlightKeys] = useState([]);
@@ -58,7 +60,7 @@ const AppContent = () => {
 
     setDisplayedMetrics(prev => {
       const keysToHighlight = [];
-      const metricKeys = ['totalInQueue', 'successful', 'exceptions', 'errors', 'avgTime'];
+      const metricKeys = ['totalCompleted', 'totalInQueue', 'successful', 'exceptions', 'errors', 'inProgress'];
 
       metricKeys.forEach(key => {
         const current = prev[key] || 0;
@@ -87,7 +89,7 @@ const AppContent = () => {
       const keysToHighlight = [];
 
       // Move each metric one step towards target
-      const metricKeys = ['totalInQueue', 'successful', 'exceptions', 'errors', 'avgTime'];
+      const metricKeys = ['totalCompleted', 'totalInQueue', 'successful', 'exceptions', 'errors', 'inProgress'];
 
       metricKeys.forEach(key => {
         const current = prev[key] || 0;

@@ -2,20 +2,25 @@ import "./Header.css";
 import MindsprintLogo from "../../assets/mindsprint.png";
 
 const Header = ({ metrics, highlightKeys = [] }) => {
+  console.log('Header metrics:', metrics);
   // Helper to get highlight class based on highlightKeys passed from parent
   const getHighlightClass = (key) => {
     if (!highlightKeys.includes(key)) return '';
 
     // Return color-specific highlight class based on metric type
     switch (key) {
-      case 'totalInQueue':
-        return 'metric-highlight-cyan';
       case 'successful':
         return 'metric-highlight-green';
       case 'exceptions':
         return 'metric-highlight-purple';
       case 'errors':
         return 'metric-highlight-red';
+      case 'totalCompleted':
+        return 'metric-highlight-blue';
+      case 'inProgress':
+        return 'metric-highlight-orange';
+      case 'totalInQueue':
+        return 'metric-highlight-cyan';
       default:
         return 'metric-highlight-green';
     }
@@ -28,13 +33,13 @@ const Header = ({ metrics, highlightKeys = [] }) => {
       <span>QUEUE DASHBOARD</span>
     </div>
     <div className="metrics-grid">
-        <div className={`header-metric cyan ${getHighlightClass('totalInQueue')}`}>
+        <div className={`header-metric blue ${getHighlightClass('totalCompleted')}`}>
           <div className="metric-icon">
-            <i className="bi bi-cpu-fill"></i>
+            <i className="bi bi-check-circle-fill"></i>
           </div>
           <div className="metric-text">
-            <div className="metric-value">{metrics?.totalInQueue || 0}</div>
-            <div className="metric-label">Total in Queue</div>
+            <div className="metric-value">{metrics?.totalCompleted || 0}</div>
+            <div className="metric-label">Total Completed</div>
           </div>
         </div>
 
@@ -68,13 +73,23 @@ const Header = ({ metrics, highlightKeys = [] }) => {
           </div>
         </div>
 
-        <div className={`header-metric teal ${getHighlightClass('avgTime')}`}>
+        <div className={`header-metric orange ${getHighlightClass('inProgress')}`}>
           <div className="metric-icon">
-            <i className="bi bi-clock-fill"></i>
+            <i className="bi bi-arrow-repeat"></i>
           </div>
           <div className="metric-text">
-            <div className="metric-value">{metrics?.avgTime || 0} mins</div>
-            <div className="metric-label">Avg. Execution Time</div>
+            <div className="metric-value">{metrics?.inProgress || 0}</div>
+            <div className="metric-label">In Progress</div>
+          </div>
+        </div>
+
+        <div className={`header-metric cyan ${getHighlightClass('totalInQueue')}`}>
+          <div className="metric-icon">
+            <i className="bi bi-cpu-fill"></i>
+          </div>
+          <div className="metric-text">
+            <div className="metric-value">{metrics?.totalInQueue || 0}</div>
+            <div className="metric-label">Total in Queue</div>
           </div>
         </div>
     </div>
