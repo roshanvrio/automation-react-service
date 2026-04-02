@@ -1,57 +1,117 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import "./ProcessCompleted.css";
 
+// How long each row stays highlighted before moving to next
+const HIGHLIGHT_DURATION = 3500;
+
 const ProcessCompleted = ({ processCompletedUpdate }) => {
   const processes = Array.isArray(processCompletedUpdate) ? processCompletedUpdate : [];
-  const [highlightedKeys, setHighlightedKeys] = useState(new Set());
-  const prevProcessKeysRef = useRef(new Set());
+  const [highlightedKey, setHighlightedKey] = useState(null);
+  // Store previous snapshot: Map<processName, { successCount, exceptionCount, errorCount }>
+  const prevSnapshotRef = useRef(new Map());
   const rowRefsMap = useRef({});
   const isFirstLoad = useRef(true);
+  // Queue of process keys waiting to be highlighted one by one
+  const highlightQueue = useRef([]);
+  const isProcessingHighlight = useRef(false);
 
-  // Build a unique key for each process row
-  const getProcessKey = useCallback((process, index) => {
-    return process.processName || `process_${index}`;
-  }, []);
-
-  // Detect newly added or updated processes, scroll & highlight
-  useEffect(() => {
-    const currentKeys = new Set(processes.map((p, i) => getProcessKey(p, i)));
-
-    // Skip highlight on first load
-    if (isFirstLoad.current) {
-      if (processes.length > 0) {
-        isFirstLoad.current = false;
-        prevProcessKeysRef.current = currentKeys;
-      }
+  // Process highlight queue one at a time
+  const processHighlightQueue = useCallback(() => {
+    if (isProcessingHighlight.current || highlightQueue.current.length === 0) {
       return;
     }
 
-    // Find new keys that weren't in the previous set
-    const newKeys = new Set();
-    currentKeys.forEach(key => {
-      if (!prevProcessKeysRef.current.has(key)) {
-        newKeys.add(key);
+    isProcessingHighlight.current = true;
+    const nextKey = highlightQueue.current.shift();
+
+    // Scroll to the row
+    const el = rowRefsMap.current[nextKey];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    // Highlight it
+    setHighlightedKey(nextKey);
+
+    // After duration, clear and process next
+    setTimeout(() => {
+      setHighlightedKey(null);
+      isProcessingHighlight.current = false;
+
+      // Process next in queue
+      if (highlightQueue.current.length > 0) {
+        setTimeout(() => {
+          processHighlightQueue();
+        }, 400); // small gap between highlights
+      }
+    }, HIGHLIGHT_DURATION);
+  }, []);
+
+  // Detect newly added OR count-changed processes, queue highlights
+  useEffect(() => {
+    if (processes.length === 0) return;
+
+    // Skip highlight on first load
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      const snapshot = new Map();
+      processes.forEach(p => {
+        snapshot.set(p.processName, {
+          successCount: p.successCount || 0,
+          exceptionCount: p.exceptionCount || 0,
+          errorCount: p.errorCount || 0
+        });
+      });
+      prevSnapshotRef.current = snapshot;
+      return;
+    }
+
+    const changedKeys = [];
+    const prev = prevSnapshotRef.current;
+
+    processes.forEach(p => {
+      const key = p.processName;
+      const prevCounts = prev.get(key);
+      const curSuccess = p.successCount || 0;
+      const curException = p.exceptionCount || 0;
+      const curError = p.errorCount || 0;
+
+      if (!prevCounts) {
+        changedKeys.push(key);
+      } else if (
+        prevCounts.successCount !== curSuccess ||
+        prevCounts.exceptionCount !== curException ||
+        prevCounts.errorCount !== curError
+      ) {
+        changedKeys.push(key);
       }
     });
 
-    prevProcessKeysRef.current = currentKeys;
+    // Update snapshot
+    const snapshot = new Map();
+    processes.forEach(p => {
+      snapshot.set(p.processName, {
+        successCount: p.successCount || 0,
+        exceptionCount: p.exceptionCount || 0,
+        errorCount: p.errorCount || 0
+      });
+    });
+    prevSnapshotRef.current = snapshot;
 
-    if (newKeys.size > 0) {
-      setHighlightedKeys(newKeys);
+    if (changedKeys.length > 0) {
+      // Add to queue, skip duplicates already queued
+      changedKeys.forEach(key => {
+        if (!highlightQueue.current.includes(key) && key !== highlightedKey) {
+          highlightQueue.current.push(key);
+        }
+      });
 
-      // Scroll to the first new row
-      const firstNewKey = [...newKeys][0];
-      const el = rowRefsMap.current[firstNewKey];
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Start processing if not already
+      if (!isProcessingHighlight.current) {
+        processHighlightQueue();
       }
-
-      // Remove highlight after animation
-      setTimeout(() => {
-        setHighlightedKeys(new Set());
-      }, 2000);
     }
-  }, [processes, getProcessKey]);
+  }, [processes, processHighlightQueue, highlightedKey]);
 
   return (
     <div className="dashboard-cards card-scroll">
@@ -61,8 +121,8 @@ const ProcessCompleted = ({ processCompletedUpdate }) => {
         {processes.map((process, i) => {
           const icon = process.triggerIndication === "Email" ? "bi-envelope" : "bi-clock";
           const total = (process.successCount || 0) + (process.exceptionCount || 0) + (process.errorCount || 0);
-          const key = getProcessKey(process, i);
-          const isHighlighted = highlightedKeys.has(key);
+          const key = process.processName || i;
+          const isHighlighted = key === highlightedKey;
 
           return (
             <div
