@@ -26,8 +26,8 @@ export const AnimationProvider = ({ children }) => {
   const [ghostVm, setGhostVm] = useState(null);
   // Ghost Bot to show in BotsInQueue during animation (in case it's removed from queue)
   const [ghostBot, setGhostBot] = useState(null);
-  // Track VMs completing transactions with outcome
-  const [completingVms, setCompletingVms] = useState(new Map()); // Map<machineName, outcome>
+  // Track VMs completing transactions with outcome (keyed by machineName_transactionId)
+  const [completingVms, setCompletingVms] = useState(new Map()); // Map<vmKey, { machineName, outcome }>
   // Exit animation state - VM flying back to Entry
   const [exitAnimation, setExitAnimation] = useState(null);
   // Ghost VM to show in Entry during exit animation (landing target)
@@ -358,34 +358,34 @@ export const AnimationProvider = ({ children }) => {
   // Add VMs to the visual exit queue (for ExitQueue component display)
   // This does NOT trigger robot animation - use queueCompletionAnimation for that
   const addToExitQueue = useCallback((vmsWithOutcomes) => {
-    // vmsWithOutcomes is an array of { machineName, outcome }
+    // vmsWithOutcomes is an array of { vmKey, machineName, outcome }
     console.log(`Adding ${vmsWithOutcomes.length} VMs to exit queue:`, vmsWithOutcomes.map(v => v.machineName));
 
     setCompletingVms(prev => {
       const newMap = new Map(prev);
-      vmsWithOutcomes.forEach(({ machineName, outcome }) => {
-        newMap.set(machineName, outcome);
+      vmsWithOutcomes.forEach(({ vmKey, machineName, outcome }) => {
+        newMap.set(vmKey, { machineName, outcome });
       });
       return newMap;
     });
   }, []);
 
   // Remove a VM from the visual exit queue
-  const removeFromExitQueue = useCallback((machineName) => {
+  const removeFromExitQueue = useCallback((vmKey) => {
     setCompletingVms(prev => {
       const newMap = new Map(prev);
-      newMap.delete(machineName);
+      newMap.delete(vmKey);
       return newMap;
     });
   }, []);
 
   // Queue completion animation for a VM (triggers robot animation for ONE VM)
   // Optional hexPosition parameter allows passing fresh position from component
-  const queueCompletionAnimation = useCallback((machineName, outcome, hexPosition = null) => {
-    console.log(`Queueing robot animation for ${machineName} with outcome: ${outcome}`);
+  const queueCompletionAnimation = useCallback((vmKey, machineName, outcome, hexPosition = null) => {
+    console.log(`Queueing robot animation for ${machineName} (${vmKey}) with outcome: ${outcome}`);
 
     // Use passed position, or fallback to cached position, or fallback to center
-    const vmHexPos = hexPosition || activeVmHexPositionsRef.current[machineName];
+    const vmHexPos = hexPosition || activeVmHexPositionsRef.current[vmKey];
     const entryPos = getFallbackVmPosition();
 
     console.log(`VM hex position for ${machineName}:`, vmHexPos, hexPosition ? '(fresh)' : '(cached)');
@@ -402,7 +402,7 @@ export const AnimationProvider = ({ children }) => {
     // Also ensure it's in completingVms (in case addToExitQueue wasn't called)
     setCompletingVms(prev => {
       const newMap = new Map(prev);
-      newMap.set(machineName, outcome);
+      newMap.set(vmKey, { machineName, outcome });
       return newMap;
     });
   }, []);
@@ -412,16 +412,17 @@ export const AnimationProvider = ({ children }) => {
 
   // Queue exit animation - VM flies back to Entry list
   const queueExitAnimation = useCallback((vmData, outcome) => {
-    const { machineName } = vmData;
+    const { machineName, transactionId } = vmData;
+    const vmKey = `${machineName}_${transactionId}`;
 
-    // Prevent duplicate exit animations for the same VM
-    if (exitAnimatingVmsRef.current.has(machineName)) {
-      console.log(`⚠️ Exit animation already in progress for ${machineName}, skipping duplicate`);
+    // Prevent duplicate exit animations for the same VM transaction
+    if (exitAnimatingVmsRef.current.has(vmKey)) {
+      console.log(`⚠️ Exit animation already in progress for ${machineName} (${vmKey}), skipping duplicate`);
       return;
     }
 
-    console.log(`Queueing exit animation for ${machineName} with outcome: ${outcome}`);
-    exitAnimatingVmsRef.current.add(machineName);
+    console.log(`Queueing exit animation for ${machineName} (${vmKey}) with outcome: ${outcome}`);
+    exitAnimatingVmsRef.current.add(vmKey);
 
     // Get center position (start point - from ActiveVMs)
     const centerElement = activeCenterRef.current;
@@ -456,24 +457,25 @@ export const AnimationProvider = ({ children }) => {
     setTimeout(() => {
       setExitAnimation(null);
       setLandingGhostVm(null);
-      exitAnimatingVmsRef.current.delete(machineName);
+      exitAnimatingVmsRef.current.delete(vmKey);
       // Clear the completing state after exit animation
       setCompletingVms(prev => {
         const newMap = new Map(prev);
-        newMap.delete(machineName);
+        newMap.delete(vmKey);
         return newMap;
       });
     }, 3000);
   }, []);
 
-  // Check if VM is currently completing (for applying blink class)
-  const isVmCompleting = useCallback((machineName) => {
-    return completingVms.has(machineName);
+  // Check if VM transaction is currently completing (for applying blink class)
+  const isVmCompleting = useCallback((vmKey) => {
+    return completingVms.has(vmKey);
   }, [completingVms]);
 
-  // Get completion outcome for a VM
-  const getVmCompletionOutcome = useCallback((machineName) => {
-    return completingVms.get(machineName) || 'unknown';
+  // Get completion outcome for a VM transaction
+  const getVmCompletionOutcome = useCallback((vmKey) => {
+    const entry = completingVms.get(vmKey);
+    return entry ? entry.outcome : 'unknown';
   }, [completingVms]);
 
   // Check if a VM should be visible in ActiveVMs

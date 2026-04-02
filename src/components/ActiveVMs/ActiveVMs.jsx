@@ -212,7 +212,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     // Add to displayed VMs after a small delay (let animation start)
     setTimeout(() => {
       setDisplayedVMs(prev => [...prev, nextVm]);
-      setLatestAddedVm(nextVm.machineName);
+      setLatestAddedVm(`${nextVm.machineName}_${nextVm.transactionId}`);
 
       // Notify parent that a VM was processed - update metrics
       if (onVmProcessed) {
@@ -341,12 +341,13 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     console.log(`VM ${nextVm.machineName} completed with outcome: ${outcome}`);
 
     // Add THIS VM to visual exit queue NOW (starts blinking for this one only)
-    addToExitQueue([{ machineName: nextVm.machineName, outcome }]);
-    console.log(`📋 Added ${nextVm.machineName} to visual exit queue (blinking starts)`);
+    const vmKey = `${nextVm.machineName}_${nextVm.transactionId}`;
+    addToExitQueue([{ vmKey, machineName: nextVm.machineName, outcome }]);
+    console.log(`📋 Added ${nextVm.machineName} (${vmKey}) to visual exit queue (blinking starts)`);
 
     // Get fresh hex position from ref (important for first/last VM)
     let freshHexPosition = null;
-    const hexElement = hexRefsMap.current[nextVm.machineName];
+    const hexElement = hexRefsMap.current[vmKey];
     if (hexElement) {
       const rect = hexElement.getBoundingClientRect();
       freshHexPosition = {
@@ -361,8 +362,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     }
 
     // Trigger robot completion animation (robot will go to this VM)
-    queueCompletionAnimation(nextVm.machineName, outcome, freshHexPosition);
-    console.log(`✨ Robot animation queued for ${nextVm.machineName}`);
+    queueCompletionAnimation(vmKey, nextVm.machineName, outcome, freshHexPosition);
+    console.log(`✨ Robot animation queued for ${nextVm.machineName} (${vmKey})`);
 
     // Wait for robot to reach VM and pick it up, then remove hexagon
     // Robot animation: 0ms move → 800ms arrive → 1200ms react → 2200ms pick up
@@ -381,7 +382,7 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
     setTimeout(() => {
       console.log(`✅ Robot animation complete for ${nextVm.machineName}`);
       completingVmsRef.current.delete(`${nextVm.machineName}_${nextVm.transactionId}`);
-      removeFromExitQueue(nextVm.machineName);
+      removeFromExitQueue(vmKey);
 
       isProcessingExitQueue.current = false;
 
@@ -508,9 +509,10 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
       <div className="activevms-scroll card-scroll" ref={centerRef}>
         <div className="hex-grid hex-dynamic" style={gridStyle}>
           {displayedVMs.map((vm, i) => {
-            const isNewlyAdded = vm.machineName === latestAddedVm;
-            const isCompleting = isVmCompleting(vm.machineName);
-            const completionOutcome = getVmCompletionOutcome(vm.machineName);
+            const vmKey = `${vm.machineName}_${vm.transactionId}`;
+            const isNewlyAdded = vmKey === latestAddedVm;
+            const isCompleting = isVmCompleting(vmKey);
+            const completionOutcome = getVmCompletionOutcome(vmKey);
 
             // Determine blink class based on outcome
             let blinkClass = '';
@@ -527,8 +529,8 @@ const ActiveVMs = ({ activeVmUpdate, onVmProcessed, pendingVmCountRef, completed
                 key={`${vm.machineName}_${vm.transactionId}` || i}
                 ref={(el) => {
                   if (el) {
-                    hexRefsMap.current[vm.machineName] = el;
-                    registerActiveVmHex(vm.machineName, el);
+                    hexRefsMap.current[vmKey] = el;
+                    registerActiveVmHex(vmKey, el);
                   }
                 }}
               >

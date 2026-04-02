@@ -5,7 +5,8 @@ const ExitQueue = () => {
   const { completingVms } = useAnimation();
 
   // Convert Map to array for rendering
-  const queuedVMs = Array.from(completingVms.entries()).map(([machineName, outcome]) => ({
+  const queuedVMs = Array.from(completingVms.entries()).map(([vmKey, { machineName, outcome }]) => ({
+    vmKey,
     machineName,
     outcome
   }));
@@ -41,7 +42,7 @@ const ExitQueue = () => {
         {queuedVMs.map((vm, index) => (
           <div
             className={`exit-queue-item outcome-${vm.outcome}`}
-            key={vm.machineName}
+            key={vm.vmKey}
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <i className={`bi ${getOutcomeIcon(vm.outcome)} outcome-icon`}></i>
