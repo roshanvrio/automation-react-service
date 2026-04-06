@@ -23,5 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables
+.env
+
 # PM2
 ecosystem.config.cjs
