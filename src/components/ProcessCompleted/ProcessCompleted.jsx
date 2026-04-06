@@ -1,136 +1,63 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import "./ProcessCompleted.css";
 
-// How long each row stays highlighted before moving to next
-const HIGHLIGHT_DURATION = 3500;
+// Scroll config
+const SCROLL_PX = 1;       // pixels per tick
+const TICK_MS = 30;         // interval between ticks
+const PAUSE_TICKS = 80;     // ticks to pause at top/bottom (~2.4s)
 
 const ProcessCompleted = ({ processCompletedUpdate }) => {
   const processes = Array.isArray(processCompletedUpdate) ? processCompletedUpdate : [];
-  const [highlightedKey, setHighlightedKey] = useState(null);
-  // Store previous snapshot: Map<processName, { successCount, exceptionCount, errorCount }>
-  const prevSnapshotRef = useRef(new Map());
-  const rowRefsMap = useRef({});
-  const isFirstLoad = useRef(true);
-  // Queue of process keys waiting to be highlighted one by one
-  const highlightQueue = useRef([]);
-  const isProcessingHighlight = useRef(false);
+  const listRef = useRef(null);
 
-  // Process highlight queue one at a time
-  const processHighlightQueue = useCallback(() => {
-    if (isProcessingHighlight.current || highlightQueue.current.length === 0) {
-      return;
-    }
-
-    isProcessingHighlight.current = true;
-    const nextKey = highlightQueue.current.shift();
-
-    // Scroll to the row
-    const el = rowRefsMap.current[nextKey];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-
-    // Highlight it
-    setHighlightedKey(nextKey);
-
-    // After duration, clear and process next
-    setTimeout(() => {
-      setHighlightedKey(null);
-      isProcessingHighlight.current = false;
-
-      // Process next in queue
-      if (highlightQueue.current.length > 0) {
-        setTimeout(() => {
-          processHighlightQueue();
-        }, 400); // small gap between highlights
-      }
-    }, HIGHLIGHT_DURATION);
-  }, []);
-
-  // Detect newly added OR count-changed processes, queue highlights
+  // Continuous auto-scroll using setInterval — runs once on mount
   useEffect(() => {
-    if (processes.length === 0) return;
+    const listEl = listRef.current;
+    if (!listEl) return;
 
-    // Skip highlight on first load
-    if (isFirstLoad.current) {
-      isFirstLoad.current = false;
-      const snapshot = new Map();
-      processes.forEach(p => {
-        snapshot.set(p.processName, {
-          successCount: p.successCount || 0,
-          exceptionCount: p.exceptionCount || 0,
-          errorCount: p.errorCount || 0
-        });
-      });
-      prevSnapshotRef.current = snapshot;
-      return;
-    }
+    let direction = 1;
+    let pauseCount = 0;
 
-    const changedKeys = [];
-    const prev = prevSnapshotRef.current;
-
-    processes.forEach(p => {
-      const key = p.processName;
-      const prevCounts = prev.get(key);
-      const curSuccess = p.successCount || 0;
-      const curException = p.exceptionCount || 0;
-      const curError = p.errorCount || 0;
-
-      if (!prevCounts) {
-        changedKeys.push(key);
-      } else if (
-        prevCounts.successCount !== curSuccess ||
-        prevCounts.exceptionCount !== curException ||
-        prevCounts.errorCount !== curError
-      ) {
-        changedKeys.push(key);
+    const id = setInterval(() => {
+      // Pausing at boundary
+      if (pauseCount > 0) {
+        pauseCount--;
+        return;
       }
-    });
 
-    // Update snapshot
-    const snapshot = new Map();
-    processes.forEach(p => {
-      snapshot.set(p.processName, {
-        successCount: p.successCount || 0,
-        exceptionCount: p.exceptionCount || 0,
-        errorCount: p.errorCount || 0
-      });
-    });
-    prevSnapshotRef.current = snapshot;
+      const maxScroll = listEl.scrollHeight - listEl.clientHeight;
+      if (maxScroll <= 1) return;
 
-    if (changedKeys.length > 0) {
-      // Add to queue, skip duplicates already queued
-      changedKeys.forEach(key => {
-        if (!highlightQueue.current.includes(key) && key !== highlightedKey) {
-          highlightQueue.current.push(key);
-        }
-      });
+      listEl.scrollTop += SCROLL_PX * direction;
 
-      // Start processing if not already
-      if (!isProcessingHighlight.current) {
-        processHighlightQueue();
+      if (direction === 1 && listEl.scrollTop >= maxScroll - 1) {
+        listEl.scrollTop = maxScroll;
+        direction = -1;
+        pauseCount = PAUSE_TICKS;
+      } else if (direction === -1 && listEl.scrollTop <= 1) {
+        listEl.scrollTop = 0;
+        direction = 1;
+        pauseCount = PAUSE_TICKS;
       }
-    }
-  }, [processes, processHighlightQueue, highlightedKey]);
+    }, TICK_MS);
+
+    return () => clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="dashboard-cards card-scroll">
       <div className="card-title text-center">Process Completed - {processes.length}</div>
 
-      <div className="process-completed-list">
+      <div className="process-completed-list" ref={listRef}>
         {processes.map((process, i) => {
           const icon = process.triggerIndication === "Email" ? "bi-envelope" : "bi-clock";
           const total = (process.successCount || 0) + (process.exceptionCount || 0) + (process.errorCount || 0);
-          const key = process.processName || i;
-          const isHighlighted = key === highlightedKey;
 
           return (
             <div
-              className={`process-completed-row${isHighlighted ? ' process-completed-highlight' : ''}`}
-              key={key}
-              ref={(el) => {
-                if (el) rowRefsMap.current[key] = el;
-              }}
+              className="process-completed-row"
+              key={process.processName || i}
             >
               <div className="process-completed-left">
                 <i className={`bi ${icon}`}></i>
